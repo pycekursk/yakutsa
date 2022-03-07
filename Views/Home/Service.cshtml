@@ -1,0 +1,29 @@
+﻿<div class="row">
+  <div class="col-sm-12">
+    <div class="form-wrapper">
+      <img src="img/logo.png" />
+      <form action="@Url.ActionLink("SignIn","Home")">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input name="email" type="text" class="form-control p-2" style="font-size: 16px;" placeholder="E-mail" aria-label="E-mail" />
+          </div>
+          <div class="col-md-6">
+            <div class="password-wrapper">
+              <input name="password" type="password" class="form-control p-2" style="font-size: 16px;" placeholder="Пароль" aria-label="Пароль" />
+              <i class="fa fa-eye-slash fa-sm" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2 g-3">
+          <div class="col-md-6">
+          </div>
+          <div class="col-md-6">
+            <div class="btn-anim w-100">
+              <input type="submit" class="btn btn-primary w-100" value="Войти" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

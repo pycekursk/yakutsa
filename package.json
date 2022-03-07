@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "threejs-object-controls": "^1.2.8"
+  }
+}

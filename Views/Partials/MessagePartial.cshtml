@@ -1,0 +1,22 @@
+﻿@model yakutsa.Models.Message
+  @if (Model!.MessageType == Enums.MessageType.danger)
+{
+  <div class="alert alert-red" role="alert">
+    @Model?.Text
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button>
+  </div>
+}
+else if (Model.MessageType == Enums.MessageType.success)
+{
+  <div class="alert alert-green" role="alert">
+    @Model?.Text
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button>
+  </div>
+}
+else if (Model.MessageType == Enums.MessageType.main)
+{
+  <div class="alert alert-main" role="alert">
+    @Model?.Text
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button>
+  </div>
+}

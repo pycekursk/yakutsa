@@ -1,0 +1,19 @@
+﻿ @if (SignInManager.IsSignedIn(User))
+{
+  if (User.Identity!.Name == "pycek@list.ru")
+  {
+    <a class="my-auto mx-1 pb-3" href="@Url.ActionLink("Debug","Home")">
+      <i class="fas fa-cog fa-2x"></i>
+    </a>
+  }
+
+  <a class="my-auto mx-3 pb-3" href="@Url.ActionLink("SignOut","Home")">
+    <i class="fas fa-door-closed fa-2x"></i>
+  </a>
+}
+else if (!SignInManager.IsSignedIn(User))
+{
+  @*  <a href="@Url.ActionLink("SignOut","Home")">
+    <i class="fas fa-door-closed fa-lg"></i>
+    </a>*@
+}

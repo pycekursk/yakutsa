@@ -1,0 +1,32 @@
+﻿@model List<Product>?
+
+<div class="row mt-0">
+  <div class="col-sm-12 p-0">
+    @{
+      await Html.RenderPartialAsync("/Views/Partials/CarouselPartial.cshtml");
+    }
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    @foreach (Product p in Model!)
+    {
+      <div class="col-6 col-sm-auto mx-auto">
+        <div class="card mx-auto text-dark bg-gray d-flex-row d-md-flex-column" style="max-width:400px;height:auto;justify-content: space-between;" data-id="@p.id">
+          <div class="card-img">
+            <picture>
+              <source srcset="@p.imageUrl">
+              <img class="w-100" src="@p.imageUrl" loading="eager" alt="@p.name" width="250"/>
+            </picture>
+          </div>
+          <div>
+            <h4 class="card-title text-center p-0 m-0">@p.name</h4>
+            <div class="card-body">
+              <p class="card-text text-end fa-lg"><strong>@p.maxPrice<i class="fa fa-rub nohover ms-1 sm"></i></strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

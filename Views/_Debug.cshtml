@@ -1,0 +1,117 @@
+﻿<div  id="get_buttons">
+    
+<div class="row pt-3">
+  <div class="col-sm-12">
+    <div class="btn-group flex-wrap" role="group" aria-label="Basic checkbox toggle button group">
+      <div class="btn-anim">
+        <button class="btn btn-primary" data="Customers">Клиенты</button>
+      </div>
+      <div class="btn-anim">
+        <button class="btn btn-primary" data="Orders">Заказы</button>
+      </div>
+      <div class="btn-anim">
+        <button class="btn btn-primary" data="Products">Товары</button>
+      </div>
+      <div class="btn-anim">
+        <button class="btn btn-primary" data="product-groups">Категории</button>
+      </div>
+      <input type="radio" class="btn-check" name="btnradio" id="btn_get" autocomplete="off" checked>
+      <label class="btn btn-primary" for="btn_get">GET</label>
+
+      <input type="radio" class="btn-check" name="btnradio" id="btn_post" autocomplete="off">
+      <label class="btn btn-primary" for="btn_post">POST</label>
+
+    </div>
+  </div>
+</div>
+
+<div class="row py-2">
+  <div class="col-sm-12">
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+      <input id="action_field" type="text" placeholder="action" />
+      <select>
+        <option>api-versions</option>
+        <option>credentials</option>
+        <option>costs</option>
+        <option>custom-fields</option>
+        <option>custom-fields/dictionaries</option>
+        <option>customers</option>
+        <option>customers/history</option>
+        <option>customers/notes</option>
+        <option>customers-corporate</option>
+        <option>customers-corporate/history</option>
+        <option>customers-corporate/notes</option>
+        <option>delivery/shipments</option>
+        <option>files</option>
+        <option>loyalty/accounts</option>
+        <option>loyalty/loyalties</option>
+        <option>orders</option>
+        <option>orders/history</option>
+        <option>orders/statuses</option>
+        <option>orders/packs</option>
+        <option>orders/packs/history</option>
+        <option>reference/cost-groups</option>
+        <option>reference/cost-items</option>
+        <option>reference/countries</option>
+        <option>reference/couriers</option>
+        <option>reference/delivery-services</option>
+        <option>reference/delivery-types</option>
+        <option>reference/legal-entities</option>
+        <option>reference/mg-channels</option>
+        <option>reference/order-methods</option>
+        <option>reference/order-types</option>
+        <option>reference/payment-statuses</option>
+        <option>reference/payment-types</option>
+        <option>reference/price-types</option>
+        <option>reference/product-statuses</option>
+        <option>reference/sites</option>
+        <option>reference/status-groups</option>
+        <option>reference/statuses</option>
+        <option>reference/stores</option>
+        <option>reference/units</option>
+        <option>segments</option>
+        <option>settings</option>
+        <option>store/inventories</option>
+        <option>store/product-groups</option>
+        <option>store/products</option>
+        <option>store/products/properties</option>
+        <option>tasks</option>
+        <option>telephony/manager</option>
+        <option>user-groups</option>
+        <option>users</option>
+        <option>statistic/update</option>
+      </select>
+      <div class="btn-anim">
+        <button class="btn btn-primary">ага</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="row">
+  <div class="col-12 p-3">
+    <p id="row_view" class="w-100" style="font-size: 12px;word-break: break-word;"></p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 p-3">
+    <p id="json_view" class="w-100" style="font-size: 12px;word-break: break-word;"></p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="model-wrapper loader">
+    </div>
+  </div>
+  @*<div class="col-10 col-lg-4 mx-auto">
+    <div class="model-wrapper"></div>
+    </div>
+    <div class="col-10 col-lg-4 mx-auto">
+    <div class="model-wrapper"></div>
+    </div>*@
+
+</div>

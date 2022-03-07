@@ -1,0 +1,35 @@
+﻿@model List<Product>
+<div class="row pt-5">
+  <div class="col-md-12">
+    <h1 class="text-center">@ViewBag.Category?.name</h1>
+  </div>
+</div>
+<div class="row pb-3">
+  <div class="col-sm-4 mr-auto">
+    <a href="@Url.ActionLink("Index", "Home")">
+      <i class="fas fa-arrow-left md ms-5" style="opacity:1"></i>
+      <span class="" style="display: inline-block;">назад</span>
+    </a>
+  </div>
+</div>
+<div class="row">
+  @foreach (Product p in Model!)
+  {
+    <div class="col-6 col-sm-auto mx-auto">
+      <div class="card mx-auto text-dark bg-gray d-flex-row d-md-flex-column" style="max-width:400px; height:auto" data-id="@p.id">
+        <div class="card-img">
+          <picture>
+            <source srcset="@await ImageResizer.Resize(p.imageUrl, ImageResizer.ImageType.png, null, 250)">
+            <img class="w-100" src="@await ImageResizer.Resize(p.imageUrl, ImageResizer.ImageType.webp, null, 250)" loading="eager" width="250" alt="@p.name" />
+          </picture>
+        </div>
+        <div>
+          <h4 class="card-title text-center p-0 m-0">@p.name</h4>
+          <div class="card-body">
+            <p class="card-text text-end fa-lg"><strong>@p.maxPrice<i class="fa fa-rub nohover ms-1 sm"></i></strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
