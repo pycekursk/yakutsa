@@ -21,21 +21,22 @@
 
                 @foreach (var product in Model?.CartProducts!)
                 {
-                  <div class="ref-product" data-id="@product.Product.id">
+                  <div class="ref-product" data-id="@product?.Product?.id">
                     <div class="ref-product-col">
                       <div class="ref-product-wrapper flex-column flex-sm-row">
-                        <img class="ref-product-photo" src="@product.Product.imageUrl" alt="@product.Product.name" />
+                        <a href="@Url.ActionLink("Product", "Home", new { id = product?.Product?.id })">
+                          <img class="ref-product-photo" src="@product?.Product?.imageUrl" alt="@product.Product.name" />
+                        </a>
                         <div class="ref-product-data">
                           <div class="ref-product-info text-center">
                             <div class="ref-product-name">@product.Product.name</div>
                             @*   <div class="ref-product-category">@product.Product?.Name</div>*@
                             <div class="ref-product-variants">Размер: @product.Offer?.article.Split("-")[1]</div>
                           </div>
-                          <div class="ref-product-price text-end">@product.Offer?.price <i class="fa fa-rub"></i></div>
+                          <div class="ref-product-price text-center">@product.Offer?.price<i class="fa fa-rub opacity-100 nohover"></i></div>
                         </div>
                       </div>
-
-                      <div class="ref-product-controls">
+                      <div class="ref-product-controls w-100">
                         <div class="ref-product-quantity">
                           <form action="@Url.ActionLink("ChangeCount", "Home")" method="post">
                             <div class="ref-quantity-widget">
@@ -49,13 +50,13 @@
                               <input class="ref-product-count px-1" style="background: transparent;color: white;border: none;" type="submit" value="Изменить" />
                               <a href="@Url.ActionLink("RemoveFromCart", "Home", new { productId = @product.Product.id, offerId = @product.Offer.id })" class="ref-product-remove px-1">Удалить</a>
                             </div>
-                            <div class="d-inline">@product.Price <i class="fa fa-rub"></i></div>
                           </form>
                         </div>
                       </div>
+                      <div class="ref-product-summ"><span>@product.Price</span><i class="fa fa-rub opacity-100 nohover"></i></div>
                     </div>
                     <div class="ref-price-col">
-                      <div class="ref-product-price">@product.Offer.price<i class="fa fa-rub nohover"></i></div>
+                      <div class="ref-product-price">@product.Offer.price<i class="fa fa-rub opacity-100 nohover"></i></div>
                     </div>
                     <div class="ref-quantity-col">
                       <div class="ref-product-quantity">
@@ -84,7 +85,7 @@
                 }
               </div>
               <div class="ref-footer">
-                <div class="ref-links">
+                <div class="ref-links d-flex-row d-md-flex-column">
                   <a href="/RefundPolicy" target="_blank">Политика возврата</a>
                   <a href="/DeliveryRules" target="_blank">Условия доставки</a>
                 </div>
@@ -105,8 +106,14 @@
       }
     </div>
   </div>
-
-
 </div>
 
+<script>
+  (($)=>{
+      let products = $('.ref-product');
 
+
+      $('.ref-product-summ').closest('.ref-product');
+      console.log(products);
+  })(jQuery);
+</script>

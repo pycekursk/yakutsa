@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using RetailCRMCore.Models;
+
+using System.Text.Json.Serialization;
 
 namespace yakutsa.Models
 {
@@ -12,11 +14,11 @@ namespace yakutsa.Models
       _httpContext = httpContext;
     }
 
-    public decimal Price
+    public double Price
     {
       get
       {
-        decimal result = 0;
+        double result = 0;
         CartProducts.ForEach(x => result += x.Price);
         return result;
       }
@@ -25,6 +27,8 @@ namespace yakutsa.Models
     public List<CartProduct> CartProducts { get; set; } = new List<CartProduct>();
 
     public int Count { get { int count = 0; CartProducts.ForEach(cp => count += cp.Count); return count; } }
+
+
 
     public List<CartProduct> Add(Product product, Offer offer, int count)
     {

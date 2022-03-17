@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using RetailCRMCore.Models;
+
+using System.Text.Json.Serialization;
 
 using yakutsa.Services;
 
@@ -10,7 +12,7 @@ namespace yakutsa.Models
     public Offer? Offer { get; set; }
     public int Count { get; set; }
 
-    public decimal Price { get { decimal price = 0; price = Math.Round((decimal)(Offer!.price * Count), 2); return price; } }
+    public double Price { get { double price = 0; price = Math.Round((double)(Offer!.price * Count), 2); return price; } }
   }
 }
 

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using static yakutsa.Models.Enums;
 using yakutsa.Services;
+using RetailCRMCore.Models;
 
 namespace yakutsa.Controllers
 {
@@ -117,6 +118,19 @@ namespace yakutsa.Controllers
       {
         HttpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(cart));
       }
+
+      if (_environment.IsDevelopment() && cart?.Count == 0)
+      {
+        var products = _retailCRM.GetResponse<Product>()?.Array;
+        var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
+        //var users = _retailCRM.GetResponse<User>()?.Array;
+        //var orders = _retailCRM.GetResponse<Order>()?.Array;
+        //var offers = _retailCRM.GetResponse<Offer>();
+
+        if (product != null)
+          cart?.Add(product!, product.offers[0]!, 2);
+      }
+
       return cart;
     }
   }

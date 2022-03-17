@@ -1,32 +1,52 @@
 ﻿@model List<Product>?
 
-<div class="row mt-0">
-  <div class="col-sm-12 p-0">
-    @{
-      await Html.RenderPartialAsync("/Views/Partials/CarouselPartial.cshtml");
-    }
+<div class="container-fluid p-0">
+  <div class="row mt-0">
+    <div class="col-sm-12 p-0">
+      @{
+        await Html.RenderPartialAsync("/Views/Partials/CarouselPartial.cshtml");
+      }
+    </div>
   </div>
-</div>
-<div class="container mt-5">
-  <div class="row">
-    @foreach (Product p in Model!)
-    {
-      <div class="col-6 col-sm-auto mx-auto">
-        <div class="card mx-auto text-dark bg-gray d-flex-row d-md-flex-column" style="max-width:400px;height:auto;justify-content: space-between;" data-id="@p.id">
-          <div class="card-img">
-            <picture>
-              <source srcset="@p.imageUrl">
-              <img class="w-100" src="@p.imageUrl" loading="eager" alt="@p.name" width="250"/>
-            </picture>
-          </div>
-          <div>
-            <h4 class="card-title text-center p-0 m-0">@p.name</h4>
-            <div class="card-body">
-              <p class="card-text text-end fa-lg"><strong>@p.maxPrice<i class="fa fa-rub nohover ms-1 sm"></i></strong></p>
+  <section id="catalog">
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 mt-3 px-1 px-md-3">
+      @foreach (Product p in Model!)
+      {
+        <div class="col">
+          <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="">
+            <div class="card h-100 pb-0" style="justify-content: center;align-items: center;overflow: hidden;">
+              <img src="@p.imageUrl" class="card-img" alt="@p.name">
+              <div class="card-body">
+                <h5 class="card-title text-center">@p.name</h5>
+                <p class="card-text fa-sm text-end">
+                  @p.maxPrice <i class="fa fa-rub opacity-100" style="color:white;"></i>
+                </p>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
-      </div>
-    }
+      }
+    </div>
+  </section>
+</div>
+
+<div class="side-toggler">
+  <div class="btn-anim">
+    <a class="btn btn-main" href="#catalog">КАТАЛОГ</a>
   </div>
 </div>
+
+@*<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+  <div class="col-md-4">
+  <img src="..." class="img-fluid rounded-start" alt="...">
+  </div>
+  <div class="col-md-8">
+  <div class="card-body">
+  <h5 class="card-title">Card title</h5>
+  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+  </div>
+  </div>
+  </div>
+  </div>*@

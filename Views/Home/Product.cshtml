@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Html
+@using RetailCRMCore.Models
 
 @model Product
 
@@ -27,17 +28,26 @@
 <div class="container mt-3" data-id="@Model?.id" id="product_info">
   <div class="row">
     <div class="col-md-6">
-      <div id="product_carousel" pause class="carousel slide carousel-fade" data-bs-interval="0" data-bs-ride="carousel">
+      <div id="product_carousel" pause class="carousel slide carousel-fade wrapper" data-bs-interval="0" data-bs-ride="carousel">
         @if (!String.IsNullOrEmpty(Model?.modelPath))
         {
-          <a data-fancybox href="#model_fancybox" class="position-absolute">
+          <a data-bs-toggle="tooltip" data-bs-placement="top" title="Посмотреть в 3D" data-fancybox href="#model_fancybox" class="position-absolute">
             <img src="~/img/3dicon.png" />
           </a>
         }
         <div class="carousel-indicators">
           @{
             List<string> images = new List<string>();
-            Model?.offers.ToList().ForEach(o => images.AddRange(o.images));
+            Model?.offers
+            .ToList()
+            .ForEach(o =>
+            o.images
+            .ToList()
+            .ForEach(img =>
+            {
+              if (!images.Contains(img)) images.Add(img);
+            })
+            );
 
             int index = 0;
 
@@ -59,8 +69,8 @@
               string active = index == 0 ? "active" : "";
               <div class="carousel-item @active">
                 <a class="fancybox" href="@imageUrl" rel="gallery">
-                  <div class="d-flex justify-content-center align-items-center" style="max-height:500px;">
-                    <img width="500" src="@await ImageResizer.Resize(imageUrl, ImageResizer.ImageType.png, null, 0, 500)" class="d-block w-100" alt="@Model?.name">
+                  <div class="">
+                    <img src="@imageUrl" class="w-100" alt="@Model?.name" style="max-height:550px;object-fit: cover;min-width: 30rem;">
                   </div>
                 </a>
               </div>
@@ -79,10 +89,10 @@
       </div>
     </div>
     <div class="col-md-6">
-      <h4 class="text-start p-0 m-0">@Model?.name</h4>
+      <h2 class="text-center p-0 m-0">@Model?.name</h2>
       <small class="opacity-50 fa-1x text-start d-block">Арктикул: @Model?.article</small>
       <label class="mt-4 mb-1">
-        Размер:
+        Размеры:
       </label>
       <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
         @{
@@ -91,9 +101,9 @@
           {
             if (!offer.active) continue;
             string isChecked = index == 0 ? "checked" : "";
-            //string cssClass = string.IsNullOrEmpty(isChecked) && offer.quantity != 0 ? "" : "active";
             string isDisabled = offer.quantity == 0 ? "disabled" : "";
-            HtmlString toolTip = offer.quantity == 0 ? new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' data-original-title='Временно нет в наличии'") : new HtmlString("");
+            HtmlString toolTip = offer.quantity == 0 ?
+            new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' title='Временно нет в наличии'") : new HtmlString("");
             <div class="btn-anim m-1 @isDisabled">
               <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
               <label @toolTip class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article.Split("-")[1]</label>
@@ -102,9 +112,9 @@
           }
         }
       </div>
-      <div class="d-block fa-2x mt-3">
+      <div class="d-block fa-2x mt-3 text-center">
         <strong>@Model.maxPrice</strong><i class="fa fa-rub nohover ms-1 sm" aria-hidden="true"></i>
-        <button class="btn btn-main bg-gray w-25 ms-3"><i class="fas fa-cart-plus lg opacity-100 align-middle" aria-hidden="true"></i></button>
+        <button tabindex="0" data-bs-toggle="tooltip" title="Disabled tooltip" class="btn btn-main bg-gray w-25 ms-3"><i class="fas fa-cart-plus lg opacity-100 align-middle" aria-hidden="true"></i></button>
       </div>
     </div>
   </div>
@@ -164,13 +174,15 @@
               controls.minDistance = 1;
               controls.maxDistance = 8;
 
-              window.addEventListener('resize', onWindowResize, false);
+              
               function onWindowResize() {
                   camera.aspect = window.innerWidth / window.innerHeight;
                   camera.updateProjectionMatrix();
                   renderer.setSize(window.innerWidth, window.innerHeight);
                   animate();
               }
+             
+              window.addEventListener('resize', onWindowResize, false);
 
               //let material = new THREE.MeshStandardMaterial();
 
@@ -196,18 +208,18 @@
                   console.log(obj.scene.children[0].material.map);
                   //obj.scene.children[0].material.map = texture;
 
-                  let wrapper = $('#model_fancybox > .model-wrapper');
+                  //let wrapper = $('#model_fancybox > .model-wrapper');
 
-                  wrapper.prepend('<div id="color_picker"><input type="color" /></div>');
+                  //wrapper.prepend('<div id="color_picker"><input type="color" /></div>');
 
-                  let colors = $('#model_fancybox').find('input[type=color]');
-                  colors.on('change', (evt)=> {
-                      let newColor = hexToRgb(evt.target.value);
-                      color.r = newColor.r;
-                      color.g = newColor.g;
-                      color.b = newColor.b;
-                      animate();
-                  });
+                  //let colors = $('#model_fancybox').find('input[type=color]');
+                  //colors.on('change', (evt)=> {
+                  //    let newColor = hexToRgb(evt.target.value);
+                  //    color.r = newColor.r;
+                  //    color.g = newColor.g;
+                  //    color.b = newColor.b;
+                  //    animate();
+                  //});
                   controls.update(wrapper);
               });
 

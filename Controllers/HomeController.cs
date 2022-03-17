@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using RetailCRMCore.Models;
+
+using System.Globalization;
 using System.Linq;
 
 using yakutsa.Data;
@@ -16,7 +19,7 @@ namespace yakutsa.Controllers
   {
     public HomeController(RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger) : base(retailCRM, userManager, signIn, context, environment, logger)
     {
-
+      CultureInfo.CurrentCulture = new CultureInfo("RU-ru") { DateTimeFormat = new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" } };
     }
 
     public IActionResult Service()
@@ -24,12 +27,35 @@ namespace yakutsa.Controllers
       return View("Views/Home/Service.cshtml");
     }
 
+    public IActionResult PaymentReturn(object args)
+    {
+      return new PortalActionResult();
+    }
+
+    public async Task<IActionResult> PaymentCheck(string id)
+    {
+      PortalActionResult result = new();
+      do
+      {
+        await Task.Delay(500);
+        string state = await _retailCRM.CheckInvoice(id);
+        if (state == "canceled")
+        {
+          result.Success = true;
+          result.Message = "Платеж отменен";
+        }
+        else if (state == "paid")
+        {
+          result.Success = true;
+          result.Message = "Заказ успешно оформлен и оплачен, скоро с Вами свяжется менеджер.";
+        }
+      } while (!result.Success);
+      HttpContext.Session.Remove("cart");
+      return result;
+    }
 
     public IActionResult Index()
     {
-      //_retailCRM.OrderCreate(null);
-
-
       ViewData["Description"] = new HtmlString("");
       ViewData["Title"] = new HtmlString("Главная");
 
@@ -66,10 +92,13 @@ namespace yakutsa.Controllers
       PortalActionResult actionResult = new();
 
       Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
+
+      count = product.offers.FirstOrDefault(o => o.id == offerId).quantity < count ? product.offers.FirstOrDefault(o => o.id == id).quantity : count;
+
       base.Cart?.Add(product!, product!.offers.FirstOrDefault(o => o.id == offerId)!, count);
 
       actionResult.Success = true;
-      actionResult.Html = Cart.Count.ToString();
+      actionResult.Html = Cart?.Count.ToString()!;
       actionResult.Message = "Добавлено в корзину!";
 
       return actionResult;
@@ -105,6 +134,7 @@ namespace yakutsa.Controllers
     public IActionResult ChangeCount(int id, int offerId, int count)
     {
       Cart.ChangeCount(id, offerId, count);
+      CheckOffers();
       return View("Views/Home/Cart.cshtml", Cart);
     }
 
@@ -119,7 +149,7 @@ namespace yakutsa.Controllers
         case "product-groups": return Json(_retailCRM.GetResponse<ProductGroup>());
         case "reference/payment-types": return Json(_retailCRM.GetResponse<PaymentType>());
         case "reference/delivery-types": return Json(_retailCRM.GetResponse<DeliveryType>());
-        default: return Json(_retailCRM.GetResponse(action!, RequestMethod.GET, new string[] { "entity:Product" }));
+        default: return Index();
       }
     }
 
@@ -157,9 +187,9 @@ namespace yakutsa.Controllers
       return Index();
     }
 
+    [ActionName("Cart")]
     public IActionResult CartView()
     {
-
       ViewData["Description"] = new HtmlString("");
       ViewData["Title"] = new HtmlString("Корзина");
 
@@ -167,38 +197,107 @@ namespace yakutsa.Controllers
     }
 
     [HttpGet]
-    public IActionResult OrderOptions()
+    public IActionResult OrderOptions(CreateOrderObject? createOrder)
     {
       ViewData["Title"] = new HtmlString("Оформление заказа");
       ViewData["Description"] = new HtmlString("Выбор способа оплаты и доставки");
 
-      ViewBag.DeliveryTypes = _retailCRM.GetResponse<DeliveryType>().Array;
-      ViewBag.PaymentTypes = _retailCRM.GetResponse<PaymentType>().Array;
-      return View(new CreateOrderObject());
+
+      if (_environment.IsDevelopment() && string.IsNullOrEmpty(createOrder?.email))
+      {
+        createOrder.email = "pycek@list.ru";
+        createOrder.address = new() { city = "Курск", street = "Кулакова", building = "9", flat = "206", text = "г Курск, пр-кт Кулакова, д 9, кв 206" };
+        createOrder.firstName = "Руслан";
+        createOrder.lastName = "Бредихин";
+        createOrder.phone = "+79207048884";
+        createOrder.patronymic = "Владимирович";
+      }
+
+      createOrder.paymentType = "cp";
+
+      ViewBag.DeliveryTypes = _retailCRM.GetResponse<DeliveryType>()?.Array?.Where(t => t.active).ToArray();
+
+      //ViewBag.PaymentTypes = _retailCRM.GetResponse<PaymentType>()?.Array?.Where(t => t.active).ToArray();
+
+      return View(createOrder);
     }
 
     [HttpPost]
-    public IActionResult OrderOptions(CreateOrderObject createOrder)
+    public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, string deliveryTypeCode, string paymentTypeCode)
     {
-      createOrder.createdAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-      createOrder.externalId = 1;
-      Cart.CartProducts.ForEach(cp =>
+      return Task.Run<IActionResult>(() =>
       {
-        createOrder.items.Add(new CreateOrderObjectItem
+        _retailCRM.ParseAddress(createOrder.address.text).ContinueWith(t => createOrder.address = t.Result).Wait();
+
+        createOrder.manager = _retailCRM.GetResponse<User>()?.Array?.FirstOrDefault(u => u.isManager && u.active);
+        var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
+
+        if (customer != null)
         {
-          initialPrice = (int)cp.Price,
-          productId = cp.Product.id,
-          productName = cp.Product.name,
-          quantity = cp.Count
+          createOrder.customer = customer;
+          createOrder.customer.manager = createOrder.manager;
+          createOrder.customer.anyPhone = createOrder.phone;
+          createOrder.customer.phone = createOrder.phone;
+          createOrder.manager = createOrder.manager;
+        }
+
+        createOrder.createdAt = DateTime.Now;
+        PortalActionResult result = new();
+
+        if (String.IsNullOrEmpty(createOrder.deliveryType) || String.IsNullOrEmpty(createOrder.paymentType))
+        {
+          result.Message = String.IsNullOrEmpty(createOrder.paymentType) ? new String("Укажите способ оплаты") : new String("Укажите способ получения");
+          return result;
+        }
+
+        Cart?.CartProducts.ForEach(cp =>
+        {
+          createOrder.items.Add(new OrderProduct
+          {
+            initialPrice = (int)cp.Price,
+            productId = cp.Product.id.ToString(),
+            productName = cp.Product.name,
+            quantity = cp.Count,
+            offer = cp.Offer
+          });
         });
+
+        createOrder.price = Cart.Price;
+
+        string link = string.Empty;
+        string id = string.Empty;
+
+        _retailCRM.OrderCreate(createOrder, HttpContext.Request.Host.Value, _environment.IsDevelopment()).ContinueWith(t =>
+        {
+          link = t.Result.link;
+          id = t.Result.id;
+        }).Wait();
+
+        if (!string.IsNullOrEmpty(link))
+        {
+          result.Success = true;
+          result.Url = link;
+          result.Html = id;
+          HttpContext.Session.Remove("cart");
+          //AppendMessage("Заказ успешно оформлен, скоро с Вами свяжется менеджер.", Enums.MessageType.success);
+          return result;
+        }
+        return result;
       });
+    }
 
-      _retailCRM.OrderCreate(createOrder);
-
-      ViewData["Title"] = new HtmlString("Оформление заказа");
-      ViewData["Description"] = new HtmlString("Выбор способа оплаты и доставки");
-      AppendMessage("Заказ успешно оформлен, скоро с Вами свяжется менеджер.", Enums.MessageType.success);
-      return RedirectToAction("Index", "Home");
+    public IActionResult CheckOffers()
+    {
+      PortalActionResult result = new();
+      var products = _retailCRM.GetResponse<Product>();
+      Cart.CartProducts.ForEach((cp) =>
+      {
+        cp.Count = products.Array.FirstOrDefault(p => p.id == cp.Product.id).offers.FirstOrDefault(o => o.id == cp.Offer.id).quantity < cp.Count ?
+        products.Array.FirstOrDefault(p => p.id == cp.Product.id).offers.FirstOrDefault(o => o.id == cp.Offer.id).quantity : cp.Count;
+      });
+      HttpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(Cart));
+      result.Success = true;
+      return result;
     }
 
     public async Task<IActionResult> SignIn(string email, string password)

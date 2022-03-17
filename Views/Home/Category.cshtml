@@ -1,35 +1,36 @@
 ﻿@model List<Product>
-<div class="row pt-5">
-  <div class="col-md-12">
-    <h1 class="text-center">@ViewBag.Category?.name</h1>
-  </div>
-</div>
-<div class="row pb-3">
-  <div class="col-sm-4 mr-auto">
-    <a href="@Url.ActionLink("Index", "Home")">
-      <i class="fas fa-arrow-left md ms-5" style="opacity:1"></i>
-      <span class="" style="display: inline-block;">назад</span>
-    </a>
-  </div>
-</div>
-<div class="row">
-  @foreach (Product p in Model!)
-  {
-    <div class="col-6 col-sm-auto mx-auto">
-      <div class="card mx-auto text-dark bg-gray d-flex-row d-md-flex-column" style="max-width:400px; height:auto" data-id="@p.id">
-        <div class="card-img">
-          <picture>
-            <source srcset="@await ImageResizer.Resize(p.imageUrl, ImageResizer.ImageType.png, null, 250)">
-            <img class="w-100" src="@await ImageResizer.Resize(p.imageUrl, ImageResizer.ImageType.webp, null, 250)" loading="eager" width="250" alt="@p.name" />
-          </picture>
-        </div>
-        <div>
-          <h4 class="card-title text-center p-0 m-0">@p.name</h4>
-          <div class="card-body">
-            <p class="card-text text-end fa-lg"><strong>@p.maxPrice<i class="fa fa-rub nohover ms-1 sm"></i></strong></p>
-          </div>
-        </div>
-      </div>
+
+<div class="container-fluid px-1 px-md-3">
+  <div class="row pt-5">
+    <div class="col-md-12">
+      <h1 class="text-center">@ViewBag.Category?.name</h1>
     </div>
-  }
+  </div>
+  <div class="row pb-3">
+    <div class="col-sm-4 mr-auto">
+      <a href="@Url.ActionLink("Index", "Home")">
+        <i class="fas fa-arrow-left md ms-5" style="opacity:1"></i>
+        <span class="" style="display: inline-block;">назад</span>
+      </a>
+    </div>
+  </div>
+  <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 mt-3">
+    @foreach (Product p in Model!)
+    {
+      <div class="col">
+        <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="h-100 w-100">
+          <div class="card h-100 pb-0 justify-content-center align-items-center" style="overflow: hidden;">
+            <img src="@p.imageUrl" class="card-img" alt="@p.name">
+            <div class="card-body">
+              <h5 class="card-title text-center">@p.name</h5>
+              <p class="card-text fa-sm text-end">
+                @p.maxPrice <i class="fa fa-rub opacity-100" style="color:white;"></i>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    }
+  </div>
 </div>
+
