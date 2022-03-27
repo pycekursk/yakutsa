@@ -1,7 +1,7 @@
 ﻿@using static yakutsa.Services.RetailCRM
 @model CreateOrderObject
 <div class="container">
-  <div class="row pt-5">
+ <div class="row">
     <div class="col-sm-12 mt-5">
       <h1 class="text-center">@ViewData["Title"]</h1>
     </div>
@@ -49,12 +49,23 @@
     </div>
     <div class="row">
       <div class="col-sm-12 my-1">
-        @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
+        @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100 form-control", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
       </div>
     </div>
-    <div class="btn-anim my-1 d-block mx-auto">
-      <input type="submit" class="btn btn-main" value="далее" />
+    <div class="row mt-2">
+      <div class="col-md-12 col-xl-6 my-2">
+        <div class="text-center">
+          @Html.CheckBox("agreement", false, new {required=true, style="width: 20px;height:20px;"})
+          <label style="cursor:pointer;vertical-align: super;" for="agreement">Я согласен с <a style="text-decoration:underline !important" href="@Url.ActionLink("Privacy", "Home")">положением о конфиденциальности</a></label>
+        </div>
+      </div>
+      <div class="col-md-12 col-xl-6 my-2">
+        <div class="btn-anim d-block mx-auto">
+          <input type="submit" class="btn btn-main d-block mx-auto" style="padding: 0.5em 5em;" value="К оплате" />
+        </div>
+      </div>
     </div>
+
   }
 </div>
 

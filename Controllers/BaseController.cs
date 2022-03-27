@@ -25,6 +25,7 @@ namespace yakutsa.Controllers
     internal RetailCRM _retailCRM;
     internal string _files;
     private Cart? cart;
+    public string PreviousUrl;
 
     public Cart? Cart { get => cart ??= GetCart(); }
 
@@ -82,7 +83,7 @@ namespace yakutsa.Controllers
       return appUser;
     }
 
-    public override ViewResult View(string? viewName, object? model)
+    void AppendData()
     {
       if (User.Identity?.Name != null && appUser != null)
       {
@@ -93,13 +94,33 @@ namespace yakutsa.Controllers
       Messages = new List<Message>();
       ViewBag.IsDevelopment = _environment.IsDevelopment();
 
-      var groups = _retailCRM.GetResponse<ProductGroup>()?.Array?.Where(g => g.active)?.ToList();
+      var groups = _retailCRM.GetResponse<ProductGroup>()?.Array?.Where(g => g.active && g.parentId == 0)?.ToList();
       ViewBag.Menu = groups;
 
       ViewData["cartPrice"] = Cart?.Price;
       ViewData["count"] = Cart?.Count;
+      ViewData["Image"] ??= $"https://{this.HttpContext.Request.Host}/img/og_logo.png";
 
+      ViewBag.Path = this.Request.Path.ToString() == "/" ? new string[0] : this.Request.Path.ToString().Split("/").Where(s => !string.IsNullOrEmpty(s)).ToArray();
+    }
+
+
+    public override ViewResult View(string? viewName, object? model)
+    {
+      AppendData();
       return base.View(viewName, model);
+    }
+
+    public override ViewResult View()
+    {
+      AppendData();
+      return base.View();
+    }
+
+    public override ViewResult View(string? viewName)
+    {
+      AppendData();
+      return base.View();
     }
 
     Cart? GetCart()
@@ -119,17 +140,13 @@ namespace yakutsa.Controllers
         HttpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(cart));
       }
 
-      if (_environment.IsDevelopment() && cart?.Count == 0)
-      {
-        var products = _retailCRM.GetResponse<Product>()?.Array;
-        var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
-        //var users = _retailCRM.GetResponse<User>()?.Array;
-        //var orders = _retailCRM.GetResponse<Order>()?.Array;
-        //var offers = _retailCRM.GetResponse<Offer>();
-
-        if (product != null)
-          cart?.Add(product!, product.offers[0]!, 2);
-      }
+      //if (_environment.IsDevelopment() && cart?.Count == 0)
+      //{
+      //  var products = _retailCRM.GetResponse<Product>()?.Array;
+      //  var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
+      //  if (product != null)
+      //    cart?.Add(product!, product.offers[0]!, 2);
+      //}
 
       return cart;
     }

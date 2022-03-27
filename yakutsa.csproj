@@ -32,4 +32,8 @@
     <ProjectReference Include="..\RetailCRMCore\RetailCRMCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\popper\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -38,14 +39,18 @@ public class Startup
 
     services.AddRouting();
 
-    services.AddResponseCompression(options =>
-    {
-      options.EnableForHttps = true;
-      options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions
-      {
-        Level = CompressionLevel.Optimal
-      }));
-    });
+    //services.AddResponseCompression(options =>
+    //{
+    //  options.EnableForHttps = true;
+    //  options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions
+    //  {
+    //    Level = CompressionLevel.Optimal
+    //  }));
+    //});
+
+    services.AddDistributedMemoryCache();
+
+    services.AddResponseCompression(options => { options.EnableForHttps = true; options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions { Level = CompressionLevel.Optimal })); });
 
     services.AddScoped<ApplicationDbContext>();
     services.AddScoped<RetailCRM>();
@@ -78,7 +83,15 @@ public class Startup
     app.UseHttpsRedirection();
 
 
-    app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+    app.UseStaticFiles(new StaticFileOptions()
+    {
+      HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
+      ContentTypeProvider = provider,
+      OnPrepareResponse = ctx =>
+      {
+        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
+      }
+    });
 
     //app.UseStaticFiles(new StaticFileOptions
     //{
@@ -89,7 +102,6 @@ public class Startup
     //});
 
 
-
     app.UseRouting();
 
     app.UseAuthentication();
@@ -97,6 +109,8 @@ public class Startup
 
     app.UseSession();
     app.UseRouting();
+
+    //ResponseCachingExtensions.UseResponseCaching(app);
 
     app.UseEndpoints(endpoints =>
     {

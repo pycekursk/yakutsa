@@ -1,16 +1,52 @@
-/*:root {
-    --main-bg-color: #228b22;
-    --main-bg-light-color: #228b2245;
-    --main-shadow-color: #4fff0029;
-    --main-border-color: #1f661f8a;
+/* MIN WIDTH MEDIA */
+@media (min-width: 576px) {
 }
-*/
+
+@media (min-width: 768px) {
+}
+
+@media (min-width: 992px) {
+}
+
+@media (min-width: 1200px) {
+}
+
+@media (min-width: 1400px) {
+}
+
+/* MAX WIDTH MEDIA */
+@media (max-width: 575.98px) {
+}
+
+
+@media (max-width: 767.98px) {
+    main > .container-fluid > .row:nth-child(1), main > .container-fluid > .container-fluid > .row:nth-child(1) {
+        margin-top: 1rem;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+}
+
+
+@media (max-width: 1199.98px) {
+}
+
+
+@media (max-width: 1399.98px) {
+}
+
 
 :root {
+    --body-bg-color: black;
     --main-bg-color: #8b2222;
     --main-bg-light-color: #8b222245;
-    --main-shadow-color: #ff000029;
+    --main-content-bg-color: #272727;
+    --main-shadow-color: #ff0e0e8c;
     --main-border-color: #661f1f8a;
+    --main-text-color: #a6a6a6;
+    --main-text-color-hover: white;
 }
 
 @keyframes loader {
@@ -46,9 +82,10 @@
 @font-face {
     font-family: 'Batman';
     src: url('../fonts/Batman.ttf') format('truetype');
+    font-display: block;
 }
 
-
+/*
 @font-face {
     font-family: 'GothamPro';
     src: url('../fonts/GothamPro.woff') format('woff');
@@ -84,18 +121,18 @@
     font-display: swap;
     src: url(../fonts/ElectronicArtsText-Regular.woff2) format('woff2');
 }
-
+*/
 
 
 html {
     position: relative;
-    min-height: 100%;
+    height: 100%;
 }
 
 body {
     height: 100vh;
     background-color: black;
-    color: white;
+    color: var(--main-text-color) !important;
     font-size: 14px;
     font-family: Batman !important;
     overflow-x: hidden;
@@ -108,7 +145,7 @@ body {
 
     body main {
         padding-bottom: 3rem !important;
-        min-height: 90%;
+        min-height: 95%;
     }
 
     body.busy > div, body.busy main > .container-fluid > div:not(.modal) {
@@ -138,6 +175,15 @@ body.busy .loading-cover {
     left: 0;
 }
 
+h1 {
+    font-size: calc(0.8rem + 1.5vw) !important;
+}
+
+h4 {
+    font-size: calc(0.8rem + 0.8vw);
+}
+
+
 .toTop-toggler {
     position: fixed;
     right: 1.5em;
@@ -157,26 +203,40 @@ body.busy .loading-cover {
     }
 
 
-    .toTop-toggler > i {
-        margin: 0.2em;
-        margin-bottom: .5em;
-        font-size: 40px;
-        transition: 250ms;
-        color: var(--main-bg-light-color) !important;
-        z-index: 50;
+.side-toggler .btn.btn-main {
+    color: var(--main-text-color-hover) !important;
+}
+
+.toTop-toggler > i {
+    margin: 0.2em;
+    margin-bottom: .5em;
+    font-size: 40px;
+    transition: 250ms;
+    color: #8b2222 !important;
+    z-index: 50;
+}
+
+.icon-link {
+    display: inline-block;
+}
+
+    .icon-link:hover a {
+        color: var(--main-text-color-hover) !important;
     }
 
 footer {
-    box-shadow: inset 0px 2px 10px 0px var(--main-shadow-color);
+    -webkit-box-shadow: 0px 12px 15px -12px rgba(244, 2, 2, 0.6) inset;
+    -moz-box-shadow: 0px 12px 15px -12px rgba(244, 2, 2, 0.6) inset;
+    box-shadow: 0px 12px 15px -12px rgba(244, 2, 2, 0.6) inset;
     border-top: 2px solid var(--main-border-color);
-    padding: 1em;
+    padding-top: 1.5em;
     min-height: 10%;
 }
 
-.modal .modal-header {
+/*.modal .modal-header {
     box-shadow: inset 0px -2px 9px 0px var(--main-shadow-color);
     border-bottom: 2px solid var(--main-border-color);
-}
+}*/
 
 .modal .modal-footer {
     box-shadow: inset 0px 2px 9px 0px var(--main-shadow-color);
@@ -184,26 +244,62 @@ footer {
 }
 
 .container-fluid > .row:nth-child(1) {
-    margin-top: 4em;
+    box-shadow: 0px -12px 15px -12px var(--main-shadow-color) inset;
+    padding-top: 2rem;
 }
 
+.container-fluid > .container {
+    margin-top: 1rem;
+    padding: 0;
+}
+
+#sizes {
+    position: relative;
+}
+
+    #sizes .tooltip-inner {
+        width: 370px;
+    }
+
+.tooltip-table .container {
+    padding: .5em !important;
+}
+
+.tooltip-table .row {
+    align-items: center;
+}
+
+    .tooltip-table .row .col {
+        padding: 0.3em !important;
+    }
+
+    .tooltip-table .row > div:not(.col) {
+        text-align: left;
+        padding: 0 0.3em !important;
+    }
+
+/*main > .container-fluid > .container {
+    margin-top: 1.5rem !important;
+}
+*/
 textarea, input[type=text], input[type=tel], input[type=button], input[type=submit], input[type=password], select {
-    background-color: whitesmoke;
+    background-color: var(--main-content-bg-color);
     outline: none;
     padding: 0.5em;
     border-radius: 0.3em;
+    color: var(--main-text-color-hover);
 }
 
 textarea, input[type=text], input[type=password], select {
-    color: black !important;
+    color: var(--main-text-color-hover);
 }
 
 select, option {
     cursor: pointer !important;
 }
 
-textarea:focus, input[type=tel]:focus, input[type=text]:focus, input[type=button]:focus, input[type=submit]:focus, input[type=password]:focus, input[type=text]:active, input[type=button]:active, input[type=submit]:active, input[type=password]:active, button:active {
-    box-shadow: inset 0px 0px 13px 0px var(--main-shadow-color);
+textarea:focus, input[type=tel]:focus, input[type=text]:focus, input[type=button]:focus, input[type=submit]:focus, input[type=password]:focus, input[type=text]:active, input[type=button]:active, input[type=password]:active, button:active {
+    box-shadow: inset 0px 0px 1px 1px var(--main-shadow-color);
 }
 
 ::-webkit-scrollbar-track {
@@ -264,7 +360,6 @@ body.openmenu .side-toggler {
     flex-direction: row;
     justify-content: center;
     list-style: none;
-    padding: 0;
     flex-wrap: wrap;
     background-color: black;
     z-index: 10;
@@ -274,9 +369,23 @@ body.openmenu .side-toggler {
     padding-bottom: 1em;
 }
 
+ul {
+    padding: 0;
+}
+
 #menu_links .btn {
     width: 200px;
 }
+
+.text-content {
+    font-size: small;
+    word-break: break-word;
+    text-align: justify;
+}
+
+    .text-content p {
+        text-indent: 30px;
+    }
 
 /*body:not(.mobile) #menu_links  {
     bottom: 0 !important;
@@ -370,24 +479,31 @@ body.openmenu .side-toggler {
         color: darkgreen;
     }
 
-i {
-    opacity: .75;
-}
+
 
 a {
-    text-decoration: none;
-    color: inherit;
+    text-decoration: none !important;
+    color: var(--main-text-color) !important;
 }
 
-    a:hover {
+    a.nohover:hover {
         text-decoration: none;
-        color: inherit !important;
+        color: var(--main-text-color) !important;
     }
 
-i:not(.nohover):hover {
-    opacity: 1;
-    cursor: pointer;
+    a:not(.nohover):hover {
+        text-decoration: none;
+        color: var(--main-text-color-hover) !important;
+    }
+
+i:not(.nohover) {
+    color: var(--main-text-color);
 }
+
+    i:not(.nohover):hover {
+        cursor: pointer;
+        color: var(--main-text-color-hover) !important;
+    }
 
 .fa-sm {
     font-size: 1.5em !important;
@@ -440,9 +556,7 @@ i:not(.nohover):hover {
 }
 
     .top-bar i {
-        color: floralwhite;
-        opacity: 1;
-        transition: 75ms;
+        color: var(--main-text-color-hover) !important;
     }
 
         .top-bar i:hover {
@@ -450,7 +564,7 @@ i:not(.nohover):hover {
             -ms-transform: scale(1.05);
             -o-transform: scale(1.05);
             -webkit-transform: scale(1.05);
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
 body.mobile .top-bar > div > a:nth-child(1) {
@@ -464,7 +578,7 @@ body.mobile .top-bar > div > a:nth-child(2) {
 
 .messages-wrapper {
     position: fixed;
-    top: 2em;
+    top: 0;
     right: 0;
     text-align: center;
     height: 0;
@@ -540,7 +654,7 @@ button {
     padding: 1em;
     padding-right: 2em;
     padding-left: 2em;
-    background-color: #111111;
+    background-color: var(--main-content-bg-color);
     font-weight: 600;
 }
 
@@ -580,9 +694,9 @@ button {
             background-size: 50px;
             position: absolute;
         }*/
-i.nohover {
+/*i.nohover {
     opacity: 1;
-}
+}*/
 
 .card.bg-image {
     background-position: top;
@@ -606,16 +720,106 @@ i.nohover {
     max-height: 25rem;
     object-fit: cover;
 }*/
-    .card-img, .card-img img, .card-img-top, .card-img-bottom {
-        max-height: 25rem;
-        object-fit: cover;
-        min-width: 20rem;
-    }
+.card-img, .card-img img, .card-img-top, .card-img-bottom {
+    /* max-height: 30rem;*/
+    object-fit: cover;
+}
 /*.ref-product-photo {
     background-color: #f5f5f50f !important;
     background-clip: border-box;
     border: 2px solid #1f661f8a;
 }*/
+
+ul {
+    list-style: none;
+}
+
+p.copyright {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    font-size: small;
+    color: gray;
+}
+
+a ~ i.fa-plus {
+    -moz-transition: 150ms;
+    -o-transition: 150ms;
+    -webkit-transition: 150ms;
+    transition: 150ms;
+    color: #8b8b8b;
+    opacity: 1;
+}
+
+    a ~ i.fa-plus:active, a ~ i.fa-plus.active {
+        transform: rotate(45deg);
+        color: white;
+    }
+
+a.active {
+    color: white !important;
+    border-bottom: 2px solid var(--main-border-color);
+}
+
+a ~ i.fa-plus:hover {
+    color: white;
+}
+
+i:not(.nohover) {
+    color: var(--main-text-color) !important;
+}
+
+    i:not(.nohover):hover {
+        color: var(--main-text-color-hover) !important;
+    }
+
+.social {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.accord {
+}
+
+.accord-content {
+    height: 0px;
+    overflow: hidden;
+    transition: 250ms;
+}
+
+.accord ul {
+    font-size: 20px;
+    line-height: 2rem;
+    padding: 0 16px;
+    list-style: none;
+}
+
+.accord.open > .accord-content {
+    height: 150px;
+}
+
+a:not(.nohover) {
+    color: #8b8b8b;
+}
+
+footer .col.social i {
+    margin: 0 .1em;
+}
+
+footer.footer-dark {
+    color: #8b8b8b;
+}
+
+ul li {
+    width: fit-content;
+}
+
+    ul li:not(.nohover):hover {
+        color: white;
+        cursor: pointer;
+    }
+
+
 
 .wrapper {
     background-color: #f5f5f50f !important;
@@ -655,7 +859,7 @@ i.nohover {
     .carousel-item video {
         pointer-events: none;
         /*max-height: 870px;*/
-       /* height: auto;*/
+        /* height: auto;*/
         object-fit: cover;
     }
 

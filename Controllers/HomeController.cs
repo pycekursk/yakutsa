@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 using RetailCRMCore.Models;
 
@@ -17,13 +18,17 @@ namespace yakutsa.Controllers
 {
   public class HomeController : BaseController
   {
-    public HomeController(RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger) : base(retailCRM, userManager, signIn, context, environment, logger)
+    private IMemoryCache _cache;
+
+    public HomeController(IMemoryCache memoryCache, RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger) : base(retailCRM, userManager, signIn, context, environment, logger)
     {
+      _cache = memoryCache;
       CultureInfo.CurrentCulture = new CultureInfo("RU-ru") { DateTimeFormat = new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" } };
     }
 
     public IActionResult Service()
     {
+
       return View("Views/Home/Service.cshtml");
     }
 
@@ -56,28 +61,84 @@ namespace yakutsa.Controllers
 
     public IActionResult Index()
     {
-      ViewData["Description"] = new HtmlString("");
+      ViewData["Description"] = new HtmlString("Единственный аниме стрит-веар бренд премиального качества.");
       ViewData["Title"] = new HtmlString("Главная");
-
-      List<Product>? products = _retailCRM.GetResponse<Product>().Array?.ToList();
-      products?.ForEach(p => p.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png");
-
+      List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
       return View(products);
     }
 
-    public IActionResult Category(int id)
+    public async Task<IActionResult> Category(int id)
     {
-      List<Product> products = new();
-      ProductGroup? productGroup = _retailCRM.GetResponse<ProductGroup>()!.Array!.FirstOrDefault(g => g.id == id);
-      products = _retailCRM.GetResponse<Product>()!.Array!.Where(p => p.groups.FirstOrDefault(g => g.id == id) != null).ToList();
+      return await Task.Run(() =>
+        {
+          List<Product> products = new();
+          ProductGroup? productGroup = _retailCRM.GetResponse<ProductGroup>()!.Array!.FirstOrDefault(g => g.id == id);
+          products = _retailCRM.GetResponse<Product>()!.Array!.Where(p => p.groups.FirstOrDefault(g => g.id == id) != null && p.active && p.quantity != 0).ToList();
 
-      products.ForEach(p => p.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png");
+          products?.ForEach(p =>
+          {
+            p?.offers[0].images.ToList().ForEach((img) =>
+            {
+              try
+              {
+                if (img.Split("_")[2].Contains("m"))
+                {
+                  ImageSide side = (ImageSide)Enum.Parse(typeof(ImageSide), img.Split("_")[3].Split('.')[0]);
+                  p.images?.Add(new Image { Side = side, Url = img });
+                }
+              }
+              catch (Exception exc)
+              {
+                if (_environment.IsDevelopment())
+                {
+                  AppendMessage(exc.Message);
+                }
+                p.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
+              }
+            });
 
-      ViewData["Description"] = new HtmlString("");
-      ViewData["Title"] = new HtmlString(productGroup?.name);
 
-      ViewBag.Category = productGroup;
-      return View("Views/Home/Category.cshtml", products);
+            ViewData["Description"] = new HtmlString("");
+            ViewData["Title"] = new HtmlString(productGroup?.name);
+
+            ViewBag.Category = productGroup;
+
+          });
+
+          return View("Views/Home/Category.cshtml", products);
+        });
+    }
+
+    public async Task<IActionResult?> Product(int id)
+    {
+      IActionResult? result = null;
+      await Task.Run(() =>
+      {
+        if (id == 0) result = new PortalActionResult { Message = new NullReferenceException().GetType().Name };
+        else
+        {
+          Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id)!;
+          product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
+
+          List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
+          ProductGroup? category = productGroups?.FirstOrDefault(p => product.groups.FirstOrDefault(c => c.id == p.id) != null);
+
+          category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
+          ViewBag.Category = category;
+
+          ViewData["backUrl"] = category?.id;
+          ViewData["categoryName"] = category?.name;
+
+          ViewData["Description"] = new HtmlString(product.description);
+          ViewData["Title"] = new HtmlString(product.name);
+          ViewData["Image"] = new HtmlString(product.imageUrl);
+
+          product.modelPath =
+            Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
+          result = View(product);
+        }
+      });
+      return result;
     }
 
     public IActionResult Debug()
@@ -87,11 +148,14 @@ namespace yakutsa.Controllers
       return View("Views/_Debug.cshtml");
     }
 
-    public IActionResult ToCart(int id, int offerId, int count = 1)
+    public IActionResult ToCart(int id, int offerId, int? subCategoryId, int count = 1)
     {
       PortalActionResult actionResult = new();
 
       Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
+
+      //product.groups.
+      //ProductGroup? productGroup = _retailCRM.GetResponse<ProductGroup>().Array?.FirstOrDefault(p => p?.SubGroups?.Length != 0 && p?.SubGroups.FirstOrDefault(sb=> sb.));
 
       count = product.offers.FirstOrDefault(o => o.id == offerId).quantity < count ? product.offers.FirstOrDefault(o => o.id == id).quantity : count;
 
@@ -99,17 +163,32 @@ namespace yakutsa.Controllers
 
       actionResult.Success = true;
       actionResult.Html = Cart?.Count.ToString()!;
-      actionResult.Message = "Добавлено в корзину!";
+      actionResult.Message = "Добавлено в <a href='/Cart' style='text-decoration:underline !important'>корзину!</a>";
 
       return actionResult;
     }
 
     public IActionResult RefundPolicy()
     {
-      ViewData["Title"] = new HtmlString("Политика возврата");
-      ViewData["Description"] = new HtmlString("Условия осуществления возврата продукции представленной в интернет-магазине.");
+      ViewData["Title"] = new HtmlString("Возврат и обмен");
+      ViewData["Description"] = new HtmlString("Условия осуществления возврата и обмена продукции приобретенной в интернет-магазине.");
       return View();
     }
+
+    public IActionResult Contacts()
+    {
+      ViewData["Title"] = new HtmlString("Реквизиты");
+      ViewData["Description"] = new HtmlString("Банковские и юридические реквизиты ООО 'ЯКУТСА'");
+      return View();
+    }
+
+    public IActionResult Privacy()
+    {
+      ViewData["Title"] = new HtmlString("Политика конфиденциальности");
+      ViewData["Description"] = new HtmlString("Положение об обработке персональных данных (далее – Положение, настоящее Положение) разработано и применяется в соответствии с п. 2 ч. 1 ст. 18.1. Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных».");
+      return View();
+    }
+
 
     public IActionResult DeliveryRules()
     {
@@ -127,15 +206,16 @@ namespace yakutsa.Controllers
 
     public IActionResult RemoveFromCart(int productId, int offerId)
     {
-      Cart.ChangeCount(productId, offerId);
-      return View("Views/Home/Cart.cshtml", Cart);
+      Cart?.ChangeCount(productId, offerId);
+
+      return RedirectToAction("Cart", "Home");
     }
 
     public IActionResult ChangeCount(int id, int offerId, int count)
     {
-      Cart.ChangeCount(id, offerId, count);
+      Cart?.ChangeCount(id, offerId, count);
       CheckOffers();
-      return View("Views/Home/Cart.cshtml", Cart);
+      return RedirectToAction("Cart", "Home");
     }
 
     [HttpPost]
@@ -153,22 +233,6 @@ namespace yakutsa.Controllers
       }
     }
 
-    public IActionResult Product(int id)
-    {
-      Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id)!;
-      product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
-      ProductGroup? category = _retailCRM.GetResponse<ProductGroup>()?.Array?.FirstOrDefault(p => product.groups.FirstOrDefault(c => c.id == p.id) != null);
-      ViewData["backUrl"] = category?.id;
-      ViewData["categoryName"] = category?.name;
-
-      ViewData["Description"] = new HtmlString("");
-      ViewData["Title"] = new HtmlString(product.name);
-
-      product.modelPath =
-        Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
-
-      return View(product);
-    }
 
     public IActionResult GetCustomers()
     {
@@ -254,7 +318,7 @@ namespace yakutsa.Controllers
         {
           createOrder.items.Add(new OrderProduct
           {
-            initialPrice = (int)cp.Price,
+            initialPrice = (int)cp.Product.maxPrice,
             productId = cp.Product.id.ToString(),
             productName = cp.Product.name,
             quantity = cp.Count,

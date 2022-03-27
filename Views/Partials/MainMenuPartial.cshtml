@@ -1,4 +1,54 @@
-﻿
-
-
-
+﻿<div class="modal fade" id="menu_modal" aria-hidden="true" aria-labelledby="menu_modal_Toggle_Label" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a href="/">
+          <img src="/img/logo.png">
+        </a>
+        <i class="fas fa-times fa-2x" aria-hidden="true" data-bs-dismiss="modal"></i>
+      </div>
+      <div class="modal-body">
+        <div class="container h-100">
+          <div class="row h-75">
+            <div class="col-10 col-sm-3 pt-5">
+              <div class="accordion accordion-flush" id="accordionFlushExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                      каталог
+                    </button>
+                  </h2>
+                  <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <ul class="text-sm-start text-center">
+                      @foreach (ProductGroup group in ViewBag.Menu)
+                      {
+                        <li><a href="@Url.ActionLink("Category","Home", new {id = group.id})">@group.name</a></li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <a class="accordion-href" href="@Url.ActionLink("DeliveryRules","Home")">доставка</a>
+                  </h2>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <a class="accordion-href" href="@Url.ActionLink("PaymentRules")">оплата</a>
+                  </h2>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <a class="accordion-href" href="@Url.ActionLink("Contacts")">реквизиты</a>
+                  </h2>
+                </div>
+              </div>
+              <div class="col-10 col-sm-3">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

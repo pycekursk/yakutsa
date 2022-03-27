@@ -87,7 +87,7 @@ namespace yakutsa.Services
         }
         catch (Exception exp)
         {
-          throw exp;
+          //throw exp;
         }
         return "wait-approved";
       });

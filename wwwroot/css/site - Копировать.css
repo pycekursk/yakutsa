@@ -1,0 +1,9 @@
+.controls {
+    height: 150px;
+    margin: 10px;
+    background-color: gray;
+}
+.gallery .carousel {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}

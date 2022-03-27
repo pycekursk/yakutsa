@@ -89,7 +89,9 @@ function sendAjaxForm(data, url, callback, busyTrigger) {
         }
     });
 }
-
+HTMLElement.prototype.toggleClass = function (value) {
+    this.className = this.className.includes(value) ? this.className.replace(value, '').trim() : `${value} ${this.className}`;
+}
 $.fn.loader = function () {
     return this.each((index, element) => {
         if ($(element).find('i.fa-spinner').length == 0) {
@@ -106,6 +108,11 @@ $.fn.loader = function () {
 var detector;
 
 function Initialize($) {
+
+
+
+
+
     var json_view = $("#json_view");
     var row_view = $("#row_view");
     $('.form-select').removeAttr('multiple');
@@ -122,15 +129,12 @@ function Initialize($) {
 
     function videoCarouselInit() {
         var videos = document.querySelectorAll('#carousel video');
-
-
         function sizeAdaptation() {
             videos.forEach(e => {
                 e.height = window.innerHeight;
                 $(e).css("max-height", window.innerHeight);
             });
         }
-
 
         let carousel = $('#carousel');
         if (carousel == null) return;
@@ -180,6 +184,8 @@ function Initialize($) {
         $(window).on('resize', () => checkDevice());
     }
 
+    videoCarouselInit();
+
     function scrollHandler() {
         if ($(window).scrollTop() > 90) {
             $('.side-toggler').hide();
@@ -197,6 +203,20 @@ function Initialize($) {
     }
 
     function loadedHandler() {
+
+        window.onload = function () {
+            //$('[data-bs-toggle=tooltip]').tooltip();
+
+
+            let sizesTable = `<h5>Таблица размеров</h5><div class='container'><div class='row row-cols-8'><div class='col'></div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>2XL</div><div class='col'>3XL</div><div class='col'>+/- см.</div></div></div>`;
+
+            let newTable = "<div class='tooltip-table'><h5>Таблица размеров</h5><div class='container'><div class='row row-cols-12'><div class='col-5'></div><div class='col'>XS</div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>+/- см.</div></div><div class='row row-cols-12'><div class='col-5'>Рост</div><div class='col'>??</div><div class='col'>160</div><div class='col'>165</div><div class='col'>170</div><div class='col'>175</div><div class='col'>3</div></div><div class='row row-cols-12'><div class='col-5'>Длина по спинке</div><div class='col'>??</div><div class='col'>68</div><div class='col'>69,5</div><div class='col'>71</div><div class='col'>72,5</div><div class='col'>1,5</div></div><div class='row row-cols-12'><div class='col-5'>Ширина по груди</div><div class='col'>??</div><div class='col'>57</div><div class='col'>59</div><div class='col'>61</div><div class='col'>63</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина рукава</div><div class='col'>??</div><div class='col'>56</div><div class='col'>57</div><div class='col'>58</div><div class='col'>59</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина плеча</div><div class='col'>??</div><div class='col'>23</div><div class='col'>23</div><div class='col'>24</div><div class='col'>24,5</div><div class='col'>0,5</div></div></div></div>";
+
+            $('#sizes i.fa-question').tooltip({ container: '#sizes', title: newTable, placement: "bottom", html: true });
+
+            let tooltip = document.querySelector('#sizes i.fa-question');
+            if (tooltip) tooltip.addEventListener("touchstart", function (e) { $(e.currentTarget).tooltip('show'); });
+        }
 
         $("#get_buttons button").on("click", (evt) => {
             $.post("GetResponse", { "action": evt.currentTarget.getAttribute("data") != null ? evt.currentTarget.getAttribute("data") : $("#action_field").val() == "" ? $("#get_buttons select")[0].selectedOptions[0].innerText : $("#action_field").val() })
@@ -240,7 +260,7 @@ function Initialize($) {
             });
         $('video[autoplay]').on('load', (evt) => { console.log(evt) });
 
-        videoCarouselInit();
+
 
         $('.alert').each((i, s) => {
             setTimeout((e) => {
@@ -274,22 +294,31 @@ function Initialize($) {
             //});
         });
         $('.toTop-toggler .fa.fa-arrow-up').on('click', () => scrollTo(0, 0));
-        $('#product_info input[type=radio]').on('click', function () { $('#product_info .btn-anim').removeClass('active'); $(this.parentElement).addClass("active") });
+        $('#sizes input[type=radio]').on('click', function () {
+            $('#sizes .btn-anim').removeClass('active');
+            $(this.parentElement).addClass("active");
+        });
+        $('#sub_categories input[type=radio]').on('click', function () {
+            $('#sub_categories .btn-anim').removeClass('active');
+            $(this.parentElement).addClass("active");
+        });
+
 
         $('#product_info .btn.bg-gray').on('click', (evt) => {
             let $parent = $('#product_info');
             let productId = $parent.attr('data-id');
-            let offerId = $('.btn-group .btn-anim.active input').attr('id');
-
-            if (productId != undefined && offerId != undefined)
-                sendAjaxForm({ id: productId, offerId }, '/ToCart', (response) => {
+            let offerId = $('#sizes .btn-group .btn-anim.active input').attr('id');
+            let subCategoryId = $('#sub_categories .btn-group .btn-anim.active input').attr('id');
+            if (productId != undefined && offerId != undefined && (subCategoryId != undefined || $('#sub_categories').length == 0))
+                sendAjaxForm({ id: productId, offerId: offerId, subCategoryId: subCategoryId }, '/ToCart', (response) => {
                     if (response.Success) {
                         $('.fa-shopping-cart').attr("count", response.Html);
                         showMessage(response.Message, 'green');
                     }
                 }, true);
 
-            else showMessage('Необходимо выбрать размер', 'yellow');
+            else if (subCategoryId == undefined) showMessage('Необходимо выбрать вариант', 'yellow');
+            else if (offerId == undefined) showMessage('Необходимо выбрать размер', 'yellow');
         });
 
         let $msg = $(`.alert`);
@@ -301,9 +330,20 @@ function Initialize($) {
         //    $(document.body).addClass('openmenu');
         //});
 
+        $('#catalog_toggler').on('click', (evt) => {
+            evt.target.toggleClass('active');
+            evt.target.previousElementSibling.toggleClass('active');
+            evt.target.nextElementSibling.toggleClass('open');
+        });
+
         document.addEventListener('click', function (evt) {
-            let result = evt.path.includes(document.getElementById('menu_links')) || evt.path.includes(document.querySelector('.side-toggler'));
-            if ($(document.body).hasClass('openmenu') && !result) $(document.body).removeClass('openmenu');
+            if (document.getElementById('menu_links') == null) return;
+            try {
+                let result = evt.path.includes() || evt.path.includes(document.querySelector('.side-toggler'));
+                if ($(document.body).hasClass('openmenu') && !result) $(document.body).removeClass('openmenu');
+            } catch (e) {
+                console.log(e);
+            }
         });
 
         $('.ref-increase').on('click', (evt) => {
@@ -348,13 +388,28 @@ function Initialize($) {
             }, true);
         });
 
+        $('input[type=text], input[type=tel], input[type=email], input[type=password]').on('focus', (evt) => {
+            setTimeout(() => {
+                evt.currentTarget.setSelectionRange(evt.currentTarget.value.length, evt.currentTarget.value.length);
+            }, 75);
+        });
+
         $('*[suggestion]').suggestion();
 
         $('#menu_links h3 > i').on('click', (evt) => { $(document.body).removeClass('openmenu') });
 
         $('#order_configure_form .form-select').on('change', (evt) => { evt.target.previousElementSibling.value = evt.currentTarget.selectedOptions[0].getAttribute('value'); });
 
+
+        //$('').on('touchstart', (evt) => {
+        //    alert("");
+        //    //evt.currentTarget.click();
+        //});
+
+
+
         setTimeout(() => { $msg.fadeOut(350, () => $msg.remove()); }, 5000);
     }
+
     return loadedHandler();
 }

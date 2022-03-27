@@ -1,0 +1,40 @@
+User-agent: Yandex
+Crawl-delay: 2
+Disallow: /js
+Disallow: /css
+Disallow: /img
+Disallow: /fonts
+Disallow: /lib
+Disallow: /src
+Disallow: /*?
+Disallow: /*&
+Disallow: /*=
+
+
+User-agent: Google
+Crawl-delay: 2
+Disallow: /js
+Disallow: /css
+Disallow: /img
+Disallow: /fonts
+Disallow: /lib
+Disallow: /src
+Disallow: /*?
+Disallow: /*&
+Disallow: /*=
+
+
+User-agent: *
+Crawl-delay: 10
+Disallow: /js
+Disallow: /css
+Disallow: /img
+Disallow: /fonts
+Disallow: /lib
+Disallow: /src
+Disallow: /*?
+Disallow: /*&
+Disallow: /*=
+
+Host: yakutsa.ru
+Sitemap: https://yakutsa.ru/sitemap.xml
