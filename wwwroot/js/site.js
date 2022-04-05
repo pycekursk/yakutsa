@@ -178,7 +178,33 @@ function Initialize($) {
 
         checkDevice();
 
-        $('.fancybox').fancybox();
+
+
+
+        $('.fancybox').fancybox({
+            thumbs: {
+                autoStart: false, // Display thumbnails on opening
+                hideOnClose: true, // Hide thumbnail grid when closing animation starts
+                parentEl: ".fancybox-container", // Container is injected into this element
+                axis: "y" // Vertical (y) or horizontal (x) scrolling
+            },
+
+        });
+
+        /* $('.fancybox').on("afterShow.fb", (evt) => { console.log(evt); });*/
+
+        //$('.fancybox').fancybox({
+        //    afterLoad: function (instance, current) {
+        //        var pixelRatio = window.devicePixelRatio || 1;
+
+        //        if (pixelRatio > 1.5) {
+        //            current.width = current.width / pixelRatio;
+        //            current.height = current.height / pixelRatio;
+        //        }
+        //    }
+        //});
+
+
         $('.loader').loader();
 
         $(window).on('resize', () => checkDevice());
@@ -314,6 +340,7 @@ function Initialize($) {
                     if (response.Success) {
                         $('.fa-shopping-cart').attr("count", response.Html);
                         showMessage(response.Message, 'green');
+                        VK.Goal('add_to_cart');
                     }
                 }, true);
 
@@ -357,12 +384,7 @@ function Initialize($) {
             if (value > 0) field.val(--value);
         });
 
-        //$('#product_info button.btn[disabled]').on('click', function () { console.log(this); });
-
-        //$('#product_info .btn-group .btn-main:not(.disabled)').on('click', function () {
-        //    let btn = $('#product_info button.btn[disabled]');
-        //    if (btn.length > 0) btn.removeAttr('disabled');
-        //});
+        $('.labelholder').labelholder();
 
         $('#menu_modal li a').on('click', (evt) => {
             $(evt.currentTarget).closest('.modal').modal('hide');
@@ -373,12 +395,14 @@ function Initialize($) {
             sendAjaxForm('', 'CheckOffers', () => {
                 sendAjaxForm(evt.currentTarget, 'OrderOptions', (response) => {
                     if (response.Success) {
+                        VK.Goal('initiate_checkout');
                         showPaymentModal(response.Url);
                         sendAjaxForm({ 'id': response.Html }, 'PaymentCheck', (resp) => {
                             if (resp.Success) {
                                 $('#payment_modal').hide();
                                 showMessage(resp.Message, "green");
                                 setTimeout(() => { location.href = "/"; }, 2000);
+                                VK.Goal('conversion');
                             }
                             else if (!resp.Success) showMessage(resp.Message, "red");
                         }, true);
@@ -388,11 +412,11 @@ function Initialize($) {
             }, true);
         });
 
-        $('input[type=text], input[type=tel], input[type=email], input[type=password]').on('focus', (evt) => {
-            setTimeout(() => {
-                evt.currentTarget.setSelectionRange(evt.currentTarget.value.length, evt.currentTarget.value.length);
-            }, 75);
-        });
+        //$('input[type=text], input[type=tel], input[type=email], input[type=password]').on('focus', (evt) => {
+        //    setTimeout(() => {
+        //        evt.currentTarget.setSelectionRange(evt.currentTarget.value.length, evt.currentTarget.value.length);
+        //    }, 75);
+        //});
 
         $('*[suggestion]').suggestion();
 
@@ -400,13 +424,16 @@ function Initialize($) {
 
         $('#order_configure_form .form-select').on('change', (evt) => { evt.target.previousElementSibling.value = evt.currentTarget.selectedOptions[0].getAttribute('value'); });
 
-
-        //$('').on('touchstart', (evt) => {
-        //    alert("");
-        //    //evt.currentTarget.click();
-        //});
-
-
+        window.oncontextmenu = function (evt) {
+            let arr = Array.from(document.querySelectorAll('.top-bar img[alt=logo]'));
+            if (arr.includes(evt.srcElement) && (evt.altKey == true || detector.isPhoneSized())) {
+                let signInIcon = document.querySelector('.inline-icons .fa-door-closed');
+                if (signInIcon) {
+                    signInIcon.style.cssText = "display:block;";
+                }
+                return false;
+            }
+        }
 
         setTimeout(() => { $msg.fadeOut(350, () => $msg.remove()); }, 5000);
     }

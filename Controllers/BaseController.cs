@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using static yakutsa.Models.Enums;
 using yakutsa.Services;
 using RetailCRMCore.Models;
+using System.Globalization;
+using Microsoft.AspNetCore.Html;
 
 namespace yakutsa.Controllers
 {
   public class BaseController : Controller
   {
-    AppUser _appUser;
+    AppUser? _appUser;
     public AppUser? appUser { get => _appUser ??= GetAppUser(); set => _appUser = UpdateAppUser(value); }
 
     public static List<Message> Messages { get; set; } = new List<Message>();
@@ -25,7 +27,7 @@ namespace yakutsa.Controllers
     internal RetailCRM _retailCRM;
     internal string _files;
     private Cart? cart;
-    public string PreviousUrl;
+    public string? PreviousUrl;
 
     public Cart? Cart { get => cart ??= GetCart(); }
 
@@ -45,6 +47,7 @@ namespace yakutsa.Controllers
       _signIn = signIn;
       _files = _environment.WebRootPath + "/files/";
       _logger = logger;
+      CultureInfo.CurrentCulture = new CultureInfo("RU-ru") { DateTimeFormat = new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" } };
     }
 
     public void AppendMessage(Message message)
@@ -57,21 +60,21 @@ namespace yakutsa.Controllers
       AppendMessage(new Message(text, messageType));
     }
 
-    public Task<string> GetEmail()
+    public Task<string?> GetEmail()
     {
-      return Task.Run<string>(() =>
+      return Task.Run<string?>(() =>
       {
         string result = string.Empty;
         using (var fileStream = new FileStream(_environment.WebRootPath + @"\targetEmail.txt", FileMode.Open))
         {
           StreamReader reader = new StreamReader(fileStream);
-          result = reader.ReadLine();
+          result = reader?.ReadLine()!;
         }
         return result;
       });
     }
 
-    AppUser GetAppUser()
+    AppUser? GetAppUser()
     {
       var user = _context.Users.Include(u => u.AddressObject).FirstOrDefault(u => u.Email == User.Identity.Name);
       return user;
@@ -99,7 +102,9 @@ namespace yakutsa.Controllers
 
       ViewData["cartPrice"] = Cart?.Price;
       ViewData["count"] = Cart?.Count;
-      ViewData["Image"] ??= $"https://{this.HttpContext.Request.Host}/img/og_logo.png";
+      ViewData["Image"] ??= $"https://{this.HttpContext.Request.Host}/img/sm_logo.png";
+      ViewData["canonical"] = new HtmlString($"https://{this.Request.Host}{this.Request.Path}".ToLower());
+
 
       ViewBag.Path = this.Request.Path.ToString() == "/" ? new string[0] : this.Request.Path.ToString().Split("/").Where(s => !string.IsNullOrEmpty(s)).ToArray();
     }
@@ -120,7 +125,7 @@ namespace yakutsa.Controllers
     public override ViewResult View(string? viewName)
     {
       AppendData();
-      return base.View();
+      return base.View(viewName);
     }
 
     Cart? GetCart()

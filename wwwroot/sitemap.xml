@@ -1,13 +1,124 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://yakutsa.ru/</loc>
-    <lastmod>2022-03-27</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://yakutsa.ru/Contacts</loc>
-    <lastmod>2022-03-27</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
+		<!--	created with www.mysitemapgenerator.com	-->
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+	<loc>https://yakutsa.ru/</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/Cart</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/hoodie</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/season-0</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/joggers</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/DeliveryRules</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/PaymentRules</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/Contacts</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/hoodie/titan</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/hoodie/hybrid</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/hoodie/slayer</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/hoodie/jojo</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/jinx</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/padik</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/berserk</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/pochita</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/eren</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/levi</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/gojo</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/t-shirt/gojo-bw</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/joggers/joggers</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/RefundPolicy</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://yakutsa.ru/Privacy</loc>
+	<lastmod>2022-04-05T15:32:46+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
 </urlset>

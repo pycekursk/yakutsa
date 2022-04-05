@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <a href="/">
-          <img src="/img/logo.png">
+          <img src="~/img/logo.png">
         </a>
         <i class="fas fa-times fa-2x" aria-hidden="true" data-bs-dismiss="modal"></i>
       </div>
@@ -22,7 +22,7 @@
                     <ul class="text-sm-start text-center">
                       @foreach (ProductGroup group in ViewBag.Menu)
                       {
-                        <li><a href="@Url.ActionLink("Category","Home", new {id = group.id})">@group.name</a></li>
+                        <li><a href="@Url.ActionLink("Category","Categories", new {name = group.name.ToLower()})">@group.name</a></li>
                       }
                     </ul>
                   </div>
@@ -34,12 +34,12 @@
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header">
-                    <a class="accordion-href" href="@Url.ActionLink("PaymentRules")">оплата</a>
+                    <a class="accordion-href" href="@Url.ActionLink("PaymentRules", "Home")">оплата</a>
                   </h2>
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header">
-                    <a class="accordion-href" href="@Url.ActionLink("Contacts")">реквизиты</a>
+                    <a class="accordion-href" href="@Url.ActionLink("Contacts", "Home")">реквизиты</a>
                   </h2>
                 </div>
               </div>

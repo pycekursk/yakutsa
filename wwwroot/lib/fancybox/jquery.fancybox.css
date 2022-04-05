@@ -774,7 +774,7 @@ body.compensate-for-scrollbar {
 /* Thumbs */
 
 .fancybox-thumbs {
-    background: #ddd;
+    background: var(--main-content-bg-color);
     bottom: 0;
     display: none;
     margin: 0;
@@ -785,7 +785,7 @@ body.compensate-for-scrollbar {
     right: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     top: 0;
-    width: 212px;
+    width: 205px;
     z-index: 99995;
 }
 
@@ -841,11 +841,11 @@ body.compensate-for-scrollbar {
     background-color: rgba(0, 0, 0, .1);
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100px;
     cursor: pointer;
     float: left;
-    height: 75px;
-    margin: 2px;
+    height: 170px;
+   /* margin: 2px;*/
     max-height: calc(100% - 8px);
     max-width: calc(50% - 4px);
     outline: none;
@@ -857,7 +857,7 @@ body.compensate-for-scrollbar {
 }
 
     .fancybox-thumbs__list a::before {
-        border: 6px solid #ff5268;
+        border: 2px solid var(--main-border-color);
         bottom: 0;
         content: '';
         left: 0;

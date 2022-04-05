@@ -5352,7 +5352,7 @@ textarea.form-control-lg {
 
 .alert {
     position: relative;
-    padding: 1rem 1rem;
+    padding: 1rem 2rem;
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: 0.25rem;
@@ -6065,12 +6065,13 @@ textarea.form-control-lg {
     flex-direction: column;
     width: 100%;
     pointer-events: auto;
-    background-color: #ffffff42;
     background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 0.3rem;
     outline: 0;
+    background-color: var(--main-content-bg-color);
+    border: 1px solid var(--main-border-color);
 }
+
 
 .modal-backdrop {
     position: fixed;

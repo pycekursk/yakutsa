@@ -39,6 +39,33 @@ namespace yakutsa.Services
       _client = new Client(_url, _key);
     }
 
+    public async Task<bool?> UpdateProductsAsync(Product[] products)
+    {
+      var url = _url + $"/api/v5/store/products/batch/edit?apiKey={_key}";
+      foreach (Product? product in products) product.updatedAt = DateTime.Now;
+      HttpClient client = new HttpClient();
+      client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
+      HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+      client.DefaultRequestHeaders
+      .Accept
+      .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+      var serializerOptions = new JsonSerializerOptions
+      {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+      };
+
+      var json = "products=" + System.Text.Json.JsonSerializer.Serialize(products, serializerOptions);
+      requestMessage.Content = new StringContent(json,
+                                    Encoding.UTF8,
+                                    "application/x-www-form-urlencoded");
+      HttpResponseMessage response = await client.SendAsync(requestMessage);
+      var result = await response.Content.ReadAsStringAsync();
+      var obj = System.Text.Json.JsonSerializer.Deserialize<CreateInvoiceResult>(result);
+
+      return obj?.success;
+    }
 
     public async Task<string> CreateInvoice(CreateInvoice data)
     {
@@ -92,7 +119,6 @@ namespace yakutsa.Services
         return "wait-approved";
       });
     }
-
 
     class OrderResponse
     {
@@ -152,7 +178,6 @@ namespace yakutsa.Services
       return (Response<T>)response;
     }
     public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
-
     public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
     {
       RetailCRMCore.Models.Order order = new RetailCRMCore.Models.Order();
@@ -197,7 +222,6 @@ namespace yakutsa.Services
         return default;
       }
     }
-
     public async Task<Address> ParseAddress(string address)
     {
       Address result = new();
@@ -205,21 +229,6 @@ namespace yakutsa.Services
       var secret = "15178f7ea73ba5e799adde3745bae8d9dc5de767";
       var api = new CleanClientAsync(token, secret);
       var response = await api.Clean<Dadata.Model.Address>(address);
-
-      //HttpClient httpClient = new HttpClient();
-      //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-      //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", "aa9b411a0851eb8344a4fe5fc9cfc272a994c6ab");
-      //httpClient.DefaultRequestHeaders.Add("X-Secret", "15178f7ea73ba5e799adde3745bae8d9dc5de767");
-      //string cleanAddressUrl = "https://cleaner.dadata.ru/api/v1/clean/address";
-      //string suggestionsUrl = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-      //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, suggestionsUrl);
-
-      //var json = System.Text.Json.JsonSerializer.Serialize(new { query = address });
-      //requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
-      //HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
-      //var responseString = await response.Content.ReadAsStringAsync();
-      //var responseObj = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(responseString).suggestions[0].data;
-
       result.countryIso = response.country_iso_code;
       result.text = String.IsNullOrEmpty(response.result) ? address : response.result;
       result.streetType = response.street_type_full;
@@ -242,7 +251,6 @@ namespace yakutsa.Services
       public int id { get; set; }
       public Order order { get; set; }
     }
-
 
     public class CreateOrderObject
     {

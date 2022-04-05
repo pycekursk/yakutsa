@@ -145,11 +145,36 @@ body {
 
     body main {
         padding-bottom: 3rem !important;
-        min-height: 95%;
+        min-height: 70% !important;
     }
 
-    body.busy > div, body.busy main > .container-fluid > div:not(.modal) {
+    body.busy > div:not(.messages-wrapper), body.busy main > .container-fluid > div:not(.modal) {
         opacity: .35;
+    }
+
+
+a {
+    text-decoration: none !important;
+    color: var(--main-text-color) !important;
+}
+
+    a.nohover:hover {
+        text-decoration: none;
+        color: var(--main-text-color) !important;
+    }
+
+    a:not(.nohover):hover {
+        text-decoration: none;
+        color: var(--main-text-color-hover) !important;
+    }
+
+i:not(.nohover) {
+    color: var(--main-text-color);
+}
+
+    i:not(.nohover):hover {
+        cursor: pointer;
+        color: var(--main-text-color-hover) !important;
     }
 
 .modal {
@@ -173,6 +198,11 @@ body.busy .loading-cover {
     bottom: 0;
     right: 0;
     left: 0;
+}
+
+
+body.mobile.busy .loading-cover {
+    background-size: 10em;
 }
 
 h1 {
@@ -277,6 +307,48 @@ footer {
         text-align: left;
         padding: 0 0.3em !important;
     }
+
+label[for], input[type=checkbox] {
+    cursor: pointer;
+    user-select: none;
+}
+
+
+.container-table .container-table-header, .container-table .selector {
+    text-align: start;
+}
+
+.container-table input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.container-table .row {
+    align-items: center;
+}
+
+    .container-table .row:not(.container-table-header) {
+        cursor: pointer;
+    }
+
+        .container-table .row:not(.container-table-header):hover {
+            background-color: grey;
+            color: black;
+        }
+
+        .container-table .row:not(.container-table-header):active {
+            background-color: slategray;
+        }
+
+    .container-table .row.container-table-header {
+        background-color: var(--main-bg-color);
+    }
+
+.container-table .description {
+    text-align: justify;
+}
 
 /*main > .container-fluid > .container {
     margin-top: 1.5rem !important;
@@ -481,29 +553,7 @@ ul {
 
 
 
-a {
-    text-decoration: none !important;
-    color: var(--main-text-color) !important;
-}
 
-    a.nohover:hover {
-        text-decoration: none;
-        color: var(--main-text-color) !important;
-    }
-
-    a:not(.nohover):hover {
-        text-decoration: none;
-        color: var(--main-text-color-hover) !important;
-    }
-
-i:not(.nohover) {
-    color: var(--main-text-color);
-}
-
-    i:not(.nohover):hover {
-        cursor: pointer;
-        color: var(--main-text-color-hover) !important;
-    }
 
 .fa-sm {
     font-size: 1.5em !important;
@@ -538,11 +588,14 @@ i:not(.nohover) {
     display: flex;
 }
 
+    .inline-icons i.fa-door-closed {
+        display: none;
+    }
+
 .top-bar {
     position: fixed;
-    top: 1.5em;
     z-index: 9997;
-    margin: 1em;
+    margin: 0.1em .1em;
     left: 0;
     right: 0;
     display: flex;
@@ -551,12 +604,15 @@ i:not(.nohover) {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    align-items: center;
     height: 0;
+    top: 0;
+    align-items: start;
+    bottom: 0;
 }
 
     .top-bar i {
         color: var(--main-text-color-hover) !important;
+        margin: 0.5rem !important;
     }
 
         .top-bar i:hover {
@@ -766,7 +822,7 @@ a ~ i.fa-plus:hover {
 }
 
 i:not(.nohover) {
-    color: var(--main-text-color) !important;
+    color: var(--main-text-color);
 }
 
     i:not(.nohover):hover {
@@ -884,13 +940,17 @@ ul li {
         background-color: var(--main-bg-color);
     }
 
-.fa-shopping-cart:after {
-    position: absolute;
-    content: attr(count);
-    margin-top: -5px;
-    right: -10px;
-    font-size: 13px;
-    background-color: var(--main-bg-color);
-    padding: 0.1em 0.4em;
-    border-radius: 5em;
+.fa-shopping-cart {
+    position: relative;
 }
+
+    .fa-shopping-cart:after {
+        position: absolute;
+        content: attr(count);
+        margin-top: -5px;
+        right: -7px;
+        font-size: 13px;
+        background-color: var(--main-bg-color);
+        padding: 0.1em 0.4em;
+        border-radius: 5em;
+    }

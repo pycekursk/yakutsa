@@ -19,9 +19,9 @@
     @foreach (Product p in Model!)
     {
       <div class="col">
-        <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="h-100 w-100 nohover">
+        <a href="@Url.ActionLink( p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="h-100 w-100 nohover">
           <div class="card h-100 pb-0 justify-content-center align-items-center" style="overflow: hidden;">
-            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" height="580" width="227" class="card-img" alt="@p.name">
+            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" width="360" class="card-img" alt="@p.name">
             <div class="card-body">
               <h5 class="card-title text-center">@p.name</h5>
               <p class="card-text fa-sm text-end">

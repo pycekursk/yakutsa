@@ -37,8 +37,10 @@ public class Startup
          .AddEntityFrameworkStores<ApplicationDbContext>()
          .AddDefaultTokenProviders();
 
-    services.AddRouting();
 
+    services.AddRouting();
+    //services.AddAuthorizationCore();
+    //services.AddAuthenticationCore();
     //services.AddResponseCompression(options =>
     //{
     //  options.EnableForHttps = true;
@@ -65,6 +67,11 @@ public class Startup
     if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
     Environment = env;
+
+
+
+
+
     var provider = new FileExtensionContentTypeProvider();
     // Add new mappings
     provider.Mappings[".gltf"] = "application/x-msdownload";
@@ -104,11 +111,10 @@ public class Startup
 
     app.UseRouting();
 
-    app.UseAuthentication();
     app.UseAuthorization();
+    app.UseAuthentication();
 
     app.UseSession();
-    app.UseRouting();
 
     //ResponseCachingExtensions.UseResponseCaching(app);
 
@@ -119,20 +125,20 @@ public class Startup
          pattern: "{action}/{id?}",
          defaults: new { controller = "Home", action = "Index" });
 
-      //endpoints.MapControllerRoute(
-      //    name: "account",
-      //    pattern: "{controller}/{action}/{id?}",
-      //    defaults: new { controller = "Account" });
+      endpoints.MapControllerRoute(
+         name: "categories",
+         pattern: "{name}",
+         defaults: new { controller = "Categories", action = "Category" });
 
-      //endpoints.MapControllerRoute(
-      //    name: "admin",
-      //    pattern: "{controller}/{action}/{id?}",
-      //    defaults: new { controller = "Admin" });
+      endpoints.MapControllerRoute(
+       name: "admin",
+       pattern: "{controller}/{action}/{id?}",
+       defaults: new { controller = "Admin", action = "Index" });
 
-      //endpoints.MapControllerRoute(
-      //    name: "api",
-      //    pattern: "{controller}/{action}/{id?}",
-      //    defaults: new { controller = "Api" });
+      endpoints.MapControllerRoute(
+        name: "products",
+        pattern: "{categoryName}/{name}",
+        defaults: new { controller = "Products", action = "Product" });
 
       endpoints.MapRazorPages();
     });

@@ -29,7 +29,7 @@
                   <div class="ref-product" data-id="@product?.Product?.id">
                     <div class="ref-product-col">
                       <div class="ref-product-wrapper flex-column flex-sm-row">
-                        <a href="@Url.ActionLink("Product", "Home", new { id = product?.Product?.id })">
+                        <a href="@Url.ActionLink( product?.Product?.name.ToLower(), product?.Product?.groups?.FirstOrDefault()?.name?.ToLower())">
                           <img class="ref-product-photo" src="@product?.Product?.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.s)?.Url" alt="@product?.Product?.name" />
                         </a>
                         <div class="ref-product-data">
@@ -115,10 +115,10 @@
 
 @*<script>
   (($)=>{
-      let products = $('.ref-product');
+  let products = $('.ref-product');
 
 
-      $('.ref-product-summ').closest('.ref-product');
-      console.log(products);
+  $('.ref-product-summ').closest('.ref-product');
+  console.log(products);
   })(jQuery);
-</script>*@
+  </script>*@

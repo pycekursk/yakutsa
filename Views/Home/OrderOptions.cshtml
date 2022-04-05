@@ -1,7 +1,7 @@
 ﻿@using static yakutsa.Services.RetailCRM
 @model CreateOrderObject
 <div class="container">
- <div class="row">
+  <div class="row">
     <div class="col-sm-12 mt-5">
       <h1 class="text-center">@ViewData["Title"]</h1>
     </div>
@@ -10,18 +10,26 @@
   {
     <div class="row">
       <div class="col-sm-12 col-md-6 my-1">
-        @Html.TextBoxFor(m => m.firstName,null, new {@class="form-control", placeholder="Имя", suggestion="fio", required=true, autocomplete="off"})
+        <div class="labelholder">
+          @Html.TextBoxFor(m => m.firstName,null, new {@class="form-control", placeholder="Имя", suggestion="fio", required=true, autocomplete="off"})
+        </div>
       </div>
       <div class="col-sm-12 col-md-6 my-1">
-        @Html.TextBoxFor(m => m.lastName,null, new {@class="form-control", placeholder="Фамилия", suggestion="fio", required=true, autocomplete="off"})
+        <div class="labelholder">
+          @Html.TextBoxFor(m => m.lastName,null, new {@class="form-control", placeholder="Фамилия", suggestion="fio", required=true, autocomplete="off"})
+        </div>
       </div>
     </div>
     <div class="row">
       <div class="col-sm-12 col-md-6 my-1">
-        @Html.TextBoxFor(m => m.email,null, new {@class="form-control", placeholder="Ел. почта", required=true})
+        <div class="labelholder">
+          @Html.TextBoxFor(m => m.email,null, new {@class="form-control", placeholder="Ел. почта", required=true})
+        </div>
       </div>
       <div class="col-sm-12 col-md-6 my-1">
-        @Html.TextBoxFor(m => m.phone,null, new {@class="form-control", placeholder="Телефон", required=true, type="tel", autocomplete="off"})
+        <div class="labelholder">
+          @Html.TextBoxFor(m => m.phone,null, new {@class="form-control", placeholder="Телефон", required=true, type="tel", autocomplete="off"})
+        </div>
       </div>
     </div>
     <div class="row">
@@ -31,7 +39,9 @@
     <div class="row">
       <div class="col-sm-12 my-1">
         @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })
-        @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Адрес", suggestion="address", required=true, autocomplete="off"})
+        <div class="labelholder">
+          @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Адрес (город, улица, дом, квартира/офис)", suggestion="address", required=true, autocomplete="off"})
+        </div>
       </div>
       <div class="col-sm-12 my-1">
         @{
@@ -49,17 +59,19 @@
     </div>
     <div class="row">
       <div class="col-sm-12 my-1">
-        @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100 form-control", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
+        <div class="labelholder">
+          @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100 form-control", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
+        </div>
       </div>
     </div>
-    <div class="row mt-2">
-      <div class="col-md-12 col-xl-6 my-2">
+    <div class="row mt-2" style="font-size: 12px;">
+      <div class="col-md-12 col-xl-12 my-2">
         <div class="text-center">
-          @Html.CheckBox("agreement", false, new {required=true, style="width: 20px;height:20px;"})
+          @Html.CheckBox("agreement", false, new {required=true, style="width: 15px;height:15px;"})
           <label style="cursor:pointer;vertical-align: super;" for="agreement">Я согласен с <a style="text-decoration:underline !important" href="@Url.ActionLink("Privacy", "Home")">положением о конфиденциальности</a></label>
         </div>
       </div>
-      <div class="col-md-12 col-xl-6 my-2">
+      <div class="col-md-12 col-xl-12 my-2">
         <div class="btn-anim d-block mx-auto">
           <input type="submit" class="btn btn-main d-block mx-auto" style="padding: 0.5em 5em;" value="К оплате" />
         </div>

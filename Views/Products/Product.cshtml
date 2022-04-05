@@ -1,11 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Html
 @using RetailCRMCore.Models
 
-@model Product
+@model Product?
 
 <div class="row">
   <div class="col-md-12">
-    <h1 class="text-center"><a href="@Url.ActionLink("Category", "Home", new {id=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
+    <h1 class="text-center"><a href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
   </div>
 </div>
 
@@ -17,7 +17,7 @@
 }
 
 <div class="mt-2 mr-auto icon-link">
-  <a class="" href="@Url.ActionLink("Category", "Home", new {id=ViewData["backUrl"]})">
+  <a class="" href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">
     <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1"></i>
     <span class="" style="display: inline-block;">назад</span>
   </a>
@@ -25,7 +25,7 @@
 
 <div class="container mt-1 px-0" data-id="@Model?.id" id="product_info">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6" style="display:flex; justify-content:center">
       <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
         @if (!String.IsNullOrEmpty(Model?.modelPath))
         {
@@ -35,22 +35,7 @@
         }
         <div class="carousel-indicators">
           @{
-            //List<string> images = new List<string>();
-            //Model?.offers
-            //.ToList()
-            //.ForEach(o =>
-            //o.images
-            //.ToList()
-            //.ForEach(img =>
-            //{
-            //  if (!images.Contains(img)) images.Add(img);
-            //})
-            //);
-
             int index = 0;
-
-            //if (images.Count == 0) images.Add(Model?.imageUrl!);
-
             foreach (Image? image in Model?.images!)
             {
               if (image.Size != ImageSize.l) continue;
@@ -68,10 +53,8 @@
               if (image.Size != ImageSize.m) continue;
               string active = index == 0 ? "active" : "";
               <div class="carousel-item @active">
-                <a class="fancybox" href="@Model?.images.FirstOrDefault(i => i.FileName == image?.FileName?.Replace("m", "l"))?.Url" rel="gallery">
-                  <div class="">
-                    <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: cover;" height="540" width="337">
-                  </div>
+                <a class="fancybox" data-thumbs='{"autoStart":true}' href="@Model?.images.FirstOrDefault(i => i.FileName == image?.FileName?.Replace("m", "l"))?.Url" rel="gallery" data-fancybox="images-preview">
+                  <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: cover;" height="540" width="337">
                 </a>
               </div>
               index++;
@@ -90,13 +73,15 @@
     </div>
     <div class="col-md-6">
       <h2 class="text-center p-0 m-0">@Model?.name</h2>
-      <small class="opacity-50 fa-1x text-start d-block">Арктикул: @Model?.article</small>
+      <small class="opacity-50 fa-1x text-start d-block">Артикул: @Model?.article</small>
+      <br>
+      <p>@Model?.description</p>
 
       @if (ViewBag?.Category?.SubGroups?.Length > 0)
       {
         <div id="sub_categories" style="position:relative">
           <label class="mt-4 mb-1">
-            Варианты:
+            Модель:
           </label>
 
           <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
@@ -123,8 +108,7 @@
           Размеры:
         </label>
         <div class="position-relative d-inline">
-          @* <i data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-html="true" class="fas fa-question position-absolute" style="top: -15px;right: -10px;font-size:1.2em;" title="<h5>Таблица размеров</h5><div class='container'><div class='row row-cols-8'><div class='col'></div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>2XL</div><div class='col'>3XL</div><div class='col'>+/- см.</div></div></div>"></i>*@
-          <i class="fas fa-question position-absolute" style="top: -15px;right: -10px;font-size:1.2em;"></i>
+          <i class="fas fa-question position-absolute" style="top: -15px;right: -10px;font-size:1.2em;color: var(--main-bg-color);"></i>
         </div>
         <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
           @{
@@ -153,6 +137,16 @@
     </div>
   </div>
 </div>
+
+<script>
+  try{
+       VK.Goal('view_content');
+  }
+  catch (exp){
+
+  }
+
+</script>
 
 <script type="module">
   //            import * as three from '../../build/three.js';

@@ -14,7 +14,9 @@
       @foreach (Product p in Model!)
       {
         <div class="col">
-          <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="nohover">
+          <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
+
+            @*<a href="@Url.ActionLink("Product","Products", new {categoryName = p.groups?.FirstOrDefault()?.name, name = p.name})" class="nohover">*@
             <div class="card h-100 pb-0" style="justify-content: center;align-items: center;overflow: hidden;">
               <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img" alt="@p.name" width="360">
               <div class="card-body">
