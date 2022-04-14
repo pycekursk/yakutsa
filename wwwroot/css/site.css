@@ -9,6 +9,9 @@
 }
 
 @media (min-width: 1200px) {
+    #footer_accordion h2 {
+        font-size: 1.5rem;
+    }
 }
 
 @media (min-width: 1400px) {
@@ -21,7 +24,7 @@
 
 @media (max-width: 767.98px) {
     main > .container-fluid > .row:nth-child(1), main > .container-fluid > .container-fluid > .row:nth-child(1) {
-        margin-top: 1rem;
+        margin-top: 2rem;
     }
 }
 
@@ -85,6 +88,26 @@
     font-display: block;
 }
 
+
+
+.owl-wrapper {
+    position: relative;
+    align-items: center;
+}
+
+    .owl-wrapper .owl-arrow {
+        position: absolute;
+        width: fit-content;
+        z-index: 5;
+    }
+
+.owl-arrow.left {
+    left: -5px;
+}
+
+.owl-arrow.right {
+    right: -5px;
+}
 /*
 @font-face {
     font-family: 'GothamPro';
@@ -122,8 +145,6 @@
     src: url(../fonts/ElectronicArtsText-Regular.woff2) format('woff2');
 }
 */
-
-
 html {
     position: relative;
     height: 100%;
@@ -138,19 +159,83 @@ body {
     overflow-x: hidden;
 }
 
-
-
-    body.mobile {
+    body.mobile #footer_accordion .accordion-button::after {
+        margin-left: auto;
     }
 
-    body main {
-        padding-bottom: 3rem !important;
-        min-height: 70% !important;
+    body.mobile .toTop-toggler {
+        right: 0.5rem;
+        /* top: 30rem;*/
+        z-index: 15550;
     }
 
-    body.busy > div:not(.messages-wrapper), body.busy main > .container-fluid > div:not(.modal) {
-        opacity: .35;
+#footer_accordion .accordion-button {
+    padding-top: 0px;
+    padding-bottom: 0;
+    margin-left: 0.3em !important;
+}
+
+
+#footer_accordion .accordion-item {
+    padding-bottom: 10px;
+}
+
+#product_info .carousel {
+    width: 100% !important;
+}
+
+body.mobile #footer_accordion .accordion-button {
+    font-size: 1rem;
+    margin-left: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body.mobile footer {
+    padding-top: 0.5em;
+}
+
+body.modal-open {
+    overflow-y: auto !important;
+    padding: 0 !important;
+}
+
+body main > .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body.mobile #footer_accordion {
+    margin: 1em 0em;
+    margin-bottom: 1.5em;
+}
+
+    body.mobile #footer_accordion .accordion-collapse ul li {
+        margin: 0;
     }
+
+    body.mobile #footer_accordion ul, body.mobile #footer_accordion p {
+        padding-left: 10px !important;
+    }
+
+
+
+        body.mobile #footer_accordion ul li, body.mobile #footer_accordion p {
+            font-size: 0.8rem;
+        }
+
+    body.mobile #footer_accordion > .accordion-item {
+        width: 100%;
+    }
+
+body main {
+    /*  padding-bottom: 3rem !important;*/
+    min-height: 85vh;
+}
+
+body.busy > div:not(.messages-wrapper), body.busy main > .container-fluid > div:not(.modal) {
+    opacity: .35;
+}
 
 
 a {
@@ -192,7 +277,6 @@ body.busy .loading-cover {
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
-    background-size: 20em;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -213,24 +297,32 @@ h4 {
     font-size: calc(0.8rem + 0.8vw);
 }
 
+.goback-wrapper {
+    margin-top: 0.5rem !important;
+    margin-left: 0.5rem !important;
+}
 
 .toTop-toggler {
     position: fixed;
     right: 1.5em;
-    bottom: 1.5em;
+    bottom: calc(100vh - 80%);
     opacity: 0 !important;
-    transition: 200ms;
+    transition: 150ms;
     display: none;
 }
 
-    .toTop-toggler.active {
-        opacity: 1 !important;
-        display: block;
-    }
+.body.mobile .toTop-toggler {
+    bottom: 0;
+}
 
-    .side-toggler i:hover, .toTop-toggler i:hover {
-        color: var(--main-bg-color) !important;
-    }
+.toTop-toggler.active {
+    opacity: 1 !important;
+    display: block;
+}
+
+.side-toggler i:hover, .toTop-toggler i:hover {
+    color: var(--main-bg-color) !important;
+}
 
 
 .side-toggler .btn.btn-main {
@@ -238,8 +330,8 @@ h4 {
 }
 
 .toTop-toggler > i {
-    margin: 0.2em;
-    margin-bottom: .5em;
+    /*  margin: 0.2em;*/
+    /* margin-bottom: .5em;*/
     font-size: 40px;
     transition: 250ms;
     color: #8b2222 !important;
@@ -273,14 +365,20 @@ footer {
     border-top: 2px solid var(--main-border-color);
 }
 
-.container-fluid > .row:nth-child(1) {
+/*.container-fluid > .row:nth-child(1) {
     box-shadow: 0px -12px 15px -12px var(--main-shadow-color) inset;
     padding-top: 2rem;
+    margin-left: 0;
+    margin-right: 0;
 }
-
+*/
 .container-fluid > .container {
     margin-top: 1rem;
-    padding: 0;
+    /* padding: 0;*/
+}
+
+p {
+    text-align: justify;
 }
 
 #sizes {
@@ -586,6 +684,7 @@ ul {
 .inline-icons {
     justify-content: end;
     display: flex;
+    flex-direction: row-reverse;
 }
 
     .inline-icons i.fa-door-closed {
@@ -595,7 +694,6 @@ ul {
 .top-bar {
     position: fixed;
     z-index: 9997;
-    margin: 0.1em .1em;
     left: 0;
     right: 0;
     display: flex;
@@ -604,15 +702,21 @@ ul {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    height: 0;
+    height: fit-content;
     top: 0;
-    align-items: start;
+    align-items: center;
     bottom: 0;
+    transition: opacity 150ms !important;
+    background-color: black;
+    padding: 0.2em 0.5em;
 }
+
+
+
 
     .top-bar i {
         color: var(--main-text-color-hover) !important;
-        margin: 0.5rem !important;
+        margin: 0 0.5rem !important;
     }
 
         .top-bar i:hover {
@@ -623,9 +727,9 @@ ul {
             transform: scale(1.1);
         }
 
-body.mobile .top-bar > div > a:nth-child(1) {
+/*body.mobile .top-bar > div > a:nth-child(1) {
     display: block !important;
-}
+}*/
 
 body.mobile .top-bar > div > a:nth-child(2) {
     display: none;
@@ -880,7 +984,7 @@ ul li {
 .wrapper {
     background-color: #f5f5f50f !important;
     border-radius: 5px !important;
-    border: 2px solid var(--main-border-color) !important;
+    /*  border: 2px solid var(--main-border-color) !important;*/
     margin: 10px;
 }
 

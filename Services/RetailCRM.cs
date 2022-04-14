@@ -15,6 +15,7 @@ using RetailCRMCore.Models;
 using RetailCRMCore.Helpers;
 using System.Net.Http.Headers;
 using Dadata;
+using System.Linq;
 
 namespace yakutsa.Services
 {
@@ -91,6 +92,10 @@ namespace yakutsa.Services
                                     Encoding.UTF8,
                                     "application/x-www-form-urlencoded");
       HttpResponseMessage response = await client.SendAsync(requestMessage);
+      if (response.StatusCode != System.Net.HttpStatusCode.OK)
+      {
+        throw new Exception(response.StatusCode.ToString());
+      }
       var result = await response.Content.ReadAsStringAsync();
       var obj = System.Text.Json.JsonSerializer.Deserialize<CreateInvoiceResult>(result);
       return obj?.result.link;
@@ -144,12 +149,19 @@ namespace yakutsa.Services
         paymentId = id,
         returnUrl = $"https://{host}/PaymentReturn"
       };
-      return await this.CreateInvoice(createInvoice);
+      try
+      {
+        return await this.CreateInvoice(createInvoice);
+      }
+      catch (Exception exc)
+      {
+        throw exc;
+      }
     }
 
     public Response<T> GetResponse<T>()
     {
-      Response response = null;
+      Response? response = null;
       switch (typeof(T).Name)
       {
         case "Order":
@@ -177,6 +189,7 @@ namespace yakutsa.Services
       }
       return (Response<T>)response;
     }
+
     public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
     public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
     {
@@ -211,10 +224,17 @@ namespace yakutsa.Services
         options.Converters.Add(new JsonDateTimeConverter());
         Rootobject result = System.Text.Json.JsonSerializer.Deserialize<Rootobject>(json: json, options: options);
         var resultOrder = result?.order;
+        try
+        {
+          string link = await CreatePayment(resultOrder.payments.LastOrDefault().id, host);
+          string id = resultOrder.externalId;
+          return (link, id);
+        }
+        catch (Exception exc)
+        {
+          throw exc;
+        }
 
-        string link = await CreatePayment(resultOrder.payments.LastOrDefault().id, host);
-        string id = resultOrder.externalId;
-        return (link, id);
       }
       catch (Exception exc)
       {
@@ -269,8 +289,8 @@ namespace yakutsa.Services
       public string comment { get; set; }
       public double price { get; internal set; }
       public string patronymic { get; internal set; }
-      public User manager { get; set; }
-      public Customer customer { get; set; }
+      public User? manager { get; set; }
+      public Customer? customer { get; set; }
     }
 
     public class CreateOrderObjectItem
@@ -299,7 +319,6 @@ namespace yakutsa.Services
         {
           PropertyNamingPolicy = new ArrayNamingProlicy<T>(),
           AllowTrailingCommas = true,
-          //WriteIndented = true,
           PropertyNameCaseInsensitive = true,
         };
         options.Converters.Add(new JsonDateTimeConverter());
@@ -335,7 +354,6 @@ namespace yakutsa.Services
         }
         else
         {
-
           try
           {
             result = System.Text.Json.JsonSerializer.Deserialize<Response<T>>(
@@ -350,6 +368,23 @@ namespace yakutsa.Services
           {
             Debug.WriteLine(exc.Message);
           }
+        }
+
+        if (typeof(T).Name == "Product" && result.Success)
+        {
+          List<T>? products = result.Array?.ToList();
+
+          products?.ForEach(p =>
+          {
+            Product? product = p as Product;
+            foreach (Product prod in products as List<Product>)
+            {
+              if (prod.maxPrice == product.maxPrice && prod.active)
+              {
+                product.analogs.Add(prod);
+              }
+            }
+          });
         }
         return result;
       }

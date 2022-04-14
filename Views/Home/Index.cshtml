@@ -1,7 +1,7 @@
 ﻿@model List<Product>?
 
 <div class="container-fluid p-0">
-  <div class="row mt-0 pt-0">
+  <div class="row mx-0 mt-0 pt-0">
     <div class="col-sm-12 p-0">
       @{
         await Html.RenderPartialAsync("/Views/Partials/CarouselPartial.cshtml");
@@ -10,15 +10,13 @@
   </div>
   <section id="catalog">
 
-    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 mt-3 px-1 px-md-3 justify-content-center">
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-1 g-sm-2 mt-3 px-1 mx-0 px-md-3 justify-content-center">
       @foreach (Product p in Model!)
       {
         <div class="col">
           <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
-
-            @*<a href="@Url.ActionLink("Product","Products", new {categoryName = p.groups?.FirstOrDefault()?.name, name = p.name})" class="nohover">*@
-            <div class="card h-100 pb-0" style="justify-content: center;align-items: center;overflow: hidden;">
-              <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img" alt="@p.name" width="360">
+            <div class="card">
+              <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img" style="object-fit:contain" alt="@p.name" height="500">
               <div class="card-body">
                 <h5 class="card-title text-center nohover">@p.name</h5>
                 <p class="card-text fa-sm text-end">

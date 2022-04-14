@@ -4880,11 +4880,11 @@ textarea.form-control-lg {
     word-wrap: break-word;
     background-color: var(--main-content-bg-color);
     background-clip: border-box;
-    border: 2px solid var(--main-border-color);
+   /* border: 2px solid var(--main-border-color);*/
     border-radius: 0.25rem;
     cursor: pointer;
     transition: 100ms;
-    height: 90% !important;
+    height: 100% !important;
     /*   padding-bottom: 2.5em !important;*/
 }
 
@@ -4996,6 +4996,7 @@ textarea.form-control-lg {
 .card-img-top,
 .card-img-bottom {
     width: 100%;
+    height: 100%;
 }
 
 .card-img,
@@ -5104,7 +5105,7 @@ textarea.form-control-lg {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%238b8b8b'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-size: 1.25rem;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5179,9 +5180,9 @@ textarea.form-control-lg {
     font-size: large;
 }
 
-.accordion-collapse ul {
+/*.accordion-collapse ul {
     margin-left: 3em;
-}
+}*/
 
 
 .accordion-flush .accordion-collapse {

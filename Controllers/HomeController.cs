@@ -65,6 +65,7 @@ namespace yakutsa.Controllers
       ViewData["Title"] = new HtmlString("Российский бренд уличной одежды.");
       List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
       List<ProductGroup>? groups = _retailCRM.GetResponse<ProductGroup>().Array?.ToList();
+      
       products?.ForEach(p =>
       {
         p.groups = groups?.Where(g => p.groups.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray();
@@ -351,10 +352,13 @@ namespace yakutsa.Controllers
           result.Success = true;
           result.Url = link;
           result.Html = id;
-          HttpContext.Session.Remove("cart");
-          //AppendMessage("Заказ успешно оформлен, скоро с Вами свяжется менеджер.", Enums.MessageType.success);
           return result;
         }
+        else
+        {
+          result.Message = "Заказ успешно оформлен, скоро с Вами свяжется менеджер.";
+        }
+        HttpContext.Session.Remove("cart");
         return result;
       });
     }

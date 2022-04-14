@@ -11,7 +11,6 @@ namespace yakutsa.Models
     private int id;
     private string? name;
 
-
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [DisplayName("Id")]
     public virtual int Id { get => id; set => id = value == 0 ? id : value; }

@@ -3,7 +3,7 @@
 
 @model Product?
 
-<div class="row">
+<div class="row d-none">
   <div class="col-md-12">
     <h1 class="text-center"><a href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
   </div>
@@ -16,21 +16,21 @@
   </div>
 }
 
-<div class="mt-2 mr-auto icon-link">
+<div class="mt-2 mr-auto goback-wrapper">
   <a class="" href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">
     <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1"></i>
     <span class="" style="display: inline-block;">назад</span>
   </a>
 </div>
 
-<div class="container mt-1 px-0" data-id="@Model?.id" id="product_info">
+<div class="container mt-1" data-id="@Model?.id" id="product_info">
   <div class="row">
-    <div class="col-md-6" style="display:flex; justify-content:center">
+    <div class="col-md-6 px-0" style="display:flex; justify-content:center">
       <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
         @if (!String.IsNullOrEmpty(Model?.modelPath))
         {
           <a data-bs-toggle="tooltip" data-bs-placement="top" title="Посмотреть в 3D" data-fancybox href="#model_fancybox" class="position-absolute">
-            <img src="~/img/3dicon.png" />
+            <img src="~/img/3dicon.png" alt="@Model?.name" />
           </a>
         }
         <div class="carousel-indicators">
@@ -99,7 +99,6 @@
               }
             }
           </div>
-
         </div>
       }
 
@@ -136,6 +135,39 @@
       </div>
     </div>
   </div>
+  @if (Model.analogs.Count != 0)
+  {
+    <div class="row">
+      <h5 class="my-0 mt-5">Смотрите также:</h5>
+    </div>
+
+    <div class="row owl-wrapper">
+  
+      <div class="owl-carousel owl-theme owl-loaded owl-drag">
+        <div class="owl-stage-outer">
+          <div class="owl-stage py-3">
+            @foreach (Product p in Model.analogs)
+            {
+              <div class="owl-item">
+                <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover" target="_blank">
+                  <div class="item active card bg-transparent mx-1">
+                    <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
+                    <div class="card-body">
+                      <h5 class="card-title text-center nohover">@p.name</h5>
+                      <p class="card-text fa-sm text-end">
+                        @p.maxPrice <i class="fa fa-rub nohover"></i>
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
 </div>
 
 <script>

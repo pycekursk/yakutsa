@@ -33,7 +33,6 @@ namespace yakutsa.Controllers
       return View(products);
     }
 
-
     public Task<IActionResult> Product(string categoryName, string name)
     {
       return Task.Run<IActionResult>(() =>

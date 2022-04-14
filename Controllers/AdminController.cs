@@ -27,7 +27,6 @@ namespace yakutsa.Controllers
       _cache = memoryCache;
     }
 
-    //[Authorize(Roles = "admin")]
     public IActionResult Products()
     {
       ViewData["Description"] = new HtmlString("");
@@ -37,7 +36,6 @@ namespace yakutsa.Controllers
     }
 
     [HttpGet]
-    //[AuthorizeAttribute(Roles = "admin, manager")]
     public IActionResult Product(int? id)
     {
       Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
@@ -47,12 +45,9 @@ namespace yakutsa.Controllers
     }
 
     [HttpPost]
-    //[AuthorizeAttribute(Roles = "admin, manager")]
     public IActionResult? Product(Product product, List<int> groups)
     {
-      //List<ProductGroup> productGroups = .ToList();
       product.groups = groups.Select(p => new ProductGroup { id = p }).ToArray();
-
       Task.Run(async () => await _retailCRM.UpdateProductsAsync(new Product[] { product })).Wait();
       return Product(product.id);
     }

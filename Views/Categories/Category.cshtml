@@ -6,22 +6,23 @@
       <h1 class="text-center">@ViewBag.Category?.name</h1>
     </div>
   </div>
-  <div class="row my-2">
+  <div class="row my-2 mx-0">
 
-    <div class="mt-2 mr-auto icon-link">
+    <div class="mt-2 mr-auto goback-wrapper">
       <a href="@Url.ActionLink("Index", "Home")">
         <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1"></i>
         <span class="" style="display: inline-block;">назад</span>
       </a>
     </div>
   </div>
-  <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 justify-content-center">
+
+  <div class="row mx-0 row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-1 g-sm-2 justify-content-center">
     @foreach (Product p in Model!)
     {
       <div class="col">
-        <a href="@Url.ActionLink( p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="h-100 w-100 nohover">
-          <div class="card h-100 pb-0 justify-content-center align-items-center" style="overflow: hidden;">
-            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" width="360" class="card-img" alt="@p.name">
+        <a href="@Url.ActionLink( p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
+          <div class="card">
+            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" height="500" class="card-img" alt="@p.name">
             <div class="card-body">
               <h5 class="card-title text-center">@p.name</h5>
               <p class="card-text fa-sm text-end">
