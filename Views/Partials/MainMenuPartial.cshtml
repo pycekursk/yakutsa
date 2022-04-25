@@ -5,12 +5,12 @@
         <a href="/">
           <img src="~/img/logo.png">
         </a>
-        <i class="fas fa-times fa-2x" aria-hidden="true" data-bs-dismiss="modal"></i>
+        <i class="fas fa-times fa-2x" aria-hidden="true" data-bs-dismiss="modal" style="color:var(--main-text-color-hover)"></i>
       </div>
       <div class="modal-body">
         <div class="container h-100">
           <div class="row h-75">
-            <div class="col-10 col-sm-3 pt-5">
+            <div class="col-10 pt-5">
               <div class="accordion accordion-flush" id="accordionFlushExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="flush-headingOne">
@@ -19,7 +19,7 @@
                     </button>
                   </h2>
                   <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                    <ul class="text-sm-start text-center">
+                    <ul class="text-sm-start text-center hovered">
                       @foreach (ProductGroup group in ViewBag.Menu)
                       {
                         <li><a href="@Url.ActionLink("Category","Categories", new {name = group.name.ToLower()})">@group.name</a></li>
@@ -30,6 +30,11 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header">
                     <a class="accordion-href" href="@Url.ActionLink("DeliveryRules","Home")">доставка</a>
+                  </h2>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <a class="accordion-href" href="@Url.ActionLink("Care","Home")">Уход</a>
                   </h2>
                 </div>
                 <div class="accordion-item">

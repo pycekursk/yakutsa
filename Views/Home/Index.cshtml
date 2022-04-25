@@ -16,7 +16,7 @@
         <div class="col">
           <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
             <div class="card">
-              <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img" style="object-fit:contain" alt="@p.name" height="500">
+              <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img px-3" style="object-fit:contain" alt="@p.name" height="500">
               <div class="card-body">
                 <h5 class="card-title text-center nohover">@p.name</h5>
                 <p class="card-text fa-sm text-end">

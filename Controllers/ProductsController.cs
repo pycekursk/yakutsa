@@ -25,50 +25,67 @@ namespace yakutsa.Controllers
       _cache = memoryCache;
     }
 
-    public IActionResult Index()
-    {
-      ViewData["Description"] = new HtmlString("Единственный аниме стрит-веар, бренд премиального качества.");
-      ViewData["Title"] = new HtmlString("Управление порталом");
-      List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
-      return View(products);
-    }
-
-    public Task<IActionResult> Product(string categoryName, string name)
+    public Task<IActionResult> Product(string categoryName, string productName)
     {
       return Task.Run<IActionResult>(() =>
        {
-         PortalActionResult result = new();
-         if (string.IsNullOrEmpty(name))
-         {
-           result.Message = new NullReferenceException().GetType().Name;
-           return result;
-         }
-         else
-         {
-           Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.name.ToLower() == name.ToLower())!;
+         Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active)!;
 
-           if (product == null) return NotFound();
+         if (product == null) return NotFound();
 
-           product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
+         product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
 
-           List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
-           ProductGroup? category = productGroups?.FirstOrDefault(p => product.groups.FirstOrDefault(c => c.id == p.id) != null);
+         List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
+         ProductGroup? category = productGroups?.FirstOrDefault(p => product.groups.FirstOrDefault(c => c.id == p.id) != null);
 
-           category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
-           ViewBag.Category = category;
+         category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
+         ViewBag.Category = category;
 
-           ViewData["backUrl"] = category?.name.ToLower();
-           ViewData["categoryName"] = category?.name;
+         ViewData["backUrl"] = category?.name.ToLower();
+         ViewData["categoryName"] = category?.name;
 
-           ViewData["Description"] = new HtmlString($"{category?.name} {product.name} - {product.maxPrice} руб.");
-           ViewData["Title"] = new HtmlString(product.name);
-           ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
+         ViewData["Description"] = new HtmlString($"{category?.name} {product.name} - {product.maxPrice} руб.");
+         ViewData["Title"] = new HtmlString(product.name);
+         ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
 
-           product.modelPath =
-             Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
-           return View(product);
-         }
+         product.modelPath =
+           Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
+
+         ToHistory(product);
+
+         return View(product);
        });
+    }
+
+    public Task<IActionResult> Offer(int offerId)
+    {
+      return Task.Run<IActionResult>(() =>
+      {
+        PortalActionResult result = new PortalActionResult();
+
+        var offers = _retailCRM.GetResponse<Offer>();
+        var offer = offers.Array?.FirstOrDefault(o => o.name == "ITW");
+
+        if (offers == null || offer == null) return NotFound();
+
+        result.Json = Newtonsoft.Json.JsonConvert.SerializeObject(offer);
+        result.Success = true;
+
+        return result;
+      });
+    }
+
+    [Route("Products/RemoveFromHistoryAsync")]
+    public Task<IActionResult> RemoveFromHistoryAsync(int id)
+    {
+      return Task.Run<IActionResult>(() =>
+      {
+        var product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
+        PortalActionResult result = new();
+        base.RemoveFromHistory(product);
+        result.Success = true;
+        return result;
+      });
     }
   }
 }

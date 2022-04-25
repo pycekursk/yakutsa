@@ -645,8 +645,8 @@ progress {
 .container-md,
 .container-sm {
     width: 100%;
-    padding-right: var(--bs-gutter-x, 0.75rem);
-    padding-left: var(--bs-gutter-x, 0.75rem);
+    padding-right: var(--bs-gutter-x, 0.25rem);
+    padding-left: var(--bs-gutter-x, 0.25rem);
     margin-right: auto;
     margin-left: auto;
 }
@@ -682,7 +682,7 @@ progress {
 }
 
 .row {
-    --bs-gutter-x: 1.5rem;
+  /*  --bs-gutter-x: 1.5rem;*/
     --bs-gutter-y: 0;
     display: flex;
     flex-wrap: wrap;
@@ -4880,7 +4880,7 @@ textarea.form-control-lg {
     word-wrap: break-word;
     background-color: var(--main-content-bg-color);
     background-clip: border-box;
-   /* border: 2px solid var(--main-border-color);*/
+    /* border: 2px solid var(--main-border-color);*/
     border-radius: 0.25rem;
     cursor: pointer;
     transition: 100ms;

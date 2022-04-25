@@ -167,6 +167,7 @@
     border: 2px solid var(--main-border-color) !important;
     box-sizing: content-box;
     margin: -2px !important;
+    padding: 10px;
 }
 
 .ref-product-col {

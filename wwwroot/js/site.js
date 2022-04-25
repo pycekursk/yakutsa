@@ -4,6 +4,7 @@ function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
+
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
@@ -92,6 +93,7 @@ function sendAjaxForm(data, url, callback, busyTrigger) {
 HTMLElement.prototype.toggleClass = function (value) {
     this.className = this.className.includes(value) ? this.className.replace(value, '').trim() : `${value} ${this.className}`;
 }
+
 $.fn.loader = function () {
     return this.each((index, element) => {
         if ($(element).find('i.fa-spinner').length == 0) {
@@ -113,8 +115,6 @@ function Initialize($) {
     $('.form-select').removeAttr('multiple');
     detector = new MobileDetect();
 
-
-
     function checkDevice() {
         if (detector.isPhoneSized()) {
             document.body.classList.add('mobile')
@@ -125,7 +125,7 @@ function Initialize($) {
     }
 
     function videoCarouselInit() {
-        var videos = document.querySelectorAll('#carousel video');
+        var videos = document.querySelectorAll('#video_carousel video');
         function sizeAdaptation() {
             videos.forEach(e => {
                 e.height = window.innerHeight;
@@ -133,7 +133,7 @@ function Initialize($) {
             });
         }
 
-        let carousel = $('#carousel');
+        let carousel = $('#video_carousel');
         if (carousel == null) return;
         let inner = carousel.find(".carousel-inner");
         let activeElement = inner.find('.carousel-item.playing');
@@ -144,7 +144,7 @@ function Initialize($) {
         window.onresize = sizeAdaptation;
 
 
-        $('#carousel .carousel-control-next,#carousel .carousel-control-prev').on('click', (evt) => {
+        $('#video_carousel .carousel-control-next,#video_carousel .carousel-control-prev').on('click', (evt) => {
             let nextSlide = null;
             if (evt.currentTarget.getAttribute('data-bs-slide') == 'prev') {
                 nextSlide = activeElement[0].previousElementSibling != null ? $(activeElement[0].previousElementSibling) : activeElement[0].nextElementSibling != null ? $(activeElement[0].nextElementSibling) : null;
@@ -174,8 +174,6 @@ function Initialize($) {
         });
 
         checkDevice();
-
-
 
 
         $('.fancybox').fancybox({
@@ -212,49 +210,33 @@ function Initialize($) {
         $(window).on('resize', () => checkDevice());
     }
 
-    videoCarouselInit();
-
-
-
-    function scrollHandler() {
-        if ($(window).scrollTop() > 90) {
-            $('.side-toggler').hide();
-        }
-        else if ($(window).scrollTop() < 90) {
-            $('.side-toggler').show();
-        }
-        if ($(window).scrollTop() > 200) {
-            if ($('#carousel').length != 0)
+    function scrollHandler(evt) {
+        return setTimeout(() => {
+            if ($(window).scrollTop() > 90) {
+                $('.side-toggler').hide();
+            }
+            else if ($(window).scrollTop() < 90) {
+                $('.side-toggler').show();
+            }
+            if ($(window).scrollTop() > $('.top-bar').height() / 2) {
                 $('.top-bar').removeClass('fade');
-            $('.toTop-toggler').addClass('active');
-        } else {
-            if ($('#carousel').length != 0)
-                $('.top-bar').addClass('fade');
-            $('.toTop-toggler').removeClass('active');
-        }
+                $('.toTop-toggler').addClass('active');
+            } else {
+                if ($('#video_carousel').length > 0)
+                    $('.top-bar').addClass('fade');
+                $('.toTop-toggler').removeClass('active');
+            }
+        }, 1);
     }
-
-    /* scrollHandler();*/
-
-
 
     function loadedHandler() {
 
-        if ($('#carousel').length == 0) {
-            $('.top-bar').removeClass('fade');
-            $('.top-bar').css('position', 'static');
-        }
+
 
         window.onload = function () {
-            //$('[data-bs-toggle=tooltip]').tooltip();
-
-
             let sizesTable = `<h5>Таблица размеров</h5><div class='container'><div class='row row-cols-8'><div class='col'></div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>2XL</div><div class='col'>3XL</div><div class='col'>+/- см.</div></div></div>`;
-
             let newTable = "<div class='tooltip-table'><h5>Таблица размеров</h5><div class='container'><div class='row row-cols-12'><div class='col-5'></div><div class='col'>XS</div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>+/- см.</div></div><div class='row row-cols-12'><div class='col-5'>Рост</div><div class='col'>??</div><div class='col'>160</div><div class='col'>165</div><div class='col'>170</div><div class='col'>175</div><div class='col'>3</div></div><div class='row row-cols-12'><div class='col-5'>Длина по спинке</div><div class='col'>??</div><div class='col'>68</div><div class='col'>69,5</div><div class='col'>71</div><div class='col'>72,5</div><div class='col'>1,5</div></div><div class='row row-cols-12'><div class='col-5'>Ширина по груди</div><div class='col'>??</div><div class='col'>57</div><div class='col'>59</div><div class='col'>61</div><div class='col'>63</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина рукава</div><div class='col'>??</div><div class='col'>56</div><div class='col'>57</div><div class='col'>58</div><div class='col'>59</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина плеча</div><div class='col'>??</div><div class='col'>23</div><div class='col'>23</div><div class='col'>24</div><div class='col'>24,5</div><div class='col'>0,5</div></div></div></div>";
-
             $('#sizes i.fa-question').tooltip({ container: '#sizes', title: newTable, placement: "bottom", html: true });
-
             let tooltip = document.querySelector('#sizes i.fa-question');
             if (tooltip) tooltip.addEventListener("touchstart", function (e) { $(e.currentTarget).tooltip('show'); });
         }
@@ -301,8 +283,6 @@ function Initialize($) {
             });
         $('video[autoplay]').on('load', (evt) => { console.log(evt) });
 
-
-
         $('.alert').each((i, s) => {
             setTimeout((e) => {
                 e.fadeOut({ complete: () => { e.remove(); } });
@@ -310,13 +290,13 @@ function Initialize($) {
         });
 
         window.onbeforeunload = function () {
+            //document.body.classList.add('loading');
             document.body.classList.add('busy');
         }
 
-
-
+        $(window).on("scroll", (evt) => scrollHandler(evt));
+        videoCarouselInit();
         $('.loader').loader();
-        $(window).on("scroll", scrollHandler);
         $('.card[data-id]').each((i, e) => {
             let $card = $(e);
 
@@ -345,8 +325,6 @@ function Initialize($) {
             $('#sub_categories .btn-anim').removeClass('active');
             $(this.parentElement).addClass("active");
         });
-
-
         $('#product_info .btn.bg-gray').on('click', (evt) => {
             let $parent = $('#product_info');
             let productId = $parent.attr('data-id');
@@ -412,7 +390,11 @@ function Initialize($) {
             sendAjaxForm('', 'CheckOffers', () => {
                 sendAjaxForm(evt.currentTarget, 'OrderOptions', (response) => {
                     if (response.Success) {
-                        VK.Goal('initiate_checkout');
+                        try {
+                            VK.Goal('initiate_checkout');
+                        } catch (e) {
+                            console.log(e);
+                        }
                         showPaymentModal(response.Url);
                         sendAjaxForm({ 'id': response.Html }, 'PaymentCheck', (resp) => {
                             if (resp.Success) {
@@ -446,32 +428,56 @@ function Initialize($) {
             }
         }
 
-
         $('#footer_accordion button[type=button]').on('click', function () {
             setTimeout(() => {
                 scrollTo(0, window.document.body.scrollHeight);
             }, 200);
         });
 
-        var owl = $('.owl-carousel');
-        $('.owl-wrapper .fa-arrow-right').on('click', () => owl.trigger('next.owl.carousel'));
-        $('.owl-wrapper .fa-arrow-left').on('click', () => owl.trigger('prev.owl.carousel'))
+        var owl = $('.owl-wrapper[loop=true] .owl-carousel');
         owl.owlCarousel({
-            items: 3,
-            center: true,
             loop: true,
+            margin: 10,
+            stagePadding: 40,
             responsive: {
-                0: {
+                300: {
+                    items: 1
+                },
+                500: {
                     items: 2
                 },
                 800: {
-                    items: 2
+                    items: 3
                 },
                 1200: {
                     items: 4
                 }
             }
         });
+
+        var owl2 = $('.owl-wrapper[loop=false] .owl-carousel');
+        owl2.owlCarousel(options = {
+            margin: 10,
+            loop: false,
+            center: false,
+            stagePadding: 40,
+            responsive: {
+                300: {
+                    items: 1
+                },
+                500: {
+                    items: 2
+                },
+                800: {
+                    items: 3
+                },
+                1200: {
+                    items: 4
+                }
+            }
+        });
+
+        $('.toTop-toggler').vibrate(10);
 
         setTimeout(() => { $msg.fadeOut(350, () => $msg.remove()); }, 5000);
     }

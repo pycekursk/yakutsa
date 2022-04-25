@@ -1,11 +1,8 @@
 ﻿@model yakutsa.Models.Cart
-
-
-<div class="row">
-  <h1 class="text-center">@ViewData["Title"]</h1>
-</div>
-
 <div class="container mt-0">
+  <div class="row">
+    <h1 class="text-center">@ViewData["Title"]</h1>
+  </div>
   <div class="row">
     <div class="col-md-12">
 
@@ -30,7 +27,7 @@
                     <div class="ref-product-col">
                       <div class="ref-product-wrapper flex-column flex-sm-row">
                         <a href="@Url.ActionLink( product?.Product?.name.ToLower(), product?.Product?.groups?.FirstOrDefault()?.name?.ToLower())">
-                          <img class="ref-product-photo" src="@product?.Product?.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.s)?.Url" alt="@product?.Product?.name" />
+                          <img class="ref-product-photo" src="@product?.Product?.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" alt="@product?.Product?.name" />
                         </a>
                         <div class="ref-product-data">
                           <div class="ref-product-info text-center">

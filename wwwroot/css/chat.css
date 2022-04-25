@@ -1,0 +1,72 @@
+#retailcrm-consultant-app {
+    right: auto !important;
+    left: 10px !important;
+}
+
+.window {
+    left: 10px !important;
+}
+
+.window__footer {
+    border-top: 1px solid var(--main-border-color) !important;
+    border-color: var(--main-border-color) !important;
+}
+
+.consultant-widget-wrap {
+    right: auto !important;
+    left: 0 !important;
+}
+
+.window-list, .window .form {
+    background-color: var(--main-content-bg-color) !important;
+}
+
+.consultant-header, .form .base-button {
+    background-color: var(--main-bg-color) !important;
+}
+
+.message-content * {
+    color: var(--main-text-color) !important;
+}
+
+.message__row * {
+    background-color: var(--body-bg-color) !important;
+}
+
+
+.form__input {
+    border: 1px solid #fff;
+    background-color: transparent !important;
+}
+
+    .form__input textarea {
+        color: var(--main-text-color) !important;
+    }
+
+.form .base-button:hover {
+}
+
+.consultant-icon {
+    background-color: transparent !important;
+}
+
+
+.messengers__wrap .messengers__item::after {
+    left: -10px !important;
+    width: 50px !important;
+    height: 50px !important;
+}
+
+.consultant-icon_opened {
+    transform: scale(.5);
+}
+
+.messengers__wrap .messengers__item_consultant::after {
+    background-color: var(--main-bg-color) !important;
+    background-size: 30px !important;
+}
+
+
+.messengers__wrap .messengers__item:hover {
+    transform: scale(1) !important;
+}

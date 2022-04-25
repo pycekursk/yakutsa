@@ -79,7 +79,12 @@
                         if (!dropdownMenu.classList.contains('show')) {
                             dropdownMenu.className = `${dropdownMenu.className} show`;
                         }
-                        for (var i = 0; i < result.suggestions.length; i++) {
+
+                        var arr = Array.from(result.suggestions).sort(function (a, b) {
+                            return a.value.length - b.value.length;
+                        });
+
+                        for (var i = 0; i < arr.length; i++) {
                             let opt = document.createElement('div');
                             opt.classList.add('drop-down-row');
 
@@ -87,7 +92,7 @@
                                 console.log(result);
                             }
 
-                            opt.innerText = result.suggestions[i].value;
+                            opt.innerText = arr[i].value;
                             dropdownMenu.append(opt);
                             opt.addEventListener('click', function (evt) {
                                 this.classList.add('.selected');

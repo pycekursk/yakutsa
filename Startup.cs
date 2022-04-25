@@ -137,7 +137,7 @@ public class Startup
 
       endpoints.MapControllerRoute(
         name: "products",
-        pattern: "{categoryName}/{name}",
+        pattern: "{categoryName}/{productName}/{article?}",
         defaults: new { controller = "Products", action = "Product" });
 
       endpoints.MapRazorPages();

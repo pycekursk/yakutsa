@@ -27,9 +27,12 @@ namespace yakutsa.Controllers
     internal RetailCRM _retailCRM;
     internal string _files;
     private Cart? cart;
+    private List<Product>? history;
     public string? PreviousUrl;
 
     public Cart? Cart { get => cart ??= GetCart(); }
+
+    public List<Product> History { get => history ??= GetHistory(); }
 
     public BaseController(
         RetailCRM retailCRM,
@@ -99,6 +102,7 @@ namespace yakutsa.Controllers
 
       var groups = _retailCRM.GetResponse<ProductGroup>()?.Array?.Where(g => g.active && g.parentId == 0)?.ToList();
       ViewBag.Menu = groups;
+      ViewBag.History = History;
 
       ViewData["cartPrice"] = Cart?.Price;
       ViewData["count"] = Cart?.Count;
@@ -128,6 +132,39 @@ namespace yakutsa.Controllers
       return base.View(viewName);
     }
 
+    List<Product>? GetHistory()
+    {
+      if (HttpContext.Session.Keys.Contains("history"))
+      {
+        history = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(HttpContext.Session.GetString("history")!);
+      }
+      else if (!HttpContext.Session.Keys.Contains("history"))
+      {
+        history = new List<Product>();
+        HttpContext.Session.SetString("history", System.Text.Json.JsonSerializer.Serialize(history));
+      }
+
+      return history;
+    }
+
+    internal void ToHistory(Product product)
+    {
+      if (!History.Contains(product))
+      {
+        history.Add(product);
+        HttpContext.Session.SetString("history", System.Text.Json.JsonSerializer.Serialize(history));
+      }
+    }
+  
+    internal void RemoveFromHistory(Product product)
+    {
+      if (History.Contains(product))
+      {
+        history?.Remove(product);
+        HttpContext.Session.SetString("history", System.Text.Json.JsonSerializer.Serialize(history));
+      }
+    }
+
     Cart? GetCart()
     {
       Cart? cart = new(HttpContext);
@@ -145,13 +182,19 @@ namespace yakutsa.Controllers
         HttpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(cart));
       }
 
-      //if (_environment.IsDevelopment() && cart?.Count == 0)
-      //{
-      //  var products = _retailCRM.GetResponse<Product>()?.Array;
-      //  var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
-      //  if (product != null)
-      //    cart?.Add(product!, product.offers[0]!, 2);
-      //}
+      if (_environment.IsDevelopment() && History?.Count == 0)
+      {
+        var products = _retailCRM.GetResponse<Product>()?.Array;
+
+        //  var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
+        //  if (product != null)
+        //    cart?.Add(product!, product.offers[0]!, 2);
+
+        ToHistory(products?.ElementAtOrDefault(0));
+        ToHistory(products?.ElementAt(1));
+        //ToHistory(products?.ElementAt(2));
+        //ToHistory(products != null ? products.ElementAt(3) : null);
+      }
 
       return cart;
     }

@@ -65,7 +65,7 @@ namespace yakutsa.Controllers
       ViewData["Title"] = new HtmlString("Российский бренд уличной одежды.");
       List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
       List<ProductGroup>? groups = _retailCRM.GetResponse<ProductGroup>().Array?.ToList();
-      
+
       products?.ForEach(p =>
       {
         p.groups = groups?.Where(g => p.groups.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray();
@@ -182,6 +182,14 @@ namespace yakutsa.Controllers
       ViewData["Title"] = new HtmlString("Возврат и обмен");
       ViewData["Description"] = new HtmlString("Условия осуществления возврата и обмена продукции приобретенной в интернет-магазине.");
       return View("Views/Home/RefundPolicy.cshtml", null);
+    }
+
+    [Route("Care")]
+    public IActionResult Care()
+    {
+      ViewData["Title"] = new HtmlString("Уход");
+      ViewData["Description"] = new HtmlString("Уход за продукцией, приобретенной в интернет-магазине yakutsa.");
+      return View("Views/Home/Care.cshtml");
     }
 
     public IActionResult Contacts()
@@ -303,18 +311,27 @@ namespace yakutsa.Controllers
       {
         _retailCRM.ParseAddress(createOrder.address.text).ContinueWith(t => createOrder.address = t.Result).Wait();
 
-        createOrder.manager = _retailCRM.GetResponse<User>()?.Array?.FirstOrDefault(u => u.isManager && u.active);
+        var managerId = 0;
+
+        var users = _retailCRM.GetResponse<User>();
+
+        int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager && u.active)?.id.ToString(), out managerId);
+
+
         var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
 
         if (customer != null)
         {
           createOrder.customer = customer;
-          createOrder.customer.manager = createOrder.manager;
+          createOrder.customer.manager ??= new User { id = managerId };
           createOrder.customer.anyPhone = createOrder.phone;
           createOrder.customer.phone = createOrder.phone;
-          createOrder.manager = createOrder.manager;
+          createOrder.managerId = createOrder.customer.manager != null ? ((User)createOrder.customer.manager).id : managerId;
         }
-
+        else
+        {
+          createOrder.managerId = createOrder.managerId;
+        }
         createOrder.createdAt = DateTime.Now;
         PortalActionResult result = new();
 

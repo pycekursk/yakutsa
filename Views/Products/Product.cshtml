@@ -5,9 +5,13 @@
 
 <div class="row d-none">
   <div class="col-md-12">
-    <h1 class="text-center"><a href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
+    <h1 class="text-center mb-0"><a href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
   </div>
 </div>
+
+
+@*<p class="text-center mb-0"><a href="@Url.ActionLink("Offer", "Products", new {pid = Model?.id, oid=467})">467</a></p>*@
+
 
 @if (!String.IsNullOrEmpty(Model?.modelPath))
 {
@@ -16,14 +20,14 @@
   </div>
 }
 
-<div class="mt-2 mr-auto goback-wrapper">
+<div class="my-1 mr-auto goback-wrapper">
   <a class="" href="@Url.ActionLink("Category", "Categories", new {name=ViewData["backUrl"]})">
-    <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1"></i>
-    <span class="" style="display: inline-block;">назад</span>
+    <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1;color:var(--main-text-color-hover)"></i>
+    <span class="" style="display: inline-block;color:var(--main-text-color-hover)">назад</span>
   </a>
 </div>
 
-<div class="container mt-1" data-id="@Model?.id" id="product_info">
+<div class="container" data-id="@Model?.id" id="product_info">
   <div class="row">
     <div class="col-md-6 px-0" style="display:flex; justify-content:center">
       <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
@@ -54,7 +58,7 @@
               string active = index == 0 ? "active" : "";
               <div class="carousel-item @active">
                 <a class="fancybox" data-thumbs='{"autoStart":true}' href="@Model?.images.FirstOrDefault(i => i.FileName == image?.FileName?.Replace("m", "l"))?.Url" rel="gallery" data-fancybox="images-preview">
-                  <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: cover;" height="540" width="337">
+                  <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: contain;" height="540" width="337">
                 </a>
               </div>
               index++;
@@ -71,7 +75,7 @@
         </button>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 px-3">
       <h2 class="text-center p-0 m-0">@Model?.name</h2>
       <small class="opacity-50 fa-1x text-start d-block">Артикул: @Model?.article</small>
       <br>
@@ -107,7 +111,9 @@
           Размеры:
         </label>
         <div class="position-relative d-inline">
+          <!--
           <i class="fas fa-question position-absolute" style="top: -15px;right: -10px;font-size:1.2em;color: var(--main-bg-color);"></i>
+          -->
         </div>
         <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
           @{
@@ -116,13 +122,16 @@
             {
               if (!offer.active) continue;
               string isChecked = index == 0 ? "checked" : "";
-              string isDisabled = offer.quantity == 0 ? "disabled" : "";
+              string isDisabled = offer.quantity == 0 || !offer.active ? "disabled" : "";
               HtmlString toolTip = offer.quantity == 0 ?
               new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' title='Временно нет в наличии'") : new HtmlString("");
-              <div class="btn-anim m-1 @isDisabled">
-                <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
-                <label @toolTip class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article.Split("-")[1]</label>
-              </div>
+              if (!string.IsNullOrEmpty(offer.article))
+              {
+                <div class="btn-anim m-1 @isDisabled">
+                  <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
+                  <label @toolTip class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article?.Split("-")[1]</label>
+                </div>
+              }
               index++;
             }
           }
@@ -131,7 +140,9 @@
 
       <div class="d-block fa-2x mt-3 text-center">
         <strong>@Model.maxPrice</strong><i class="fa fa-rub nohover ms-1 sm" aria-hidden="true"></i>
-        <button tabindex="0" data-bs-toggle="tooltip" title="Disabled tooltip" class="btn btn-main bg-gray w-25 ms-3"><i class="fas nohover  fa-cart-plus lg opacity-100 align-middle" aria-hidden="true"></i></button>
+        <button tabindex="0" data-bs-toggle="tooltip" title="Disabled tooltip" class="btn btn-main bg-gray w-25 ms-3">
+          <i class="fas nohover  fa-cart-plus lg opacity-100 align-middle" aria-hidden="true" style="color: black;"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -141,17 +152,16 @@
       <h5 class="my-0 mt-5">Смотрите также:</h5>
     </div>
 
-    <div class="row owl-wrapper">
-  
-      <div class="owl-carousel owl-theme owl-loaded owl-drag">
+    <div class="row owl-wrapper" loop="true">
+      <div class="owl-carousel owl-loaded">
         <div class="owl-stage-outer">
-          <div class="owl-stage py-3">
+          <div class="owl-stage ps-0 py-2">
             @foreach (Product p in Model.analogs)
             {
               <div class="owl-item">
-                <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover" target="_blank">
-                  <div class="item active card bg-transparent mx-1">
-                    <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
+                <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
+                  <div class="item card bg-transparent nohover">
+                    <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100 px-3" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
                     <div class="card-body">
                       <h5 class="card-title text-center nohover">@p.name</h5>
                       <p class="card-text fa-sm text-end">
@@ -165,9 +175,46 @@
           </div>
         </div>
       </div>
-
     </div>
   }
+
+  @if (ViewBag?.History != null && (ViewBag?.History as List<Product>)?.Count > 1)
+  {
+    <div id="history">
+      <div class="row">
+        <h5 class="my-0">Вы просматривали:</h5>
+      </div>
+
+      <div class="row owl-wrapper py-2" loop="false">
+        <div class="owl-carousel owl-loaded">
+          <div class="owl-stage-outer">
+            <div class="owl-stage ps-0">
+              @{
+                foreach (Product p in ViewBag?.History as List<Product>)
+                {
+                  if (p.id == Model.id) continue;
+                  <div class="owl-item" data="@p.id">
+                    <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
+                      <div class="item card bg-transparent nohover">
+                        <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100 px-3" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
+                        <div class="card-body">
+                          <h5 class="card-title text-center nohover mb-0">@p.name</h5>
+                          <p class="card-buttons fa-sm d-inline-flex justify-content-end">
+                            <i class="fas fa-times"></i>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>
 
 <script>
@@ -178,119 +225,144 @@
 
   }
 
+  $(document).ready(function(){
+      let items = $('.owl-wrapper[loop=false] .owl-item');
+      items.each((i,e)=>{
+          let $this = $(e);
+          let id = e.getAttribute('data');
+          let button = $this.find('.card-buttons i.fas.fa-times');
+          button.on('click', (evt)=>{
+            evt.preventDefault();
+            $this.addClass('opacity-25');
+            sendAjaxForm({id:id}, "@Url.ActionLink("RemoveFromHistoryAsync","Products")",
+            (responce)=>{
+                if(responce.Success){
+                    if($('.owl-wrapper[loop=false] .owl-item').length == 1){
+                            $('#history h5').addClass('fade');
+                            setTimeout(()=>   $this.remove(), 300);
+                       }
+                       else{
+                            $this.remove();
+                       }
+                }
+            }, false);
+          });
+      });
+  });
+
 </script>
 
 <script type="module">
-  //            import * as three from '../../build/three.js';
-  //            import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
-  //            import { GUI } from '../../lib/three/lil-gui.module.min.js';
-  //            import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
+  //          import * as three from '../../build/three.js';
+  //          import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
+  //          import { GUI } from '../../lib/three/lil-gui.module.min.js';
+  //          import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
 
-  //            var modelsArray = ["../../3d/hoody/hoody.gltf" ,"../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
+  //          var modelsArray = ["../../3d/hoody/hoody.gltf" ,"../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
 
-  //            function renderModel(wrapper, modelSource) {
-  //              if (wrapper == null || modelSource == null) return;
-  //              if (wrapper == null) return;
+  //          function renderModel(wrapper, modelSource) {
+  //            if (wrapper == null || modelSource == null) return;
+  //            if (wrapper == null) return;
 
-  //              const scene = new THREE.Scene();
-  //              const camera = new THREE.PerspectiveCamera(
-  //                  40,  // fov
-  //                  window.innerWidth / window.innerHeight,   // aspect
-  //                  0.05, // near
-  //                  500); // far
-  //              camera.position.z = 4;
-  //              const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  //              const loader = new GLTFLoader();
-  //              renderer.setClearColor(0x000000, 0);
-  //              renderer.setSize(window.innerWidth, window.innerHeight);
-  //              wrapper.appendChild(renderer.domElement);
-  //              const pLight = new THREE.PointLight(0xFFFFFF, 4);
-  //              const pLight2 = new THREE.PointLight(0xFFFFFF, 4);
-  //              const pLight3 = new THREE.PointLight(0xFFFFFF, 4);
-  //              const pLight4 = new THREE.PointLight(0xFFFFFF, 4);
-  //              pLight.position.z = 1;
-  //              pLight.position.y = 1;
-  //              pLight.position.x = 0;
-  //              pLight2.position.z = -1;
-  //              pLight2.position.y = 1;
-  //              pLight2.position.x = 0;
+  //            const scene = new THREE.Scene();
+  //            const camera = new THREE.PerspectiveCamera(
+  //                40,  // fov
+  //                window.innerWidth / window.innerHeight,   // aspect
+  //                0.05, // near
+  //                500); // far
+  //            camera.position.z = 4;
+  //            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  //            const loader = new GLTFLoader();
+  //            renderer.setClearColor(0x000000, 0);
+  //            renderer.setSize(window.innerWidth, window.innerHeight);
+  //            wrapper.appendChild(renderer.domElement);
+  //            const pLight = new THREE.PointLight(0xFFFFFF, 4);
+  //            const pLight2 = new THREE.PointLight(0xFFFFFF, 4);
+  //            const pLight3 = new THREE.PointLight(0xFFFFFF, 4);
+  //            const pLight4 = new THREE.PointLight(0xFFFFFF, 4);
+  //            pLight.position.z = 1;
+  //            pLight.position.y = 1;
+  //            pLight.position.x = 0;
+  //            pLight2.position.z = -1;
+  //            pLight2.position.y = 1;
+  //            pLight2.position.x = 0;
 
-  //              pLight3.position.z = 0;
-  //              pLight3.position.y = 1;
-  //              pLight3.position.x = 2;
+  //            pLight3.position.z = 0;
+  //            pLight3.position.y = 1;
+  //            pLight3.position.x = 2;
 
-  //              pLight4.position.z = 0;
-  //              pLight4.position.y = 1;
-  //              pLight4.position.x = -2;
+  //            pLight4.position.z = 0;
+  //            pLight4.position.y = 1;
+  //            pLight4.position.x = -2;
 
-  //              scene.add(pLight3);
-  //              scene.add(pLight4);
-  //              scene.add(pLight2);
-  //              scene.add(pLight);
+  //            scene.add(pLight3);
+  //            scene.add(pLight4);
+  //            scene.add(pLight2);
+  //            scene.add(pLight);
 
-  //              let obj = null;
-  //              const controls = new OrbitControls(camera, renderer.domElement);
-  //              controls.minDistance = 1;
-  //              controls.maxDistance = 8;
+  //            let obj = null;
+  //            const controls = new OrbitControls(camera, renderer.domElement);
+  //            controls.minDistance = 1;
+  //            controls.maxDistance = 8;
 
 
-  //              function onWindowResize() {
-  //                  camera.aspect = window.innerWidth / window.innerHeight;
-  //                  camera.updateProjectionMatrix();
-  //                  renderer.setSize(window.innerWidth, window.innerHeight);
-  //                  animate();
-  //              }
+  //            function onWindowResize() {
+  //                camera.aspect = window.innerWidth / window.innerHeight;
+  //                camera.updateProjectionMatrix();
+  //                renderer.setSize(window.innerWidth, window.innerHeight);
+  //                animate();
+  //            }
 
-  //              window.addEventListener('resize', onWindowResize, false);
+  //            window.addEventListener('resize', onWindowResize, false);
 
-  //              //let material = new THREE.MeshStandardMaterial();
+  //            //let material = new THREE.MeshStandardMaterial();
 
-  //              //var texture = new THREE.TextureLoader().load("../../3d/TTST-/textures/shirt.png");
-  //              //texture.wrapS = THREE.RepeatWrapping;
-  //              //texture.wrapT = THREE.RepeatWrapping;
+  //            //var texture = new THREE.TextureLoader().load("../../3d/TTST-/textures/shirt.png");
+  //            //texture.wrapS = THREE.RepeatWrapping;
+  //            //texture.wrapT = THREE.RepeatWrapping;
 
-  //              //console.log(texture);
+  //            //console.log(texture);
 
-  //              loader.load(modelSource, function (gltf) {
-  //                  obj = gltf;
-  //                  obj.scene.scale.set(2, 2, 2);
-  //                  obj.scene.position.z = 0;
-  //                  obj.scene.position.y = 0;
-  //                  obj.scene.position.x = 0;
-  //                  scene.add(obj.scene);
-  //                  controls.enableDamping = true;
-  //                  controls.dampingFactor = 0.25;
-  //                  controls.enableZoom = true;
+  //            loader.load(modelSource, function (gltf) {
+  //                obj = gltf;
+  //                obj.scene.scale.set(2, 2, 2);
+  //                obj.scene.position.z = 0;
+  //                obj.scene.position.y = 0;
+  //                obj.scene.position.x = 0;
+  //                scene.add(obj.scene);
+  //                controls.enableDamping = true;
+  //                controls.dampingFactor = 0.25;
+  //                controls.enableZoom = true;
 
-  //                  let model = gltf.scene.children[0].material;
-  //                  let color = model.color;
-  //                  console.log(obj.scene.children[0].material.map);
-  //                  //obj.scene.children[0].material.map = texture;
+  //                let model = gltf.scene.children[0].material;
+  //                let color = model.color;
+  //                console.log(obj.scene.children[0].material.map);
+  //                //obj.scene.children[0].material.map = texture;
 
-  //                  //let wrapper = $('#model_fancybox > .model-wrapper');
+  //                //let wrapper = $('#model_fancybox > .model-wrapper');
 
-  //                  //wrapper.prepend('<div id="color_picker"><input type="color" /></div>');
+  //                //wrapper.prepend('<div id="color_picker"><input type="color" /></div>');
 
-  //                  //let colors = $('#model_fancybox').find('input[type=color]');
-  //                  //colors.on('change', (evt)=> {
-  //                  //    let newColor = hexToRgb(evt.target.value);
-  //                  //    color.r = newColor.r;
-  //                  //    color.g = newColor.g;
-  //                  //    color.b = newColor.b;
-  //                  //    animate();
-  //                  //});
-  //                  controls.update(wrapper);
-  //              });
+  //                //let colors = $('#model_fancybox').find('input[type=color]');
+  //                //colors.on('change', (evt)=> {
+  //                //    let newColor = hexToRgb(evt.target.value);
+  //                //    color.r = newColor.r;
+  //                //    color.g = newColor.g;
+  //                //    color.b = newColor.b;
+  //                //    animate();
+  //                //});
+  //                controls.update(wrapper);
+  //            });
 
-  //              function animate() {
-  //                  controls.update();
-  //                  requestAnimationFrame(animate);
-  //                  renderer.render(scene, camera);
-  //              };
-  //              animate();
-  //           }
-  //  (function () {
-  //      $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath');});
-  //  })();
+  //            function animate() {
+  //                controls.update();
+  //                requestAnimationFrame(animate);
+  //                renderer.render(scene, camera);
+  //            };
+  //            animate();
+  //         }
+  //(function () {
+  //    $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath');});
+  //})();
 
 </script>

@@ -16,6 +16,9 @@ using RetailCRMCore.Helpers;
 using System.Net.Http.Headers;
 using Dadata;
 using System.Linq;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace yakutsa.Services
 {
@@ -185,6 +188,9 @@ namespace yakutsa.Services
         case "Customer":
           response = _client.CustomersList();
           break;
+        case "Offer":
+          response = _client.StoreProducts();
+          break;
         default: throw new NotImplementedException("Метод API не реализован");
       }
       return (Response<T>)response;
@@ -211,7 +217,7 @@ namespace yakutsa.Services
         order.totalSumm = createOrderObject.price;
         order.customerComment = createOrderObject.comment;
         order.customer = createOrderObject.customer;
-        order.manager = createOrderObject.manager;
+        order.managerId = createOrderObject.managerId;
         order.anyPhone = createOrderObject.phone;
         order.anyEmail = createOrderObject.email;
         var json = _client.OrdersCreate(order).GetRawResponse();
@@ -289,7 +295,7 @@ namespace yakutsa.Services
       public string comment { get; set; }
       public double price { get; internal set; }
       public string patronymic { get; internal set; }
-      public User? manager { get; set; }
+      public int managerId { get; set; }
       public Customer? customer { get; set; }
     }
 
@@ -352,6 +358,60 @@ namespace yakutsa.Services
           }
           result.Success = true;
         }
+        else if (typeof(T).Name == "Offer")
+        {
+          //JObject keyValuePairs = JObject.Parse(response.GetRawResponse());
+          //var jobj = JObject.Parse(response.GetRawResponse());
+          //try
+          //{
+          //  var props = keyValuePairs.SelectTokens("$..offers[*].properties", true).Where(t => t.Count() != 0).ToArray();
+          //  var json = "[";
+
+          //  int index = 0;
+          //  foreach (JToken jToken in props)
+          //  {
+          //    json += jToken.ToString();
+          //    index++;
+          //    json += index != props.Length ? "," : "]";
+          //  }
+
+
+          //  //var dynamicProps = JsonConvert.DeserializeObject<dynamic>(props?.ToString());
+
+          //  var tempProps = JsonConvert.DeserializeObject(json) as dynamic[];
+          //}
+          //catch (Exception)
+          //{
+          //  throw;
+          //}
+
+          ////JToken jToken = props
+
+
+          Regex regex = new Regex("(?<=\"offers\":)\\[.+?\\](?=,\"updatedAt\")");
+          List<T>? offers = new List<T>();
+          var matches = regex.Matches(response.GetRawResponse());
+
+
+          //PortalSerializationBinder serializationBinder = new PortalSerializationBinder();
+          //serializationBinder.BindToName(typeof(object));
+
+          //serializationBinder.BindToType(typeof(Offer).Assembly.FullName, typeof(Offer).FullName);
+
+          JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+          {
+            //ContractResolver = new PortalContractResolver(),
+            //SerializationBinder = serializationBinder
+          };
+
+          foreach (Match match in matches)
+          {
+            List<T>? offer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<T>>(match.Value, jsonSerializerSettings);
+            offers.AddRange(offer);
+          }
+          result.Array = offers.ToArray();
+          result.Success = true;
+        }
         else
         {
           try
@@ -366,28 +426,70 @@ namespace yakutsa.Services
           }
           catch (Exception exc)
           {
-            Debug.WriteLine(exc.Message);
+            throw exc;
           }
-        }
-
-        if (typeof(T).Name == "Product" && result.Success)
-        {
-          List<T>? products = result.Array?.ToList();
-
-          products?.ForEach(p =>
-          {
-            Product? product = p as Product;
-            foreach (Product prod in products as List<Product>)
-            {
-              if (prod.maxPrice == product.maxPrice && prod.active)
-              {
-                product.analogs.Add(prod);
-              }
-            }
-          });
         }
         return result;
       }
+    }
+  }
+
+  public class PortalSerializationBinder : DefaultSerializationBinder
+  {
+    public override void BindToName(Type serializedType, out string? assemblyName, out string? typeName)
+    {
+      base.BindToName(serializedType, out assemblyName, out typeName);
+    }
+
+    public override Type BindToType(string? assemblyName, string typeName)
+    {
+      Type result = base.BindToType(assemblyName, typeName);
+      return result;
+    }
+  }
+
+  public class PortalContractResolver : Newtonsoft.Json.Serialization.DefaultContractResolver
+  {
+    public override JsonContract ResolveContract(Type type)
+    {
+      var contract = base.ResolveContract(type);
+      return contract;
+    }
+
+    protected override string ResolveDictionaryKey(string dictionaryKey)
+    {
+      if (dictionaryKey == null) return null;
+
+      return base.ResolveDictionaryKey(dictionaryKey);
+    }
+
+    protected override Newtonsoft.Json.Serialization.JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+    {
+      var prop = base.CreateProperty(member, memberSerialization);
+      var temp = this.ResolvePropertyName("isNumeric");
+
+
+      if (!prop.Writable)
+      {
+        var property = member as PropertyInfo;
+        if (property != null)
+        {
+          var hasPrivateSetter = property.GetSetMethod(true) != null;
+          prop.Writable = hasPrivateSetter;
+        }
+      }
+
+      return prop;
+    }
+
+    protected override List<MemberInfo> GetSerializableMembers(Type objectType)
+    {
+      return base.GetSerializableMembers(objectType);
+    }
+
+    protected override IList<Newtonsoft.Json.Serialization.JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+    {
+      return base.CreateProperties(type, memberSerialization);
     }
   }
 }
