@@ -3,8 +3,9 @@
     left: 10px !important;
 }
 
-.window {
+.window.window_left-bottom {
     left: 10px !important;
+    background-color: transparent !important;
 }
 
 .window__footer {
@@ -31,6 +32,7 @@
 
 .message__row * {
     background-color: var(--body-bg-color) !important;
+    border-radius: 10px !important;
 }
 
 
@@ -69,4 +71,24 @@
 
 .messengers__wrap .messengers__item:hover {
     transform: scale(1) !important;
+}
+
+
+.contact-form__area, .contact-form {
+    background-color: transparent !important;
+    color: var(--main-text-color) !important;
+}
+
+.contact-form__row_btn {
+    text-align: center !important;
+}
+
+
+.message__row, .message-content {
+    border-radius: 10px !important;
+}
+
+
+.contact-form-wrap {
+    padding: 0 50px 0 40px !important;
 }

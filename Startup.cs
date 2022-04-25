@@ -125,10 +125,10 @@ public class Startup
          pattern: "{action}/{id?}",
          defaults: new { controller = "Home", action = "Index" });
 
-      endpoints.MapControllerRoute(
-         name: "categories",
-         pattern: "{name}",
-         defaults: new { controller = "Categories", action = "Category" });
+      //endpoints.MapControllerRoute(
+      //   name: "categories",
+      //   pattern: "{name}",
+      //   defaults: new { controller = "Categories", action = "Category" });
 
       endpoints.MapControllerRoute(
        name: "admin",
@@ -137,8 +137,8 @@ public class Startup
 
       endpoints.MapControllerRoute(
         name: "products",
-        pattern: "{categoryName}/{productName}/{article?}",
-        defaults: new { controller = "Products", action = "Product" });
+        pattern: "{categoryName}/{productName?}/{article?}",
+        defaults: new { controller = "Store" });
 
       endpoints.MapRazorPages();
     });

@@ -97,6 +97,7 @@ namespace yakutsa.Controllers
         _context.SaveChanges();
       }
       ViewBag.Messages = new List<Message>(Messages);
+      ViewBag.Text = "Text";
       Messages = new List<Message>();
       ViewBag.IsDevelopment = _environment.IsDevelopment();
 
@@ -108,7 +109,6 @@ namespace yakutsa.Controllers
       ViewData["count"] = Cart?.Count;
       ViewData["Image"] ??= $"https://{this.HttpContext.Request.Host}/img/sm_logo.png";
       ViewData["canonical"] = new HtmlString($"https://{this.Request.Host}{this.Request.Path}".ToLower());
-
 
       ViewBag.Path = this.Request.Path.ToString() == "/" ? new string[0] : this.Request.Path.ToString().Split("/").Where(s => !string.IsNullOrEmpty(s)).ToArray();
     }
@@ -182,19 +182,19 @@ namespace yakutsa.Controllers
         HttpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(cart));
       }
 
-      if (_environment.IsDevelopment() && History?.Count == 0)
-      {
-        var products = _retailCRM.GetResponse<Product>()?.Array;
+      //if (_environment.IsDevelopment() && History?.Count == 0)
+      //{
+      //  var products = _retailCRM.GetResponse<Product>()?.Array;
 
-        //  var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
-        //  if (product != null)
-        //    cart?.Add(product!, product.offers[0]!, 2);
+      //  //  var product = products?.FirstOrDefault(products => products.article == "TTST-")!;
+      //  //  if (product != null)
+      //  //    cart?.Add(product!, product.offers[0]!, 2);
 
-        ToHistory(products?.ElementAtOrDefault(0));
-        ToHistory(products?.ElementAt(1));
-        //ToHistory(products?.ElementAt(2));
-        //ToHistory(products != null ? products.ElementAt(3) : null);
-      }
+      //  ToHistory(products?.ElementAtOrDefault(0));
+      //  ToHistory(products?.ElementAt(1));
+      //  //ToHistory(products?.ElementAt(2));
+      //  //ToHistory(products != null ? products.ElementAt(3) : null);
+      //}
 
       return cart;
     }

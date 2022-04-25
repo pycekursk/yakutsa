@@ -729,8 +729,19 @@ ul {
 
 .top-bar {
     position: relative;
-    transition: opacity 100ms !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
 }
+
+.top-bar {
+    position: fixed;
+}
+
+/*  .top-bar.fade {
+        background-color: transparent !important;
+    }*/
 
 .top-bar-inner {
     position: fixed;
@@ -747,12 +758,16 @@ ul {
     top: 0;
     align-items: center;
     bottom: 0;
-    background-color: black;
+    background-color: var(--body-bg-color);
     padding: 0.2em 0.5em;
 }
 
 
-
+.goback-wrapper {
+    padding-left: 0.25rem !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+}
 
 .top-bar i {
     color: var(--main-text-color-hover) !important;

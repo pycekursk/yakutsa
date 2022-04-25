@@ -22,7 +22,7 @@
                     <ul class="text-sm-start text-center hovered">
                       @foreach (ProductGroup group in ViewBag.Menu)
                       {
-                        <li><a href="@Url.ActionLink("Category","Categories", new {name = group.name.ToLower()})">@group.name</a></li>
+                        <li><a href="@Url.ActionLink("Category","Store", new {categoryName = group.name.ToLower()})">@group.name</a></li>
                       }
                     </ul>
                   </div>

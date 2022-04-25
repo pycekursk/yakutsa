@@ -155,6 +155,7 @@ namespace yakutsa.Controllers
       return View("Views/_Debug.cshtml");
     }
 
+    [Route("ToCart")]
     public IActionResult ToCart(int id, int offerId, int? subCategoryId, int count = 1)
     {
       PortalActionResult actionResult = new();
@@ -222,13 +223,14 @@ namespace yakutsa.Controllers
       return View("Views/Home/PaymentRules.cshtml");
     }
 
+    [Route("RemoveFromCart")]
     public IActionResult RemoveFromCart(int productId, int offerId)
     {
       Cart?.ChangeCount(productId, offerId);
 
       return RedirectToAction("Cart", "Home");
     }
-
+    [Route("ChangeCount")]
     public IActionResult ChangeCount(int id, int offerId, int count)
     {
       Cart?.ChangeCount(id, offerId, count);
@@ -252,24 +254,24 @@ namespace yakutsa.Controllers
     }
 
 
-    public IActionResult GetCustomers()
-    {
-      var response = _retailCRM.GetResponse<Customer>();
-      return Json(response);
-    }
+    //public IActionResult GetCustomers()
+    //{
+    //  var response = _retailCRM.GetResponse<Customer>();
+    //  return Json(response);
+    //}
 
-    public IActionResult GetOrders()
-    {
-      var response = _retailCRM.GetResponse<Order>();
-      return Json(response);
-    }
+    //public IActionResult GetOrders()
+    //{
+    //  var response = _retailCRM.GetResponse<Order>();
+    //  return Json(response);
+    //}
 
-    public IActionResult GetProducts()
-    {
-      return Index();
-    }
+    //public IActionResult GetProducts()
+    //{
+    //  return Index();
+    //}
 
-    [ActionName("Cart")]
+    [Route("Cart")]
     public IActionResult CartView()
     {
       ViewData["Description"] = new HtmlString("");
@@ -279,6 +281,7 @@ namespace yakutsa.Controllers
     }
 
     [HttpGet]
+    [Route("OrderOptions")]
     public IActionResult OrderOptions(CreateOrderObject? createOrder)
     {
       ViewData["Title"] = new HtmlString("Оформление заказа");
@@ -305,6 +308,7 @@ namespace yakutsa.Controllers
     }
 
     [HttpPost]
+    [Route("OrderOptions")]
     public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, string deliveryTypeCode, string paymentTypeCode)
     {
       return Task.Run<IActionResult>(() =>
@@ -380,6 +384,7 @@ namespace yakutsa.Controllers
       });
     }
 
+    [Route("CheckOffers")]
     public IActionResult CheckOffers()
     {
       PortalActionResult result = new();
