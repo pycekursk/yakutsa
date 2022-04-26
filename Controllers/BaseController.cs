@@ -88,7 +88,6 @@ namespace yakutsa.Controllers
       _context.SaveChanges();
       return appUser;
     }
-
     void AppendData()
     {
       if (User.Identity?.Name != null && appUser != null)
@@ -114,11 +113,9 @@ namespace yakutsa.Controllers
     }
 
 
-    public override ViewResult View(string? viewName, object? model)
-    {
-      AppendData();
-      return base.View(viewName, model);
-    }
+
+
+
 
     public override ViewResult View()
     {
@@ -131,6 +128,16 @@ namespace yakutsa.Controllers
       AppendData();
       return base.View(viewName);
     }
+    public override ViewResult View(string? viewName, object? model)
+    {
+      AppendData();
+      return base.View(viewName, model);
+    }
+
+
+
+
+
 
     List<Product>? GetHistory()
     {
@@ -155,7 +162,7 @@ namespace yakutsa.Controllers
         HttpContext.Session.SetString("history", System.Text.Json.JsonSerializer.Serialize(history));
       }
     }
-  
+
     internal void RemoveFromHistory(Product product)
     {
       if (History.Contains(product))

@@ -27,10 +27,10 @@ namespace yakutsa.Services
     public int paymentId { get; set; }
     public string returnUrl { get; set; }
   }
-  public class ApiCreateInvoiceRequest
-  {
-    public CreateInvoice createInvoice { get; set; }
-  }
+  //public class ApiCreateInvoiceRequest
+  //{
+  //  public CreateInvoice createInvoice { get; set; }
+  //}
 
   public partial class RetailCRM
   {
@@ -128,11 +128,11 @@ namespace yakutsa.Services
       });
     }
 
-    class OrderResponse
-    {
-      public bool success { get; set; }
-      public Order order { get; set; }
-    }
+    //class OrderResponse
+    //{
+    //  public bool success { get; set; }
+    //  public Order order { get; set; }
+    //}
 
     class CreateInvoiceResult
     {
@@ -196,7 +196,7 @@ namespace yakutsa.Services
       return (Response<T>)response;
     }
 
-    public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
+    //public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
     public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
     {
       RetailCRMCore.Models.Order order = new RetailCRMCore.Models.Order();
@@ -299,19 +299,19 @@ namespace yakutsa.Services
       public Customer? customer { get; set; }
     }
 
-    public class CreateOrderObjectItem
-    {
-      public int initialPrice { get; set; }
-      public int quantity { get; set; }
-      public int productId { get; set; }
-      public string productName { get; set; }
-    }
+    //public class CreateOrderObjectItem
+    //{
+    //  public int initialPrice { get; set; }
+    //  public int quantity { get; set; }
+    //  public int productId { get; set; }
+    //  public string productName { get; set; }
+    //}
 
-    public enum RequestMethod
-    {
-      GET = 0,
-      POST = 1
-    }
+    //public enum RequestMethod
+    //{
+    //  GET = 0,
+    //  POST = 1
+    //}
 
     public class Response<T>
     {
@@ -360,44 +360,9 @@ namespace yakutsa.Services
         }
         else if (typeof(T).Name == "Offer")
         {
-          //JObject keyValuePairs = JObject.Parse(response.GetRawResponse());
-          //var jobj = JObject.Parse(response.GetRawResponse());
-          //try
-          //{
-          //  var props = keyValuePairs.SelectTokens("$..offers[*].properties", true).Where(t => t.Count() != 0).ToArray();
-          //  var json = "[";
-
-          //  int index = 0;
-          //  foreach (JToken jToken in props)
-          //  {
-          //    json += jToken.ToString();
-          //    index++;
-          //    json += index != props.Length ? "," : "]";
-          //  }
-
-
-          //  //var dynamicProps = JsonConvert.DeserializeObject<dynamic>(props?.ToString());
-
-          //  var tempProps = JsonConvert.DeserializeObject(json) as dynamic[];
-          //}
-          //catch (Exception)
-          //{
-          //  throw;
-          //}
-
-          ////JToken jToken = props
-
-
           Regex regex = new Regex("(?<=\"offers\":)\\[.+?\\](?=,\"updatedAt\")");
           List<T>? offers = new List<T>();
           var matches = regex.Matches(response.GetRawResponse());
-
-
-          //PortalSerializationBinder serializationBinder = new PortalSerializationBinder();
-          //serializationBinder.BindToName(typeof(object));
-
-          //serializationBinder.BindToType(typeof(Offer).Assembly.FullName, typeof(Offer).FullName);
-
           JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
           {
             //ContractResolver = new PortalContractResolver(),
@@ -434,62 +399,62 @@ namespace yakutsa.Services
     }
   }
 
-  public class PortalSerializationBinder : DefaultSerializationBinder
-  {
-    public override void BindToName(Type serializedType, out string? assemblyName, out string? typeName)
-    {
-      base.BindToName(serializedType, out assemblyName, out typeName);
-    }
+  //public class PortalSerializationBinder : DefaultSerializationBinder
+  //{
+  //  public override void BindToName(Type serializedType, out string? assemblyName, out string? typeName)
+  //  {
+  //    base.BindToName(serializedType, out assemblyName, out typeName);
+  //  }
 
-    public override Type BindToType(string? assemblyName, string typeName)
-    {
-      Type result = base.BindToType(assemblyName, typeName);
-      return result;
-    }
-  }
+  //  public override Type BindToType(string? assemblyName, string typeName)
+  //  {
+  //    Type result = base.BindToType(assemblyName, typeName);
+  //    return result;
+  //  }
+  //}
 
-  public class PortalContractResolver : Newtonsoft.Json.Serialization.DefaultContractResolver
-  {
-    public override JsonContract ResolveContract(Type type)
-    {
-      var contract = base.ResolveContract(type);
-      return contract;
-    }
+  //public class PortalContractResolver : Newtonsoft.Json.Serialization.DefaultContractResolver
+  //{
+  //  public override JsonContract ResolveContract(Type type)
+  //  {
+  //    var contract = base.ResolveContract(type);
+  //    return contract;
+  //  }
 
-    protected override string ResolveDictionaryKey(string dictionaryKey)
-    {
-      if (dictionaryKey == null) return null;
+  //  protected override string ResolveDictionaryKey(string dictionaryKey)
+  //  {
+  //    if (dictionaryKey == null) return null;
 
-      return base.ResolveDictionaryKey(dictionaryKey);
-    }
+  //    return base.ResolveDictionaryKey(dictionaryKey);
+  //  }
 
-    protected override Newtonsoft.Json.Serialization.JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-    {
-      var prop = base.CreateProperty(member, memberSerialization);
-      var temp = this.ResolvePropertyName("isNumeric");
+  //  protected override Newtonsoft.Json.Serialization.JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+  //  {
+  //    var prop = base.CreateProperty(member, memberSerialization);
+  //    var temp = this.ResolvePropertyName("isNumeric");
 
 
-      if (!prop.Writable)
-      {
-        var property = member as PropertyInfo;
-        if (property != null)
-        {
-          var hasPrivateSetter = property.GetSetMethod(true) != null;
-          prop.Writable = hasPrivateSetter;
-        }
-      }
+  //    if (!prop.Writable)
+  //    {
+  //      var property = member as PropertyInfo;
+  //      if (property != null)
+  //      {
+  //        var hasPrivateSetter = property.GetSetMethod(true) != null;
+  //        prop.Writable = hasPrivateSetter;
+  //      }
+  //    }
 
-      return prop;
-    }
+  //    return prop;
+  //  }
 
-    protected override List<MemberInfo> GetSerializableMembers(Type objectType)
-    {
-      return base.GetSerializableMembers(objectType);
-    }
+  //  protected override List<MemberInfo> GetSerializableMembers(Type objectType)
+  //  {
+  //    return base.GetSerializableMembers(objectType);
+  //  }
 
-    protected override IList<Newtonsoft.Json.Serialization.JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-    {
-      return base.CreateProperties(type, memberSerialization);
-    }
-  }
+  //  protected override IList<Newtonsoft.Json.Serialization.JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+  //  {
+  //    return base.CreateProperties(type, memberSerialization);
+  //  }
+  //}
 }

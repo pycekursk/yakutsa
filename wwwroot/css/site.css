@@ -276,7 +276,7 @@ a {
     color: var(--main-text-color) !important;
 }
 
-    a.nohover, i.nohover:not(.fa-rub, i.fa-copyright) {
+    a.nohover, i.nohover:not(.fa-rub, i.fa-copyright, .fa-cart-plus) {
         color: var(--main-text-color-hover) !important;
     }
 

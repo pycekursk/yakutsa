@@ -78,6 +78,7 @@ namespace yakutsa.Controllers
       return await Task.Run<IActionResult>(() =>
        {
          var products = _retailCRM.GetResponse<Product>();
+
          Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active)!;
 
          if (product == null) return NotFound();
@@ -85,15 +86,31 @@ namespace yakutsa.Controllers
          product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
 
          List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
-         ProductGroup? category = productGroups?.FirstOrDefault(p => product.groups.FirstOrDefault(c => c.id == p.id) != null);
+
+         var currentProductGroups = product.groups;
+
+         foreach (ProductGroup currentProductGroup in currentProductGroups!)
+         {
+           foreach (var prod in products?.Array!)
+           {
+             if (prod.id != product.id && prod.active && prod.groups.Contains(currentProductGroup))
+             {
+               product.analogs.Add(prod);
+             }
+           }
+         }
+
+
+
+
+
+         ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
 
          category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
          ViewBag.Category = category;
 
          ViewData["backUrl"] = category?.name.ToLower();
          ViewData["categoryName"] = category?.name;
-
-
 
          ViewData["Description"] = new HtmlString($"{category?.name} {product.name} - {product.maxPrice} руб.");
          ViewData["Title"] = new HtmlString(product.name);

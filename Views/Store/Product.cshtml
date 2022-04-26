@@ -159,7 +159,7 @@
             @foreach (Product p in Model.analogs)
             {
               <div class="owl-item">
-                <a href="@Url.ActionLink("Product", "Store", new {categoryName=p.groups?.FirstOrDefault()?.name?.ToLower(), productName = p.name.ToLower()})" class="nohover">
+                <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
                   <div class="item card bg-transparent nohover">
                     <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100 px-3" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
                     <div class="card-body">

@@ -34,10 +34,16 @@
   @*  <link rel="stylesheet" href="~/lib/owl/css/owl.carousel.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/owl/css/owl.theme.default.css" />*@
   <style>
-    body.loading main, body.loading aside, header.loading {
-        transition: 250ms;
+    /*  body.loading main, body.loading aside, header.loading, footer.loading {
+            transition: 150ms;
+            opacity: 0;
+        }*/
+
+    body.loading main, body.loading aside, body.loading footer {
+        transition: 150ms;
         opacity: 0;
     }
+
   </style>
   <link rel="stylesheet" href="~/lib/fontawesome/css/fontawesome.css" />
   <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
