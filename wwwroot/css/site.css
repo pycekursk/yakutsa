@@ -285,7 +285,7 @@ a {
             color: var(--main-text-color) !important;
         }
 
-    a:not(.nohover):hover, .messengers__item {
+    a:not(.nohover):hover *, .messengers__item {
         text-decoration: none;
         color: var(--main-text-color-hover) !important;
     }
@@ -424,6 +424,8 @@ p {
     #sizes .tooltip-inner {
         width: 370px;
     }
+
+
 
 .tooltip-table .container {
     padding: .5em !important;
@@ -720,7 +722,7 @@ ul {
 .inline-icons {
     justify-content: end;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
 }
 
     .inline-icons i.fa-door-closed {
@@ -1127,4 +1129,111 @@ ul li {
         background-color: var(--main-bg-color);
         padding: 0.1em 0.4em;
         border-radius: 5em;
+    }
+
+#sub_categories .sizes {
+    transition: height 150ms;
+    height: 0;
+    overflow: hidden;
+}
+
+#sub_categories .sizes-inner div[value] {
+    display: none;
+}
+
+#sub_categories .sizes-inner div.active[value] {
+    display: flex;
+}
+
+/*.sizes-inner div[value] .btn-anim {
+    flex: 1 1 auto;
+}*/
+
+
+/*#offer_info {
+    opacity: 0;
+    transition: 100ms;
+}*/
+.ref-quantity-widget + div.d-inline-block {
+    padding: .5em 0;
+}
+
+
+.sizes .btn-group {
+    justify-content: start;
+}
+
+
+/* .sizes .btn-group > div[value] {
+        outline: 2px solid transparent;
+        transition: 300ms;
+    }*/
+
+*[notify] {
+    border: 2px solid transparent;
+    transition: 700ms;
+    border-radius: 0.25rem;
+    /* animation-fill-mode: forwards;
+    animation-name: notify-pulsing;*/
+    /*animation: 1.5s ease 0s infinite normal none running notifyPulsing;*/
+  
+ 
+}
+
+.noticed[notify] {
+    border-color: yellow;
+    animation: notifyPulsing 700ms ease-in-out 3;
+}
+/*.fa-rub.nohover {
+    margin-left: 5px;
+}
+*/
+.carousel-item > a {
+    cursor: zoom-in !important;
+}
+
+
+@keyframes notifyPulsing {
+    0% {
+        border-color: yellow;
+    }
+
+    100% {
+        border-color: #ffff0078;
+    }
+}
+
+@-moz-keyframes notify-pulsing {
+}
+
+@-webkit-keyframes notify-pulsing {
+}
+
+/*.carousel-preview {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    z-index: 2;
+    justify-content: space-around;
+}*/
+
+#retailcrm-consultant-app {
+    z-index: 10 !important;
+}
+
+#product_carousel > button {
+    margin-bottom: 120px;
+}
+
+.carousel-preview .preview-item {
+    border: 1px solid transparent !important;
+    transition: 150ms;
+    cursor: pointer;
+    flex: 1 1 auto;
+}
+
+    /**/
+
+    .carousel-preview .preview-item.active, body:not(.mobile) .carousel-preview .preview-item:hover {
+        border-color: var(--main-border-color) !important;
     }

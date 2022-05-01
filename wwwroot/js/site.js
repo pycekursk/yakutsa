@@ -1,4 +1,4 @@
-﻿var inputObject;
+﻿
 
 function componentToHex(c) {
     var hex = c.toString(16);
@@ -32,67 +32,6 @@ function observe(target) {
     });
 }
 
-function showMessage(text, type) {
-    let $msg = $(`<div class="alert alert-${type == undefined ? 'main' : type}" role="alert">${text}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button></div>`);
-    $('.messages-wrapper').append($msg);
-
-    $msg.find('button').on('click', () => {
-        $msg.fadeOut(350, () => $msg.remove());
-    });
-
-    setTimeout(() => { $msg.fadeOut(350, () => $msg.remove()); }, 5000);
-}
-
-Array.prototype.remove = function (elem) {
-    let index = this.indexOf(elem);
-    this.splice(index, 1);
-}
-
-function sendAjaxForm(data, url, callback, busyTrigger) {
-    function getProps(obj) {
-        let formData = new FormData();
-        for (var i in obj) {
-            formData.append(i, obj[i]);
-        }
-        return formData;
-    }
-    let isAsync = callback ? true : false;
-
-    data = data instanceof HTMLFormElement ? new FormData(data) : data instanceof FormData ? data : getProps(data);
-
-    if (busyTrigger)
-        setTimeout(() => {
-            document.body.classList.add('busy');
-        }, 0);
-
-    return $.ajax({
-        url: url,
-        type: "POST",
-        data: data,
-        async: isAsync,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            if (busyTrigger) setTimeout(() => { document.body.classList.remove('busy'); }, 0);
-            try {
-                let obj = JSON.parse(response);
-                if (callback) callback(obj);
-                //if (obj.Message != null)
-                //    showMessage(obj.Message);
-            } catch (exc) { console.log(exc); }
-        },
-        error: function (response) {
-            if (busyTrigger) setTimeout(() => { document.body.classList.remove('busy'); }, 0);
-            console.log(response);
-        },
-        progress: function (e) {
-            console.log(e);
-        }
-    });
-}
-HTMLElement.prototype.toggleClass = function (value) {
-    this.className = this.className.includes(value) ? this.className.replace(value, '').trim() : `${value} ${this.className}`;
-}
 
 $.fn.loader = function () {
     return this.each((index, element) => {
@@ -107,7 +46,7 @@ $.fn.loader = function () {
     });
 };
 
-var detector;
+//var detector;
 
 function Initialize($) {
     var json_view = $("#json_view");
@@ -126,12 +65,7 @@ function Initialize($) {
 
     function videoCarouselInit() {
         var videos = document.querySelectorAll('#video_carousel video');
-        function sizeAdaptation() {
-            videos.forEach(e => {
-                e.height = window.innerHeight;
-                $(e).css("max-height", window.innerHeight);
-            });
-        }
+
 
         let carousel = $('#video_carousel');
         if (carousel == null) return;
@@ -139,9 +73,10 @@ function Initialize($) {
         let activeElement = inner.find('.carousel-item.playing');
 
 
-
         sizeAdaptation(videos);
-        window.onresize = sizeAdaptation;
+
+        if (!detector.isPhoneSized())
+            window.onresize = () => { sizeAdaptation(videos); };
 
 
         $('#video_carousel .carousel-control-next,#video_carousel .carousel-control-prev').on('click', (evt) => {
@@ -210,34 +145,10 @@ function Initialize($) {
         $(window).on('resize', () => checkDevice());
     }
 
-    function scrollHandler(evt) {
-        return new Promise((resolve) => {
-            if ($(window).scrollTop() > 90) {
-                $('.side-toggler').hide();
-            }
-            else if ($(window).scrollTop() < 90) {
-                $('.side-toggler').show();
-            }
-            if ($(window).scrollTop() > $('.top-bar').height() / 3) {
-                $('.top-bar').removeClass('fade');
-                $('.toTop-toggler').addClass('active');
-            } else {
-                if (url == '/')
-                    $('.top-bar').addClass('fade');
-                $('.toTop-toggler').removeClass('active');
-            }
-            resolve();
-        });
-    }
+
 
     function loadedHandler() {
-
-
-
         $('.top-bar').css('height', Math.round($('.top-bar-inner').height() + 4));
-
-
-
         window.onload = function () {
             let sizesTable = `<h5>Таблица размеров</h5><div class='container'><div class='row row-cols-8'><div class='col'></div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>2XL</div><div class='col'>3XL</div><div class='col'>+/- см.</div></div></div>`;
             let newTable = "<div class='tooltip-table'><h5>Таблица размеров</h5><div class='container'><div class='row row-cols-12'><div class='col-5'></div><div class='col'>XS</div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>+/- см.</div></div><div class='row row-cols-12'><div class='col-5'>Рост</div><div class='col'>??</div><div class='col'>160</div><div class='col'>165</div><div class='col'>170</div><div class='col'>175</div><div class='col'>3</div></div><div class='row row-cols-12'><div class='col-5'>Длина по спинке</div><div class='col'>??</div><div class='col'>68</div><div class='col'>69,5</div><div class='col'>71</div><div class='col'>72,5</div><div class='col'>1,5</div></div><div class='row row-cols-12'><div class='col-5'>Ширина по груди</div><div class='col'>??</div><div class='col'>57</div><div class='col'>59</div><div class='col'>61</div><div class='col'>63</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина рукава</div><div class='col'>??</div><div class='col'>56</div><div class='col'>57</div><div class='col'>58</div><div class='col'>59</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина плеча</div><div class='col'>??</div><div class='col'>23</div><div class='col'>23</div><div class='col'>24</div><div class='col'>24,5</div><div class='col'>0,5</div></div></div></div>";
@@ -295,58 +206,27 @@ function Initialize($) {
         });
 
         window.onbeforeunload = function () {
-            //document.body.classList.add('loading');
             document.body.classList.add('busy');
         }
 
         $(window).on("scroll", (evt) => scrollHandler(evt));
+
+
         videoCarouselInit();
         $('.loader').loader();
         $('.card[data-id]').each((i, e) => {
             let $card = $(e);
-
             $card.on('click', (evt) => {
                 if (evt.target.className.includes('fas')) return;
-
                 location.href = `/Product?id=${$card.attr('data-id')}`;
             });
-
-            //$card.find('.fas.fa-cart-plus').on('click', function (evt) {
-            //    let id = $card.attr('data-id');
-            //    console.log(evt);
-            //    //sendAjaxForm($this.attr('data-id'), 'ToCart/', (resp) => {
-            //    //    console.log(resp);
-            //    //}, true);
-
-
-            //});
         });
         $('.toTop-toggler .fa.fa-arrow-up').on('click', () => scrollTo(0, 0));
-        $('#sizes input[type=radio]').on('click', function () {
-            $('#sizes .btn-anim').removeClass('active');
-            $(this.parentElement).addClass("active");
-        });
-        $('#sub_categories input[type=radio]').on('click', function () {
-            $('#sub_categories .btn-anim').removeClass('active');
-            $(this.parentElement).addClass("active");
-        });
-        $('#product_info .btn.bg-gray').on('click', (evt) => {
-            let $parent = $('#product_info');
-            let productId = $parent.attr('data-id');
-            let offerId = $('#sizes .btn-group .btn-anim.active input').attr('id');
-            let subCategoryId = $('#sub_categories .btn-group .btn-anim.active input').attr('id');
-            if (productId != undefined && offerId != undefined && (subCategoryId != undefined || $('#sub_categories').length == 0))
-                sendAjaxForm({ id: productId, offerId: offerId, subCategoryId: subCategoryId }, '/ToCart', (response) => {
-                    if (response.Success) {
-                        $('.fa-shopping-cart').attr("count", response.Html);
-                        showMessage(response.Message, 'green');
-                        VK.Goal('add_to_cart');
-                    }
-                }, true);
 
-            else if (subCategoryId == undefined) showMessage('Необходимо выбрать вариант', 'yellow');
-            else if (offerId == undefined) showMessage('Необходимо выбрать размер', 'yellow');
-        });
+
+
+
+
 
         let $msg = $(`.alert`);
         $msg.find('button').on('click', () => {
@@ -373,16 +253,7 @@ function Initialize($) {
             }
         });
 
-        $('.ref-increase').on('click', (evt) => {
-            let field = $(evt.target.parentElement).find('input[name=count]');
-            let value = parseInt(field.val());
-            field.val(++value);
-        });
-        $('.ref-decrease').on('click', (evt) => {
-            let field = $(evt.target.parentElement).find('input[name=count]');
-            let value = parseInt(field.val());
-            if (value > 0) field.val(--value);
-        });
+
 
         $('.labelholder').labelholder();
 
@@ -395,10 +266,13 @@ function Initialize($) {
             sendAjaxForm('', 'CheckOffers', () => {
                 sendAjaxForm(evt.currentTarget, 'OrderOptions', (response) => {
                     if (response.Success) {
-                        try {
-                            VK.Goal('initiate_checkout');
-                        } catch (e) {
-                            console.log(e);
+                        if (!isDevelopment) {
+                            try {
+                                ym(87733644, 'reachGoal', 'iniciatecheakout');
+                                VK.Goal('initiate_checkout');
+                            } catch (e) {
+                                console.log(e);
+                            }
                         }
                         showPaymentModal(response.Url);
                         sendAjaxForm({ 'id': response.Html }, 'PaymentCheck', (resp) => {
@@ -406,7 +280,14 @@ function Initialize($) {
                                 $('#payment_modal').hide();
                                 showMessage(resp.Message, "green");
                                 setTimeout(() => { location.href = "/"; }, 2000);
-                                VK.Goal('conversion');
+                                if (!isDevelopment) {
+                                    try {
+                                        ym(87733644, 'reachGoal', 'sell');
+                                        VK.Goal('conversion');
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                }
                             }
                             else if (!resp.Success) showMessage(resp.Message, "red");
                         }, true);
@@ -443,7 +324,7 @@ function Initialize($) {
         owl.owlCarousel({
             loop: true,
             margin: 10,
-            stagePadding: 40,
+            stagePadding: 50,
             responsive: {
                 300: {
                     items: 1
@@ -465,7 +346,7 @@ function Initialize($) {
             margin: 10,
             loop: false,
             center: false,
-            stagePadding: 40,
+            stagePadding: 50,
             responsive: {
                 300: {
                     items: 1
@@ -481,6 +362,44 @@ function Initialize($) {
                 }
             }
         });
+
+        var previewOwl = $('#product_carousel .owl-carousel');
+        previewOwl.owlCarousel(options = {
+            dots: false,
+            loop: false,
+            center: false,
+            stagePadding: 30,
+            responsive: {
+                300: {
+                    items: 3
+                },
+                500: {
+                    items: 4
+                },
+                800: {
+                    items: 5
+                }
+            }
+        });
+
+        if (isDevelopment) {
+
+            $('.consultant-widget > .consultant-icon').on('click', function () {
+                if (!$(this).hasClass("consultant-icon_opened")) {
+                    try {
+                        ym(87733644, 'reachGoal', 'openChat')
+                    } catch (e) {
+                        console.log(e);
+                    }
+                };
+            });
+
+
+
+
+        }
+
+
 
         //$('.toTop-toggler').vibrate(10);
 

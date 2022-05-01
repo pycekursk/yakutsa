@@ -3,6 +3,7 @@
   <div class="row">
     <h1 class="text-center">@ViewData["Title"]</h1>
   </div>
+
   <div class="row">
     <div class="col-md-12">
 
@@ -32,10 +33,17 @@
                         <div class="ref-product-data">
                           <div class="ref-product-info text-center">
                             <div class="ref-product-name">@product.Product.name</div>
-                            @*   <div class="ref-product-category">@product.Product?.Name</div>*@
-                            <div class="ref-product-variants">Размер: @product.Offer?.article.Split("-")[1]</div>
+
+
+                            @{
+                              var str = product.Offer?.Model != RetailCRMCore.Models.Model.Default ? product.Offer?.Model.GetDisplayName() : string.Empty;
+                              var productModel = str == string.Empty ? str : $"Модель: {str}";
+                            }
+
+                            <div class="ref-product-variants text-start">@productModel</div>
+                            <div class="ref-product-variants text-start">Размер: @product.Offer?.article.Split("-")[1]</div>
                           </div>
-                          <div class="ref-product-price text-center">@product.Offer?.price<i class="fa fa-rub opacity-100 nohover"></i></div>
+                          <div class="ref-product-price text-center">@product.Offer?.price <i class="fa fa-rub opacity-100 nohover"></i></div>
                         </div>
                       </div>
                       <div class="ref-product-controls w-100">
@@ -43,7 +51,7 @@
                           <form action="@Url.ActionLink("ChangeCount", "Home")" method="post">
                             <div class="ref-quantity-widget">
                               <div class="ref-decrease">-</div>
-                              <input name="id" type="hidden" value="@product.Product.id" />
+                              <input name="productId" type="hidden" value="@product.Product.id" />
                               <input name="offerId" type="hidden" value="@product.Offer.id" />
                               <input name="count" type="text" value="@product.Count" />
                               <div class="ref-increase">+</div>
@@ -55,17 +63,17 @@
                           </form>
                         </div>
                       </div>
-                      <div class="ref-product-summ"><span>@product.Price</span><i class="fa fa-rub opacity-100 nohover"></i></div>
+                      <div class="ref-product-summ"><span>@product.Price </span><i class="fa fa-rub opacity-100 nohover"></i></div>
                     </div>
                     <div class="ref-price-col">
-                      <div class="ref-product-price">@product.Offer.price<i class="fa fa-rub opacity-100 nohover"></i></div>
+                      <div class="ref-product-price">@product.Offer.price <i class="fa fa-rub opacity-100 nohover"></i></div>
                     </div>
                     <div class="ref-quantity-col">
                       <div class="ref-product-quantity">
                         <form action="@Url.ActionLink("ChangeCount", "Home")" method="post">
                           <div class="ref-quantity-widget">
                             <div class="ref-decrease">-</div>
-                            <input name="id" type="hidden" value="@product.Product.id" />
+                            <input name="productId" type="hidden" value="@product.Product.id" />
                             <input name="offerId" type="hidden" value="@product.Offer.id" />
                             <input name="count" type="text" value="@product.Count" />
                             <div class="ref-increase">+</div>
@@ -104,11 +112,15 @@
       }
       else
       {
-        <p class="text-center">Ваша корзина пока пуста...</p>
+        <p class="text-center">
+          Ваша корзина пока пуста...<a href="@Url.ActionLink("Index", "Home")#catalog"><br /><span style="text-decoration:underline;">Перейти в каталог</span></a>
+        </p>
       }
     </div>
   </div>
 </div>
+
+<script src="~/js/cart.js" type="text/javascript" asp-append-version="true"></script>
 
 @*<script>
   (($)=>{

@@ -27,6 +27,8 @@ namespace yakutsa.Controllers
       _cache = memoryCache;
     }
 
+
+    [Route("Admin/Products")]
     public IActionResult Products()
     {
       ViewData["Description"] = new HtmlString("");
@@ -36,6 +38,7 @@ namespace yakutsa.Controllers
     }
 
     [HttpGet]
+    [Route("Admin/Product")]
     public IActionResult Product(int? id)
     {
       Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
@@ -45,11 +48,13 @@ namespace yakutsa.Controllers
     }
 
     [HttpPost]
+    [Route("Admin/Product")]
     public IActionResult? Product(Product product, List<int> groups)
     {
+      PortalActionResult actionResult = new();
       product.groups = groups.Select(p => new ProductGroup { id = p }).ToArray();
-      Task.Run(async () => await _retailCRM.UpdateProductsAsync(new Product[] { product })).Wait();
-      return Product(product.id);
+      _retailCRM.UpdateProductsAsync(new Product[] { product }).ContinueWith(t => actionResult.Success = t.Result.Value).Wait();
+      return actionResult;
     }
   }
 }

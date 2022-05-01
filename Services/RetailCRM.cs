@@ -196,6 +196,23 @@ namespace yakutsa.Services
       return (Response<T>)response;
     }
 
+    public List<Product>? GetProducts()
+    {
+      List<Product>? products = new List<Product>();
+      products = GetResponse<Product>()?.Array?.ToList();
+      var groups = GetResponse<ProductGroup>()?.Array?.ToList();
+      products?.ForEach(p =>
+      {
+        if (p.groups != null)
+          foreach (var group in p.groups)
+          {
+            group.name = groups.FirstOrDefault(g => g.id == group.id).name;
+          }
+      });
+
+      return products;
+    }
+
     //public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
     public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
     {

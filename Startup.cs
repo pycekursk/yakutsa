@@ -134,11 +134,11 @@ public class Startup
 
       endpoints.MapControllerRoute(
        name: "admin",
-       pattern: "{controller}/{action}/{id?}",
-       defaults: new { controller = "Admin", action = "Index" });
+       pattern: "{controller}/{action?}",
+       defaults: new { controller = "Admin" });
 
       endpoints.MapControllerRoute(
-        name: "products",
+        name: "store",
         pattern: "{categoryName}/{productName?}/{article?}",
         defaults: new { controller = "Store" });
 

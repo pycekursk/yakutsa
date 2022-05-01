@@ -30,16 +30,8 @@
   <link rel="stylesheet" href="~/lib/toolkit.min.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/lib/labelholder/labelholder.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
-
-  @*  <link rel="stylesheet" href="~/lib/owl/css/owl.carousel.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/owl/css/owl.theme.default.css" />*@
   <style>
-    /*  body.loading main, body.loading aside, header.loading, footer.loading {
-            transition: 150ms;
-            opacity: 0;
-        }*/
-
-    body.loading main, body.loading aside, body.loading footer {
+    body.loading main, body.loading aside, body.loading footer, body.loading #retailcrm-consultant-app {
         transition: 150ms;
         opacity: 0;
     }
@@ -51,8 +43,12 @@
   <link rel="stylesheet" href="~/lib/fontawesome/css/regular.css" />
   <link rel="stylesheet" href="~/lib/owl/css/owl.carousel.css" asp-append-version="true">
   <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+  <script src="~/js/exstensions.js" type="text/javascript" asp-append-version="true"></script>
 </head>
 <body class="busy loading">
+
+  <script src="~/lib/mobile-detect.min.js" type="text/javascript" asp-append-version="true"></script>
+
   @{
     bool isDevelopment = true;
     if (!Startup.Environment.IsDevelopment())
@@ -83,7 +79,7 @@
   </script>
 
   <header>
-    <nav class="top-bar fade">
+    <nav class="top-bar" style="display: none;">
       <div class="top-bar-inner position-fixed">
         <div class="inline-icons">
           <i class="fas fa-bars fa-sm nohover" style="margin-top: 0 !important;" data-bs-toggle="modal" href="#menu_modal" role="button"></i>
@@ -133,15 +129,13 @@
     <div class="container">
       <div class="row" style="border-top-style: none;">
         <div class="col-sm-7 col-md-7 item">
-
-
           <div class="accordion accordion-flush" id="footer_accordion">
             <div class="accordion-item">
-              <h2 class="accordion-header" id="footer-flush-headingOne">
+              <h5 class="accordion-header" id="footer-flush-headingOne">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseOne" aria-expanded="false" aria-controls="footer-flush-collapseOne">
                   Клиентам
                 </button>
-              </h2>
+              </h5>
               <div id="footer-flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingOne" data-bs-parent="#footer_accordion">
                 <ul class="hovered text-left mt-1 m-0">
                   <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("PaymentRules","Home")">Способы оплаты</a></li>
@@ -154,11 +148,11 @@
             </div>
 
             <div class="accordion-item">
-              <h2 class="accordion-header" id="footer-flush-headingTwo">
+              <h5 class="accordion-header" id="footer-flush-headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseTwo" aria-expanded="false" aria-controls="footer-flush-collapseTwo">
                   Контакты
                 </button>
-              </h2>
+              </h5>
               <div id="footer-flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingTwo" data-bs-parent="#footer_accordion">
                 <p style="padding-left:2rem;">
                   ООО "ЯКУТСА"
@@ -235,7 +229,6 @@
 
 
   <script src="~/lib/owl/js/owl.carousel.js" type="text/javascript" asp-append-version="true"></script>
-  <script src="~/lib/mobile-detect.min.js" type="text/javascript"></script>
   <script src="/lib/popper/popper.min.js" type="text/javascript"></script>
   <script src="/lib/fancybox/jquery.fancybox.js" type="text/javascript" asp-append-version="true"></script>
   <script src="~/js/labelholder.js" type="text/javascript"></script>
@@ -249,7 +242,7 @@
            let url =  '@Context.Request.Path';
 
           if(url != '/'){
-                 document.querySelector('.top-bar').classList.remove('fade');
+                 document.querySelector('.top-bar').style.display = 'block';
                  $('.top-bar').height($('.top-bar .top-bar-inner').height() + 8);
 
 
@@ -266,22 +259,11 @@
                     }, 5250);
 
                      window.onload = function(){
-
-                         //if(isDevelopment) location.href = "https://localhost:7087/Products/Offer?pid=165&oid=467";
-
                         setTimeout(()=> {document.body.classList.remove('loading');}, 150);
                         setTimeout(()=> { document.body.classList.remove('busy');}, 200);
                }
                });
-
-               //$(document).ready();
-
-
-
                  (function ($) {Initialize($);})(jQuery);
-
-
-
                 var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
         !function (t) {
             var a = t.getElementsByTagName("head")[0];

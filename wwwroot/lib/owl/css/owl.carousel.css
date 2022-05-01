@@ -56,6 +56,7 @@
         -webkit-backface-visibility: hidden;
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
+        z-index: 1000;
     }
 
         .owl-carousel .owl-item img {
@@ -174,6 +175,15 @@
 /*
  * 	Owl Carousel - Lazy Load Plugin
  */
+
+.owl-item .item {
+    cursor: pointer;
+}
+
+    .owl-item .item:active {
+        cursor: grab;
+    }
+
 .owl-carousel .owl-item {
     /**
 			This is introduced due to a bug in IE11 where lazy loading combined with autoheight plugin causes a wrong

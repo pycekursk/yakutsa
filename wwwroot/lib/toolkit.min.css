@@ -160,6 +160,7 @@
 .ref-product-variants {
     opacity: 50%;
     font-size: small;
+    text-align: start;
 }
 
 .ref-product-wrapper > a {
@@ -195,7 +196,9 @@
 
 .reflow-shopping-cart .ref-cart .ref-cart-table .ref-product-name {
     font-weight: bold;
-    word-break: break-word
+    word-break: break-word;
+    font-size: 20px;
+    letter-spacing: 3px;
 }
 
 .reflow-shopping-cart .ref-cart .ref-cart-table .ref-product-category, .reflow-shopping-cart .ref-cart .ref-cart-table .ref-product-variant, .reflow-shopping-cart .ref-cart .ref-cart-table .ref-product-total-formula {

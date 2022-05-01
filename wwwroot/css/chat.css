@@ -8,6 +8,13 @@
     background-color: transparent !important;
 }
 
+.window_mobile {
+    top: auto !important;
+    max-height: 95vh !important;
+    max-width: 95vw !important;
+    left: 0 !important;
+}
+
 .window__footer {
     border-top: 1px solid var(--main-border-color) !important;
     border-color: var(--main-border-color) !important;

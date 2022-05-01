@@ -7,6 +7,7 @@ using RetailCRMCore.Models;
 
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 
 using yakutsa.Data;
 using yakutsa.Models;
@@ -30,11 +31,15 @@ namespace yakutsa.Controllers
     {
       return await Task.Run<IActionResult>(() =>
       {
-        List<Product> products = new();
+        List<Product>? products = new();
+
+
         ProductGroup[]? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array;
         ProductGroup? productGroup = productGroups?.FirstOrDefault(g => g.name.ToLower() == categoryName);
-        products = _retailCRM.GetResponse<Product>()!.Array!.Where(p => p.groups?.FirstOrDefault(g => g.id == productGroup?.id) != null && p.active && p.quantity != 0).ToList();
-        if (products.Count == 0) return NotFound();
+        //products = _retailCRM.GetResponse<Product>()!.Array!.Where(p => p.groups?.FirstOrDefault(g => g.id == productGroup?.id) != null && p.active && p.quantity != 0).ToList();
+        products = _retailCRM.GetProducts()?.Where(p => p.groups?.FirstOrDefault(g => g.id == productGroup?.id) != null && p.active && p.quantity != 0).ToList();
+
+        if (products?.Count == 0) return NotFound();
 
         products?.ForEach(p =>
         {
@@ -59,80 +64,145 @@ namespace yakutsa.Controllers
               p.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
             }
           });
-
-
-          ViewData["Description"] = new HtmlString("");
-          ViewData["Title"] = new HtmlString(productGroup?.name);
-
-          ViewBag.Category = productGroup;
-
         });
+
+        ViewData["Description"] = new HtmlString("");
+        ViewData["Title"] = new HtmlString(productGroup?.name);
+
+        ViewBag.Category = productGroup;
 
         return View(products);
       });
     }
 
+    //[Route("{categoryName}/{productName}")]
+    //public async Task<IActionResult> Product(string categoryName, string productName)
+    //{
+    //  if (_environment.IsDevelopment()) { return await Productv2(categoryName, productName); }
+    //  return await Task.Run<IActionResult>(() =>
+    //   {
+    //     var products = _retailCRM.GetResponse<Product>();
+    //     //var newProducts = _retailCRM.GetProducts();
+
+    //     Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active && p.quantity > 0)!;
+
+    //     if (product == null) return NotFound();
+
+    //     product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
+
+    //     List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
+
+    //     var currentProductGroups = product.groups;
+
+    //     foreach (ProductGroup currentProductGroup in currentProductGroups!)
+    //     {
+    //       foreach (var prod in products?.Array!)
+    //       {
+    //         if (prod.id != product.id && prod.active && prod.groups.Contains(currentProductGroup))
+    //         {
+    //           prod.groups.ToList().ForEach(p =>
+    //           {
+    //             p.name = productGroups.FirstOrDefault(g => g.id == p.id)?.name;
+    //           });
+    //           product.analogs.Add(prod);
+    //         }
+    //       }
+    //     }
+
+    //     ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
+
+    //     category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
+    //     ViewBag.Category = category;
+
+    //     ViewData["backUrl"] = category?.name.ToLower();
+    //     ViewData["categoryName"] = category?.name;
+
+    //     ViewData["Description"] = new HtmlString($"{product.description}");
+    //     ViewData["Title"] = new HtmlString(product.name);
+
+
+    //     ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
+
+
+    //     product.modelPath =
+    //       Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
+
+    //     int index = 0;
+    //     foreach (var group in product.groups)
+    //     {
+    //       product.groups[index] = productGroups?.FirstOrDefault(g => g.id == group.id);
+    //       index++;
+    //     }
+
+    //     ToHistory(product);
+
+    //     return View(product);
+    //   });
+    //}
+
     [Route("{categoryName}/{productName}")]
     public async Task<IActionResult> Product(string categoryName, string productName)
     {
       return await Task.Run<IActionResult>(() =>
-       {
-         var products = _retailCRM.GetResponse<Product>();
+      {
+        var products = _retailCRM.GetResponse<Product>();
+       
+        Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active && p.quantity > 0)!;
 
-         Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active)!;
+        if (product == null) return NotFound();
 
-         if (product == null) return NotFound();
+        product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
 
-         product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
+        List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
 
-         List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
+        var currentProductGroups = product.groups;
 
-         var currentProductGroups = product.groups;
+        foreach (ProductGroup currentProductGroup in currentProductGroups!)
+        {
+          foreach (var prod in products?.Array!)
+          {
+            if (prod.id != product.id && prod.active && prod.groups.Contains(currentProductGroup))
+            {
+              prod.groups.ToList().ForEach(p =>
+              {
+                p.name = productGroups.FirstOrDefault(g => g.id == p.id)?.name;
+              });
+              product.analogs.Add(prod);
+            }
+          }
+        }
 
-         foreach (ProductGroup currentProductGroup in currentProductGroups!)
-         {
-           foreach (var prod in products?.Array!)
-           {
-             if (prod.id != product.id && prod.active && prod.groups.Contains(currentProductGroup))
-             {
-               product.analogs.Add(prod);
-             }
-           }
-         }
+        ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
 
+        category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
+        ViewBag.Category = category;
 
+        ViewData["backUrl"] = category?.name.ToLower();
+        ViewData["categoryName"] = category?.name;
 
-
-
-         ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
-
-         category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
-         ViewBag.Category = category;
-
-         ViewData["backUrl"] = category?.name.ToLower();
-         ViewData["categoryName"] = category?.name;
-
-         ViewData["Description"] = new HtmlString($"{category?.name} {product.name} - {product.maxPrice} руб.");
-         ViewData["Title"] = new HtmlString(product.name);
-
-
-         ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
+        ViewData["Description"] = new HtmlString($"{product.description}");
+        ViewData["Title"] = new HtmlString(product.name);
 
 
-         product.modelPath =
-           Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
+        ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
 
-         int index = 0;
-         foreach (var group in product.groups)
-         {
-           product.groups[index] = productGroups?.FirstOrDefault(g => g.id == group.id);
-           index++;
-         }
 
-         ToHistory(product);
+        product.modelPath =
+          Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
 
-         return View(product);
-       });
+        int index = 0;
+        foreach (var group in product.groups)
+        {
+          product.groups[index] = productGroups?.FirstOrDefault(g => g.id == group.id);
+          index++;
+        }
+
+        ToHistory(product);
+
+
+
+        return View("/Views/Store/Productv2.cshtml", product);
+      });
     }
 
     public async Task<IActionResult> Offer(int offerId)

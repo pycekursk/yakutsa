@@ -3,6 +3,15 @@
 
 @model Product?
 
+<script type="application/json" id="asp_model">
+  @{
+    var obj = new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+  }
+  @obj
+</script>
+<script type="text/javascript">
+  var model = JSON.parse(document.getElementById("asp_model").innerHTML);
+</script>
 <div class="row d-none">
   <div class="col-md-12">
     <h1 class="text-center mb-0"><a href="@Url.ActionLink("Category", "Store", new {name=ViewData["backUrl"]})">@ViewData["categoryName"]</a></h1>
@@ -20,15 +29,15 @@
   </div>
 }
 
-<div class="my-1 mr-auto goback-wrapper">
+<div class="mt-3 px-3 mr-auto goback-wrapper">
   <a class="" href="@Url.ActionLink("Category", "Store", new {categoryName=ViewData["backUrl"]})">
     <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1;color:var(--main-text-color-hover)"></i>
-    <span class="" style="display: inline-block;color:var(--main-text-color-hover)">назад</span>
+    <span class="" style="display: inline-block;color:var(--main-text-color-hover)">@ViewData["categoryName"]</span>
   </a>
 </div>
 
-<div class="container" data-id="@Model?.id" id="product_info">
-  <div class="row">
+<div class="container-lg container-fluid px-0" data-id="@Model?.id" id="product_info">
+  <div class="row pb-5">
     <div class="col-md-6 px-0" style="display:flex; justify-content:center">
       <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
         @if (!String.IsNullOrEmpty(Model?.modelPath))
@@ -37,28 +46,28 @@
             <img src="~/img/3dicon.png" alt="@Model?.name" />
           </a>
         }
-        <div class="carousel-indicators">
+        @*  <div class="carousel-indicators">
+          @{
+          int index = 0;
+          foreach (Image? image in Model?.images!)
+          {
+          if (image.Size != ImageSize.l) continue;
+          string active = index == 0 ? "active" : "";
+          <button type="button" data-bs-target="#product_carousel" class="@active" data-bs-slide-to="@index" aria-label="@index"></button>
+          index++;
+          }
+          }
+          </div>*@
+        <div class="carousel-inner">
           @{
             int index = 0;
             foreach (Image? image in Model?.images!)
             {
-              if (image.Size != ImageSize.l) continue;
-              string active = index == 0 ? "active" : "";
-              <button type="button" data-bs-target="#product_carousel" class="@active" data-bs-slide-to="@index" aria-label="@index"></button>
-              index++;
-            }
-          }
-        </div>
-        <div class="carousel-inner">
-          @{
-            index = 0;
-            foreach (Image? image in Model?.images!)
-            {
               if (image.Size != ImageSize.m) continue;
               string active = index == 0 ? "active" : "";
-              <div class="carousel-item @active">
-                <a class="fancybox" data-thumbs='{"autoStart":true}' href="@Model?.images.FirstOrDefault(i => i.FileName == image?.FileName?.Replace("m", "l"))?.Url" rel="gallery" data-fancybox="images-preview">
-                  <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: contain;" height="540" width="337">
+              <div class="carousel-item @active" index="@index">
+                <a class="fancybox" data-thumbs='{"autoStart":false}' href="@Model?.images.FirstOrDefault(i => i.FileName == image?.FileName?.Replace("m", "l"))?.Url" rel="gallery" data-fancybox="images-preview">
+                  <img src="@image.Url" class="w-100" alt="@Model?.name" style="object-fit: contain;" height="450">
                 </a>
               </div>
               index++;
@@ -73,71 +82,129 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Следующий</span>
         </button>
+
+        <div class="carousel-preview">
+          <div class="owl-carousel owl-loaded">
+            <div class="owl-stage-outer">
+              <div class="owl-stage ps-0">
+                @{
+                  index = 0;
+                  foreach (Image? image in Model?.images!)
+                  {
+                    if (image.Size != ImageSize.s) continue;
+                    string active = index == 0 ? "active" : "";
+                    <div class="owl-item">
+                      <div class="preview-item @active" index="@index">
+                        <img src="@image.Url" alt="@Model?.name" style="object-fit: contain; width:100%" height="120">
+                      </div>
+                    </div>
+                    index++;
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="col-md-6 px-3">
       <h2 class="text-center p-0 m-0">@Model?.name</h2>
-      <small class="opacity-50 fa-1x text-start d-block">Артикул: @Model?.article</small>
       <br>
-      <p>@Model?.description</p>
+      <div class="text-content">
+        <p>@Model?.description</p>
+        @{
+          var printSize = string.IsNullOrEmpty(Model?.offers?.FirstOrDefault()?.PrintSize) ? "" : $"Размер принта: {Model?.offers?.FirstOrDefault()?.PrintSize}";
+          var material = string.IsNullOrEmpty(Model?.offers?.FirstOrDefault()?.Material) ? "" : $"Состав: {Model?.offers?.FirstOrDefault()?.Material}";
+        }
+      </div>
+      <div id="offer_info">
+        <div value="printSize">@printSize</div>
+        <div value="material">@material</div>
+      </div>
 
-      @if (ViewBag?.Category?.SubGroups?.Length > 0)
+      @if (Model?.models.Count > 1)
       {
         <div id="sub_categories" style="position:relative">
           <label class="mt-4 mb-1">
-            Модель:
+            Выберите модель:
           </label>
-
-          <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
+          <div class="btn-group" role="group" notify>
             @{
               index = 0;
-              foreach (ProductGroup? productGroup in ((ProductGroup)ViewBag?.Category!).SubGroups!)
+              foreach (var mod in Model.models)
               {
-                if (!productGroup.active) continue;
-              //string isChecked = index == 0 ? "checked" : "";
                 <div class="btn-anim m-1">
-                  <input type="radio" class="btn-check btn-main" name="subgroupradio" id="@productGroup.id" autocomplete="off">
-                  <label class="btn btn-primary" for="@productGroup.id">@productGroup.name</label>
+                  <input type="radio" class="btn-check btn-main" name="subgroupradio" id="@mod-button" value="@mod" autocomplete="off">
+                  <label class="btn btn-primary" for="@mod-button">@mod</label>
                 </div>
                 index++;
               }
             }
           </div>
+          <div class="sizes">
+            <div class="sizes-inner">
+              <label class="mt-4 mb-1">
+                Размеры:
+              </label>
+              <div class="position-relative d-inline">
+              </div>
+              <div class="btn-group w-100" role="group">
+                @foreach (var mod in Model.models)
+                {
+                  <div value="@mod" notify class="justify-content-md-start justify-content-center flex-wrap">
+                    @{
+                      var offers = Model?.offers?.Where(o => o.Model == mod).ToList();
+                      foreach (Offer offer in offers)
+                      {
+                        string isDisabled = offer.quantity == 0 || !offer.active ? "disabled" : "";
+                        HtmlString toolTip = offer.quantity == 0 ?
+                        new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' title='Временно нет в наличии'") : new HtmlString("");
+                        <div class="btn-anim m-1 @isDisabled" @toolTip>
+                          <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
+                          <label class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article?.Split("-")[1]</label>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
         </div>
       }
-
-      <div id="sizes">
-        <label class="mt-4 mb-1">
-          Размеры:
-        </label>
-        <div class="position-relative d-inline">
-          <!--
-          <i class="fas fa-question position-absolute" style="top: -15px;right: -10px;font-size:1.2em;color: var(--main-bg-color);"></i>
-          -->
-        </div>
-        <div class="btn-group w-100 justify-content-md-start justify-content-center flex-wrap" role="group">
-          @{
-            index = 0;
-            foreach (Offer offer in Model?.offers!)
-            {
-              if (!offer.active || offer.quantity == 0) continue;
-              string isChecked = index == 0 ? "checked" : "";
-              string isDisabled = offer.quantity == 0 || !offer.active ? "disabled" : "";
-              HtmlString toolTip = offer.quantity == 0 ?
-              new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' title='Временно нет в наличии'") : new HtmlString("");
-              if (!string.IsNullOrEmpty(offer.article))
+      else
+      {
+        <div class="sizes">
+          <div class="sizes-inner">
+            <label class="mt-4 mb-1">
+              Размеры:
+            </label>
+            <div class="position-relative d-inline">
+            </div>
+            <div class="btn-group w-100" role="group">
+              @foreach (var mod in Model?.models!)
               {
-                <div class="btn-anim m-1 @isDisabled">
-                  <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
-                  <label @toolTip class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article?.Split("-")[1]</label>
+                <div value="@mod" notify class="active d-flex justify-content-md-start justify-content-center flex-wrap">
+                  @{
+                    var offers = Model?.offers?.Where(o => o.Model == mod).ToList();
+                    foreach (Offer offer in offers)
+                    {
+                      string isDisabled = offer.quantity == 0 || !offer.active ? "disabled" : "";
+                      HtmlString toolTip = offer.quantity == 0 ?
+                      new HtmlString("data-bs-toggle='tooltip' data-bs-placement='top' title='Временно нет в наличии'") : new HtmlString("");
+                      <div class="btn-anim m-1 @isDisabled" @toolTip>
+                        <input type="radio" class="btn-check btn-main" name="btnradio" id="@offer.id" autocomplete="off">
+                        <label class="btn btn-primary" style="width:100px" for="@offer.id">@offer.article?.Split("-")[1]</label>
+                      </div>
+                    }
+                  }
                 </div>
               }
-              index++;
-            }
-          }
+            </div>
+          </div>
         </div>
-      </div>
-
+      }
+      <br />
       <div class="fa-2x mt-3 text-center">
         <div class="d-inline">
           <strong>@Model.maxPrice</strong>
@@ -149,13 +216,14 @@
       </div>
     </div>
   </div>
+
   @if (Model.analogs.Count != 0)
   {
-    <div class="row">
+    <div class="row px-3">
       <h5 class="my-0 mt-5">Смотрите также:</h5>
     </div>
 
-    <div class="row owl-wrapper" loop="true">
+    <div class="row px-3 owl-wrapper" loop="true">
       <div class="owl-carousel owl-loaded">
         <div class="owl-stage-outer">
           <div class="owl-stage ps-0 py-2">
@@ -184,11 +252,11 @@
   @if (ViewBag?.History != null && (ViewBag?.History as List<Product>)?.Count > 1)
   {
     <div id="history">
-      <div class="row">
+      <div class="row px-3">
         <h5 class="my-0">Вы просматривали:</h5>
       </div>
 
-      <div class="row owl-wrapper py-2" loop="false">
+      <div class="row px-3 owl-wrapper py-2" loop="false">
         <div class="owl-carousel owl-loaded">
           <div class="owl-stage-outer">
             <div class="owl-stage ps-0">
@@ -197,6 +265,7 @@
                 {
                   if (p.id == Model.id) continue;
                   <div class="owl-item" data="@p.id">
+
                     <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
                       <div class="item card bg-transparent nohover">
                         <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="w-100 px-3" style="object-fit:contain; background-color: var(--main-content-bg-color);" alt="@p.name" height="300">
@@ -220,40 +289,47 @@
 
 </div>
 
+<script src="~/js/product.js" asp-append-version="true"></script>
+
 <script>
    if (!isDevelopment) {
       try {
           ym(87733644, 'reachGoal', 'contentview');
-          VK.Goal('view_content');
+          window.onload = function(){
+              setTimeout(()=>{
+                VK.Goal('view_content');
+              }, 150);
+          }
       }
       catch (e) {
           console.log(e);
       }
   }
-      $(document).ready(function(){
-          let items = $('.owl-wrapper[loop=false] .owl-item');
-          items.each((i,e)=>{
-              let $this = $(e);
-              let id = e.getAttribute('data');
-              let button = $this.find('.card-buttons i.fas.fa-times');
-              button.on('click', (evt)=>{
-                evt.preventDefault();
-                $this.addClass('opacity-25');
-                sendAjaxForm({id:id}, "@Url.ActionLink("RemoveFromHistoryAsync","Products")",
-                (responce)=>{
-                    if(responce.Success){
-                        if($('.owl-wrapper[loop=false] .owl-item').length == 1){
-                                $('#history h5').addClass('fade');
-                                setTimeout(()=>   $this.remove(), 300);
-                           }
-                           else{
-                                $this.remove();
-                           }
-                    }
-                }, false);
-              });
-          });
-      });
+
+    $(document).ready(function(){
+        let items = $('.owl-wrapper[loop=false] .owl-item');
+        items.each((i,e)=>{
+            let $this = $(e);
+            let id = e.getAttribute('data');
+            let button = $this.find('.card-buttons i.fas.fa-times');
+            button.on('click', (evt)=>{
+              evt.preventDefault();
+              $this.addClass('opacity-25');
+              sendAjaxForm({id:id}, "@Url.ActionLink("RemoveFromHistoryAsync","Products")",
+              (responce)=>{
+                  if(responce.Success){
+                      if($('.owl-wrapper[loop=false] .owl-item').length == 1){
+                              $('#history h5').addClass('fade');
+                              setTimeout(()=>   $this.remove(), 300);
+                         }
+                         else{
+                              $this.remove();
+                         }
+                  }
+              }, false);
+            });
+        });
+    });
 
 </script>
 

@@ -1,5 +1,5 @@
 ﻿<div id="signin_modal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog modal-md" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-body">
         <div>
@@ -8,15 +8,24 @@
             <div class="d-flex d-md-flex d-xl-flex justify-content-center justify-content-md-center justify-content-xl-center illustration">
               <img class="d-flex d-xl-flex mb-3" src="~/img/logo.png" />
             </div>
-            <div class="input-group">
-              <div class="labelholder">
-                <input required class="form-control" type="text" name="login" placeholder="Email" />
+
+            <div class="form-row input-group" style="justify-content:space-between">
+              <div class="col-6 px-1">
+                <div class="labelholder">
+                  <input required class="form-control" type="text" name="login" placeholder="Email" />
+                </div>
               </div>
-              <div class="labelholder">
-                <input required class="form-control" type="password" name="password" placeholder="Пароль" />
+              <div class="col-6 px-1">
+                <div class="labelholder">
+                  <input required class="form-control" type="password" name="password" placeholder="Пароль" />
+                </div>
               </div>
             </div>
-            <div class="input-group mt-2" style="justify-content:space-between">
+
+
+            <div class="input-group">
+            </div>
+            <div class="input-group mt-2" style="justify-content:space-around">
               <div class="btn-anim" style="flex: 0 0 49%;">
                 <button class="btn btn-primary w-100" type="submit">ВОЙТИ</button>
               </div>

@@ -156,18 +156,22 @@ namespace yakutsa.Controllers
     }
 
     [Route("ToCart")]
-    public IActionResult ToCart(int id, int offerId, int? subCategoryId, int count = 1)
+    public IActionResult ToCart(int productId, int offerId, int count = 1)
     {
       PortalActionResult actionResult = new();
-
-      Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == id);
-
+      Product? product = _retailCRM.GetResponse<Product>()?.Array?.FirstOrDefault(p => p.id == productId);
       product.groups = _retailCRM.GetResponse<ProductGroup>().Array?.Where(g => product?.groups?.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray();
+      try
+      {
+        count = product.offers.FirstOrDefault(o => o.id == offerId).quantity < count ? product.offers.FirstOrDefault(o => o.id == productId).quantity : count;
+      }
+      catch (Exception exc)
+      {
+        actionResult.Success = false;
+        actionResult.Message = exc.Message;
+        return actionResult;
+      }
 
-      //product.groups.
-      //ProductGroup? productGroup = _retailCRM.GetResponse<ProductGroup>().Array?.FirstOrDefault(p => p?.SubGroups?.Length != 0 && p?.SubGroups.FirstOrDefault(sb => sb.));
-
-      count = product.offers.FirstOrDefault(o => o.id == offerId).quantity < count ? product.offers.FirstOrDefault(o => o.id == id).quantity : count;
 
       base.Cart?.Add(product!, product!.offers.FirstOrDefault(o => o.id == offerId)!, count);
 
@@ -231,9 +235,9 @@ namespace yakutsa.Controllers
       return RedirectToAction("Cart", "Home");
     }
     [Route("ChangeCount")]
-    public IActionResult ChangeCount(int id, int offerId, int count)
+    public IActionResult ChangeCount(int productId, int offerId, int count)
     {
-      Cart?.ChangeCount(id, offerId, count);
+      Cart?.ChangeCount(productId, offerId, count);
       CheckOffers();
       return RedirectToAction("Cart", "Home");
     }
@@ -399,6 +403,7 @@ namespace yakutsa.Controllers
       return result;
     }
 
+    [Route("SignIn")]
     public async Task<IActionResult> SignIn(string login, string password)
     {
       var user = await _userManager.FindByEmailAsync(login.ToLower());
@@ -408,6 +413,7 @@ namespace yakutsa.Controllers
       return RedirectToAction("Index", "Home");
     }
 
+    [Route("SignOut")]
     new public async Task<IActionResult> SignOut()
     {
       await _signIn.SignOutAsync();
