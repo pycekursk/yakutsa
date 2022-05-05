@@ -1,0 +1,30 @@
+﻿@model Vk
+
+<div class="row">
+  <h1 class="text-center">@ViewData["Title"]</h1>
+</div>
+
+<div class="container p-0">
+  <div class="row">
+    <div class="col-sm-12">
+      @*   <form action="@Url.ActionLink("Vk","Admin")" method="post">
+        <input class="form-control" type="submit" value="ага" />
+        </form>*@
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div id="content">
+        @Model.WallJson
+      </div>
+    </div>
+  </div>
+
+</div>
+
+@*<script>
+  var form = document.getElementById("form");
+  formToAjax(form, (response)=>{document.getElementById('content').innerHTML = response.Html;}, true);
+</script>*@

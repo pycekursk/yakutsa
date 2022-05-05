@@ -37,18 +37,7 @@ public class Startup
          .AddEntityFrameworkStores<ApplicationDbContext>()
          .AddDefaultTokenProviders();
 
-
     services.AddRouting();
-    //services.AddAuthorizationCore();
-    //services.AddAuthenticationCore();
-    //services.AddResponseCompression(options =>
-    //{
-    //  options.EnableForHttps = true;
-    //  options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions
-    //  {
-    //    Level = CompressionLevel.Optimal
-    //  }));
-    //});
 
     services.AddDistributedMemoryCache();
 
@@ -56,6 +45,7 @@ public class Startup
 
     services.AddScoped<ApplicationDbContext>();
     services.AddScoped<RetailCRM>();
+    services.AddScoped<Vk>((e) => Vk.Initialize());
 
     services.AddSession();
     services.AddControllersWithViews();
@@ -65,15 +55,8 @@ public class Startup
   public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
   {
     if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-
     Environment = env;
-
-
-
-
-
     var provider = new FileExtensionContentTypeProvider();
-    // Add new mappings
     provider.Mappings[".gltf"] = "application/x-msdownload";
 
     if (env.IsDevelopment())
@@ -83,7 +66,6 @@ public class Startup
     else
     {
       app.UseExceptionHandler("/Error");
-      // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
       app.UseHsts();
     }
 
@@ -99,16 +81,6 @@ public class Startup
         ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
       }
     });
-
-    //app.UseStaticFiles(new StaticFileOptions
-    //{
-    //  FileProvider = new PhysicalFileProvider(
-    //       Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
-    //  RequestPath = "/StaticContentDir",
-    //  ContentTypeProvider = provider
-    //});
-
-
     app.UseRouting();
 
     app.UseAuthorization();
@@ -116,21 +88,12 @@ public class Startup
 
     app.UseSession();
 
-    //ResponseCachingExtensions.UseResponseCaching(app);
-
-
-
     app.UseEndpoints(endpoints =>
     {
       endpoints.MapControllerRoute(
          name: "default",
          pattern: "{action}/{id?}",
          defaults: new { controller = "Home", action = "Index" });
-
-      //endpoints.MapControllerRoute(
-      //   name: "categories",
-      //   pattern: "{name}",
-      //   defaults: new { controller = "Categories", action = "Category" });
 
       endpoints.MapControllerRoute(
        name: "admin",

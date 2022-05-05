@@ -71,6 +71,14 @@ HTMLElement.prototype.toggleClass = function (value) {
     this.className = this.className.includes(value) ? this.className.replace(value, '').trim() : `${value} ${this.className}`;
 }
 
+HTMLElement.prototype.removeClass = function (value) {
+    this.classList.remove(value);
+}
+
+HTMLElement.prototype.addClass = function (value) {
+    this.classList.add(value);
+}
+
 function sizeAdaptation(videos) {
     videos.forEach(e => {
         e.height = window.innerHeight;
@@ -93,7 +101,7 @@ function scrollHandler(evt) {
             $('.top-bar').fadeIn(duration_easing = 50);
             $('.toTop-toggler').addClass('active');
         } else {
-            if (url == '/')
+            if (url == '/' && detector.isPhoneSized())
                 $('.top-bar').fadeOut(duration_easing = 50);
             $('.toTop-toggler').removeClass('active');
         }

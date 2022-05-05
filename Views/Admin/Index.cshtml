@@ -1,17 +1,42 @@
-﻿@model List<Product>?
+﻿
 
 <div class="row">
   <h1 class="text-center">@ViewData["Title"]</h1>
   <div hidden>
-    Yakutsa - российский бренд уличной одежды.
-    Мы совмещаем стрит-веар и аниме принты с футуристичными киберпанковыми элементами. Мы создаём для Вас удобные модели худи и футболок, которые прослужат долгое время за счёт качественных материалов и новейшего способа нанесения авторского рисунка.
-    Доставка по всему миру.
   </div>
 </div>
 
 <div class="container p-0">
   <div class="row">
     <div class="col-sm-12">
+      <div class="btn-group" role="group">
+        <div class="btn-anim">
+          <a class="btn btn-main" href="@Url.ActionLink("Products", "Admin")">Товары</a>
+        </div>
+        <div class="btn-anim">
+          <a class="btn btn-main" href="@Url.ActionLink("Categories", "Admin")">Категории</a>
+        </div>
+        <div class="btn-anim">
+          <a class="btn btn-main" href="@Url.ActionLink("Vk", "Admin")">VK</a>
+        </div>
+      </div>
     </div>
   </div>
+  @*  <div class="row">
+    <div class="col-sm-12">
+    <div id="tab_content">
+    </div>
+    </div>
+    </div>*@
 </div>
+
+@*<script>
+  var inputs = document.querySelectorAll(".btn-anim > input");
+  var wrapper = document.getElementById("tab_content");
+  inputs.forEach((i)=> {
+  i.addEventListener('change', (evt)=> {
+  document.querySelectorAll(".btn-anim.active").forEach((ai)=> ai.removeClass('active'));
+  evt.target.parentElement.addClass('active');
+  });
+  });
+  </script>*@

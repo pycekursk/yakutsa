@@ -21,7 +21,7 @@ namespace yakutsa.Controllers
   {
     private IMemoryCache _cache;
 
-    public StoreController(IMemoryCache memoryCache, RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger) : base(retailCRM, userManager, signIn, context, environment, logger)
+    public StoreController(IMemoryCache memoryCache, RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger, Vk vk) : base(retailCRM, userManager, signIn, context, environment, logger, vk)
     {
       _cache = memoryCache;
     }
@@ -75,78 +75,13 @@ namespace yakutsa.Controllers
       });
     }
 
-    //[Route("{categoryName}/{productName}")]
-    //public async Task<IActionResult> Product(string categoryName, string productName)
-    //{
-    //  if (_environment.IsDevelopment()) { return await Productv2(categoryName, productName); }
-    //  return await Task.Run<IActionResult>(() =>
-    //   {
-    //     var products = _retailCRM.GetResponse<Product>();
-    //     //var newProducts = _retailCRM.GetProducts();
-
-    //     Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active && p.quantity > 0)!;
-
-    //     if (product == null) return NotFound();
-
-    //     product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
-
-    //     List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
-
-    //     var currentProductGroups = product.groups;
-
-    //     foreach (ProductGroup currentProductGroup in currentProductGroups!)
-    //     {
-    //       foreach (var prod in products?.Array!)
-    //       {
-    //         if (prod.id != product.id && prod.active && prod.groups.Contains(currentProductGroup))
-    //         {
-    //           prod.groups.ToList().ForEach(p =>
-    //           {
-    //             p.name = productGroups.FirstOrDefault(g => g.id == p.id)?.name;
-    //           });
-    //           product.analogs.Add(prod);
-    //         }
-    //       }
-    //     }
-
-    //     ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
-
-    //     category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
-    //     ViewBag.Category = category;
-
-    //     ViewData["backUrl"] = category?.name.ToLower();
-    //     ViewData["categoryName"] = category?.name;
-
-    //     ViewData["Description"] = new HtmlString($"{product.description}");
-    //     ViewData["Title"] = new HtmlString(product.name);
-
-
-    //     ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
-
-
-    //     product.modelPath =
-    //       Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
-
-    //     int index = 0;
-    //     foreach (var group in product.groups)
-    //     {
-    //       product.groups[index] = productGroups?.FirstOrDefault(g => g.id == group.id);
-    //       index++;
-    //     }
-
-    //     ToHistory(product);
-
-    //     return View(product);
-    //   });
-    //}
-
     [Route("{categoryName}/{productName}")]
     public async Task<IActionResult> Product(string categoryName, string productName)
     {
       return await Task.Run<IActionResult>(() =>
       {
         var products = _retailCRM.GetResponse<Product>();
-       
+
         Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active && p.quantity > 0)!;
 
         if (product == null) return NotFound();

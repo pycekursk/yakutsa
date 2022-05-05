@@ -761,7 +761,7 @@ ul {
     align-items: center;
     bottom: 0;
     background-color: var(--body-bg-color);
-    padding: 0.2em 0.5em;
+    padding: 0.5em;
 }
 
 
@@ -1176,8 +1176,6 @@ ul li {
     /* animation-fill-mode: forwards;
     animation-name: notify-pulsing;*/
     /*animation: 1.5s ease 0s infinite normal none running notifyPulsing;*/
-  
- 
 }
 
 .noticed[notify] {
@@ -1237,3 +1235,8 @@ ul li {
     .carousel-preview .preview-item.active, body:not(.mobile) .carousel-preview .preview-item:hover {
         border-color: var(--main-border-color) !important;
     }
+
+
+.btn-group > * {
+    margin: 0 10px;
+}

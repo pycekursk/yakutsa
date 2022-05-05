@@ -25,6 +25,7 @@ namespace yakutsa.Controllers
     internal UserManager<AppUser> _userManager;
     internal SignInManager<AppUser> _signIn;
     internal RetailCRM _retailCRM;
+    internal Vk _vk;
     internal string _files;
     private Cart? cart;
     private List<Product>? history;
@@ -40,7 +41,8 @@ namespace yakutsa.Controllers
         SignInManager<AppUser> signIn,
         ApplicationDbContext context,
         IWebHostEnvironment environment,
-        ILogger<BaseController> logger
+        ILogger<BaseController> logger,
+        Vk vk
         ) : base()
     {
       _retailCRM = retailCRM;
@@ -50,6 +52,7 @@ namespace yakutsa.Controllers
       _signIn = signIn;
       _files = _environment.WebRootPath + "/files/";
       _logger = logger;
+      _vk = vk;
       CultureInfo.CurrentCulture = new CultureInfo("RU-ru") { DateTimeFormat = new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" } };
     }
 

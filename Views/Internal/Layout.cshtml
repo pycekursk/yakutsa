@@ -85,7 +85,7 @@
           <i class="fas fa-bars fa-sm nohover" style="margin-top: 0 !important;" data-bs-toggle="modal" href="#menu_modal" role="button"></i>
           @if (SignInManager.IsSignedIn(User))
           {
-            <a class="nohover" href="@Url.ActionLink("Products", "Admin")" aria-hidden="true">
+            <a class="nohover" href="@Url.ActionLink("Index", "Admin")" aria-hidden="true">
               <i class="fas fa-tools d-block fa-sm nohover" count="0" role="button" aria-hidden="true"></i>
             </a>
             <a class="nohover" href="@Url.ActionLink("SignOut", "Home")" aria-hidden="true">
@@ -239,39 +239,41 @@
   <script src="~/js/site.js" type="text/javascript" asp-append-version="true"></script>
 
   <script type="text/javascript" language="javascript">
-           let url =  '@Context.Request.Path';
-
-          if(url != '/'){
-                 document.querySelector('.top-bar').style.display = 'block';
-                 $('.top-bar').height($('.top-bar .top-bar-inner').height() + 8);
+       let url =  '@Context.Request.Path';
 
 
+       if(detector.isPhoneSized()){
+             if(url != '/'){
+             document.querySelector('.top-bar').style.display = 'block';
+             $('.top-bar').height($('.top-bar .top-bar-inner').height() + 16);
+             $('.top-bar').css('position','static');
+            }
+       }
+       else{
+             document.querySelector('.top-bar').style.display = 'block';
+              $('.top-bar').css('position','static');
+       }
 
+           document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(()=> {
+                    document.body.classList.remove('loading');
+                    document.body.classList.remove('busy');
+                }, 5250);
 
-    $('.top-bar').css('position','static');
-
-
+                 window.onload = function(){
+                    setTimeout(()=> {document.body.classList.remove('loading');}, 150);
+                    setTimeout(()=> { document.body.classList.remove('busy');}, 200);
            }
-               document.addEventListener("DOMContentLoaded", () => {
-                    setTimeout(()=> {
-                        document.body.classList.remove('loading');
-                        document.body.classList.remove('busy');
-                    }, 5250);
-
-                     window.onload = function(){
-                        setTimeout(()=> {document.body.classList.remove('loading');}, 150);
-                        setTimeout(()=> { document.body.classList.remove('busy');}, 200);
-               }
-               });
-                 (function ($) {Initialize($);})(jQuery);
-                var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
-        !function (t) {
-            var a = t.getElementsByTagName("head")[0];
-            var c = t.createElement("script");
-            c.type = "text/javascript";
-            c.src = "//c.retailcrm.tech/widget/loader.js";
-            a.appendChild(c);
-        } (document);
+           });
+             (function ($) {Initialize($);})(jQuery);
+            var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
+    !function (t) {
+        var a = t.getElementsByTagName("head")[0];
+        var c = t.createElement("script");
+        c.type = "text/javascript";
+        c.src = "//c.retailcrm.tech/widget/loader.js";
+        a.appendChild(c);
+    } (document);
 
   </script>
 
