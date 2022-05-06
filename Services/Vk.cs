@@ -45,17 +45,26 @@ namespace yakutsa.Services
     {
       Client.Authorize(new ApiAuthParams
       {
-        AccessToken = "507f821fb7688395d37e67836ca6edaf388cfd8d5a6c4da03fa381f40decc6b0f8fc488b8296d0a36ad5a",//_groupToken,// "507f821fb7688395d37e67836ca6edaf388cfd8d5a6c4da03fa381f40decc6b0f8fc488b8296d0a36ad5a",
+        AccessToken = _groupToken,// "507f821fb7688395d37e67836ca6edaf388cfd8d5a6c4da03fa381f40decc6b0f8fc488b8296d0a36ad5a",
         Settings = Settings.All
       });
 
-      var products = Client.Markets.Get(_groupId);
+      //var products = Client.Markets.Get(_groupId);
     }
 
     public string GetWall()
     {
-      var wall = Client.Wall.Get(new VkNet.Model.RequestParams.WallGetParams { OwnerId = _groupId });
-      return Newtonsoft.Json.JsonConvert.SerializeObject(wall);
+      string result = string.Empty;
+      try
+      {
+        var wall = Client.Wall.Get(new VkNet.Model.RequestParams.WallGetParams { OwnerId = _groupId });
+        result = Newtonsoft.Json.JsonConvert.SerializeObject(wall);
+      }
+      catch (Exception exc)
+      {
+        return exc.Message;
+      }
+      return result;
     }
 
     string CodeRequest()

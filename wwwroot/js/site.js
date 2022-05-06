@@ -123,7 +123,14 @@ function Initialize($) {
                 parentEl: ".fancybox-container", // Container is injected into this element
                 axis: "y" // Vertical (y) or horizontal (x) scrolling
             },
-
+            beforeShow: function (evt) {
+                $('main').addClass('blur');
+                console.log('open', evt);
+            },
+            beforeClose: function (evt) {
+                $('main').removeClass('blur');
+                console.log('close', evt);
+            }
         });
 
         /* $('.fancybox').on("afterShow.fb", (evt) => { console.log(evt); });*/

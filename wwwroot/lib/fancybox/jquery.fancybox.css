@@ -27,7 +27,16 @@ body.compensate-for-scrollbar {
     transform: translateZ(0);
     width: 100%;
     z-index: 99992;
+  /*  backdrop-filter: blur(10px) contrast(90%);
+    -webkit-backdrop-filter: blur(10px) contrast(90%);*/
 }
+
+    /*.fancybox-container::before {
+        backdrop-filter: blur(10px) contrast(90%);
+        -webkit-backdrop-filter: blur(10px) contrast(90%);
+        width: contain;
+    }*/
+
 
     .fancybox-container * {
         box-sizing: border-box;
@@ -50,7 +59,7 @@ body.compensate-for-scrollbar {
 }
 
 .fancybox-bg {
-    background: rgb(87 87 87);
+    background: transparent;
     opacity: 0;
     transition-duration: inherit;
     transition-property: opacity;
@@ -845,7 +854,7 @@ body.compensate-for-scrollbar {
     cursor: pointer;
     float: left;
     height: 170px;
-   /* margin: 2px;*/
+    /* margin: 2px;*/
     max-height: calc(100% - 8px);
     max-width: calc(50% - 4px);
     outline: none;

@@ -31,9 +31,13 @@
   <link rel="stylesheet" href="~/lib/labelholder/labelholder.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
   <style>
-    body.loading main, body.loading aside, body.loading footer, body.loading #retailcrm-consultant-app {
+    body.loading aside, body.loading footer, body.loading #retailcrm-consultant-app {
         transition: 150ms;
         opacity: 0;
+    }
+
+    body.loading main {
+        filter: blur(10px);
     }
 
   </style>

@@ -1231,8 +1231,6 @@ ul li {
     flex: 1 1 auto;
 }
 
-    /**/
-
     .carousel-preview .preview-item.active, body:not(.mobile) .carousel-preview .preview-item:hover {
         border-color: var(--main-border-color) !important;
     }
@@ -1240,4 +1238,8 @@ ul li {
 
 .btn-group > * {
     margin: 0 10px;
+}
+
+.blur {
+    filter: blur(10px);
 }
