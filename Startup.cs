@@ -14,98 +14,98 @@ using yakutsa.Services;
 
 public class Startup
 {
-  public Startup(IConfiguration configuration)
-  {
-    _configuration = configuration;
-  }
-
-  IConfiguration _configuration { get; set; }
-  public static IWebHostEnvironment? Environment { get; set; }
-
-  public void ConfigureServices(IServiceCollection services)
-  {
-    services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseMySql("server=37.77.105.24;database=yakutsa;uid=pycek;password=6m7sd38L;ConvertZeroDateTime=True", new MySqlServerVersion(new Version(8, 0, 23))));
-
-    services.AddDatabaseDeveloperPageExceptionFilter();
-
-    services.AddIdentity<AppUser, IdentityRole>(options =>
+    public Startup(IConfiguration configuration)
     {
-      options.User.AllowedUserNameCharacters = "абвгдеёжзийклмнопрстуфхцчшщьыъэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-      options.User.RequireUniqueEmail = false;
-    })
-         .AddEntityFrameworkStores<ApplicationDbContext>()
-         .AddDefaultTokenProviders();
-
-    services.AddRouting();
-
-    services.AddDistributedMemoryCache();
-
-    services.AddResponseCompression(options => { options.EnableForHttps = true; options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions { Level = CompressionLevel.Optimal })); });
-
-    services.AddScoped<ApplicationDbContext>();
-    services.AddScoped<RetailCRM>();
-    services.AddScoped<Vk>((e) => Vk.Initialize());
-
-    services.AddSession();
-    services.AddControllersWithViews();
-    services.AddRazorPages();
-  }
-
-  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-  {
-    if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-    Environment = env;
-    var provider = new FileExtensionContentTypeProvider();
-    provider.Mappings[".gltf"] = "application/x-msdownload";
-
-    if (env.IsDevelopment())
-    {
-      app.UseMigrationsEndPoint();
-    }
-    else
-    {
-      app.UseExceptionHandler("/Error");
-      app.UseHsts();
+        _configuration = configuration;
     }
 
-    app.UseHttpsRedirection();
+    IConfiguration _configuration { get; set; }
+    public static IWebHostEnvironment? Environment { get; set; }
 
-
-    app.UseStaticFiles(new StaticFileOptions()
+    public void ConfigureServices(IServiceCollection services)
     {
-      HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
-      ContentTypeProvider = provider,
-      OnPrepareResponse = ctx =>
-      {
-        ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
-      }
-    });
-    app.UseRouting();
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseMySql("server=37.77.105.24;database=yakutsa;uid=pycek;password=6m7sd38L;ConvertZeroDateTime=True", new MySqlServerVersion(new Version(8, 0, 23))));
 
-    app.UseAuthorization();
-    app.UseAuthentication();
+        services.AddDatabaseDeveloperPageExceptionFilter();
 
-    app.UseSession();
+        services.AddIdentity<AppUser, IdentityRole>(options =>
+        {
+            options.User.AllowedUserNameCharacters = "абвгдеёжзийклмнопрстуфхцчшщьыъэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = false;
+        })
+             .AddEntityFrameworkStores<ApplicationDbContext>()
+             .AddDefaultTokenProviders();
 
-    app.UseEndpoints(endpoints =>
+        services.AddRouting();
+
+        services.AddDistributedMemoryCache();
+
+        services.AddResponseCompression(options => { options.EnableForHttps = true; options.Providers.Add(new GzipCompressionProvider(new GzipCompressionProviderOptions { Level = CompressionLevel.Optimal })); });
+
+        services.AddScoped<ApplicationDbContext>();
+        services.AddScoped<RetailCRM>();
+        services.AddSingleton<Vk>((e) => Vk.Initialize());
+
+        services.AddSession();
+        services.AddControllersWithViews();
+        services.AddRazorPages();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-      endpoints.MapControllerRoute(
-         name: "default",
-         pattern: "{action}/{id?}",
-         defaults: new { controller = "Home", action = "Index" });
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+        Environment = env;
+        var provider = new FileExtensionContentTypeProvider();
+        provider.Mappings[".gltf"] = "application/x-msdownload";
 
-      endpoints.MapControllerRoute(
-       name: "admin",
-       pattern: "{controller}/{action?}",
-       defaults: new { controller = "Admin" });
+        if (env.IsDevelopment())
+        {
+            app.UseMigrationsEndPoint();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
+        }
 
-      endpoints.MapControllerRoute(
-        name: "store",
-        pattern: "{categoryName}/{productName?}/{article?}",
-        defaults: new { controller = "Store" });
+        app.UseHttpsRedirection();
 
-      endpoints.MapRazorPages();
-    });
-  }
+
+        app.UseStaticFiles(new StaticFileOptions()
+        {
+            HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
+            ContentTypeProvider = provider,
+            OnPrepareResponse = ctx =>
+            {
+                ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
+            }
+        });
+        app.UseRouting();
+
+        app.UseAuthorization();
+        app.UseAuthentication();
+
+        app.UseSession();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+           name: "default",
+           pattern: "{action}/{id?}",
+           defaults: new { controller = "Home", action = "Index" });
+
+            endpoints.MapControllerRoute(
+         name: "admin",
+         pattern: "{controller}/{action}/{id?}",
+         defaults: new { controller = "Admin", action = "Index" });
+
+            endpoints.MapControllerRoute(
+          name: "store",
+          pattern: "{categoryName}/{productName?}/{article?}",
+          defaults: new { controller = "Store" });
+
+            endpoints.MapRazorPages();
+        });
+    }
 }

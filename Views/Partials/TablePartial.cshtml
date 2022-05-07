@@ -1,0 +1,42 @@
+﻿@using System.Reflection
+@model List<object>
+
+
+
+@{
+    var properties = Model.First().GetType().GetProperties().Where(p => p.GetCustomAttribute(typeof(TableAttribute)) != null).ToList();
+}
+
+<div class="table-responsive" id="table_@Model.First().GetType().Name">
+    <table class="table table-sm table-dark table-hover">
+        <thead>
+            <tr>
+                <th scope="col" style="text-align:center">№</th>
+                @foreach (PropertyInfo prop in properties)
+                {
+                    var columnName = prop.GetCustomAttribute<TableAttribute>()?.ColumnName;
+                    <th scope="col" style="text-align:center">@columnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int index = 1;
+            }
+            @foreach (object item in Model)
+            {
+                <tr style="position:relative">
+                    <th scope="row">
+                        <a style="position: absolute;left:10px;right: 0;top: 0;bottom: 0;text-align:start" href="@Url.ActionLink(Model.First().GetType().Name, values: new { id = item.GetPropertyValue("id")})">@index</a>
+                    </th>
+                    @foreach (PropertyInfo prop in properties)
+                    {
+                        var val = item.GetPropertyValue(prop.Name) == null ? "" : item.GetPropertyValue(prop.Name);
+                        <td>@val</td>
+                    }
+                </tr>
+                index++;
+            }
+        </tbody>
+    </table>
+</div>

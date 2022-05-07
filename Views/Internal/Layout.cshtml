@@ -1,292 +1,281 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-  @* <meta http-equiv="x-ua-compatible" content="IE=edge">*@
-  <meta charset="utf-8" />
-  <!-- Chrome, Firefox OS and Opera -->
-  <meta name="theme-color" content="black">
-  <!-- Windows Phone -->
-  <meta name="msapplication-navbutton-color" content="black">
-  <!-- iOS Safari -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#272727" />
-  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=5' />
-  <meta property="og:type" content='website'>
-  <meta property="og:title" content='@ViewData["Title"]'>
-  <meta property="og:url" content='https://@this.Context.Request.Host'>
-  <meta property="og:image" content='@ViewData["Image"]'>
-  <meta name="yandex-verification" content="ffb2a7e35abc7b93" />
-  <meta property="og:description" content="@ViewData["Description"]">
-  <meta property="description" content="@ViewData["Description"]">
-  <title>YAKUTSA | @ViewData["Title"]</title>
-  <link rel="canonical" href='@ViewData["canonical"]'>
-  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/svg" href="/favicon.svg">
-  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true">
-  <link rel="stylesheet" href="~/lib/fancybox/jquery.fancybox.css">
-  <link rel="stylesheet" href="~/css/suggestion.css" />
-  <link rel="stylesheet" href="~/lib/toolkit.min.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/lib/labelholder/labelholder.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
-  <style>
-    body.loading aside, body.loading footer, body.loading #retailcrm-consultant-app {
-        transition: 150ms;
-        opacity: 0;
-    }
+    @* <meta http-equiv="x-ua-compatible" content="IE=edge">*@
+    <meta charset="utf-8" />
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="black">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="black">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#272727" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=5' />
+    <meta property="og:type" content='website'>
+    <meta property="og:title" content='@ViewData["Title"]'>
+    <meta property="og:url" content='https://@this.Context.Request.Host'>
+    <meta property="og:image" content='@ViewData["Image"]'>
+    <meta name="yandex-verification" content="ffb2a7e35abc7b93" />
+    <meta property="og:description" content="@ViewData["Description"]">
+    <meta property="description" content="@ViewData["Description"]">
+    <title>YAKUTSA | @ViewData["Title"]</title>
+    <link rel="canonical" href='@ViewData["canonical"]'>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg" href="/favicon.svg">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/fancybox/jquery.fancybox.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/suggestion.css" />
+    <link rel="stylesheet" href="~/lib/toolkit.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/labelholder/labelholder.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
+    <style>
+        body.loading aside, body.loading footer, body.loading #retailcrm-consultant-app {
+            transition: 150ms;
+            opacity: 0;
+        }
 
-    body.loading main {
-        filter: blur(10px);
-    }
+        body.loading main {
+            filter: blur(10px);
+        }
 
-  </style>
-  <link rel="stylesheet" href="~/lib/fontawesome/css/fontawesome.css" />
-  <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
-  <link rel="stylesheet" href="~/lib/fontawesome/css/brands.css" />
-  <link rel="stylesheet" href="~/lib/fontawesome/css/regular.css" />
-  <link rel="stylesheet" href="~/lib/owl/css/owl.carousel.css" asp-append-version="true">
-  <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
-  <script src="~/js/exstensions.js" type="text/javascript" asp-append-version="true"></script>
+    </style>
+    <link rel="stylesheet" href="~/lib/fontawesome/css/fontawesome.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/brands.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/regular.css" />
+    <link rel="stylesheet" href="~/lib/owl/css/owl.carousel.css" asp-append-version="true">
+    <script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="~/js/exstensions.js" type="text/javascript" asp-append-version="true"></script>
 </head>
 <body class="busy loading">
 
-  <script src="~/lib/mobile-detect.min.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/mobile-detect.min.js" type="text/javascript" asp-append-version="true"></script>
 
-  @{
-    bool isDevelopment = true;
-    if (!Startup.Environment.IsDevelopment())
-    {
-      isDevelopment = false;
-      <!-- Yandex.Metrika counter -->
-      <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-        ym(87733644, "init", {
-             clickmap:true,
-             trackLinks:true,
-             accurateTrackBounce:true,
-             webvisor:true
-        });
-      </script>
-      <noscript><div><img src="https://mc.yandex.ru/watch/87733644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-      <!-- /Yandex.Metrika counter -->
-      <script type="text/javascript">!function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src='https://vk.com/js/api/openapi.js?169',t.onload=function(){VK.Retargeting.Init("VK-RTRG-1318686-5SDfC"),VK.Retargeting.Hit()},document.head.appendChild(t)}();</script>
-      <noscript><img src="https://vk.com/rtrg?p=VK-RTRG-1318686-5SDfC" style="position:fixed; left:-999px;" alt="" /></noscript>
-    }
-  }
-
-  <script type="text/javascript">
-    const isDevelopment = @isDevelopment.ToString().ToLower();
-  </script>
-
-  <header>
-    <nav class="top-bar" style="display: none;">
-      <div class="top-bar-inner position-fixed">
-        <div class="inline-icons">
-          <i class="fas fa-bars fa-sm nohover" style="margin-top: 0 !important;" data-bs-toggle="modal" href="#menu_modal" role="button"></i>
-          @if (SignInManager.IsSignedIn(User))
-          {
-            <a class="nohover" href="@Url.ActionLink("Index", "Admin")" aria-hidden="true">
-              <i class="fas fa-tools d-block fa-sm nohover" count="0" role="button" aria-hidden="true"></i>
-            </a>
-            <a class="nohover" href="@Url.ActionLink("SignOut", "Home")" aria-hidden="true">
-              <i class="fas d-block fa-door-open fa-sm" aria-hidden="true" role="button"></i>
-            </a>
-          }
-          else
-          {
-            <i role="button" class="fas fa-door-closed nohover fa-sm" data-bs-toggle="modal" data-bs-target="#signin_modal" aria-hidden="true"></i>
-          }
-        </div>
-        <a href="/" class="d-block">
-          <img src="~/img/logo.png" alt="logo" aria-hidden="true" height="40" style="object-fit:contain;width:100%;" />
-        </a>
-        <a class="nohover" href="@Url.ActionLink("Cart", "Home")" aria-hidden="true">
-          <i class="fas fa-shopping-cart d-block fa-sm nohover" count="@ViewData["count"]" role="button"></i>
-        </a>
-      </div>
-    </nav>
     @{
-      await Html.RenderPartialAsync("~/Views/Partials/MainMenuPartial.cshtml");
+        bool isDevelopment = true;
+        if (!Startup.Environment.IsDevelopment())
+        {
+            isDevelopment = false;
+            <!-- Yandex.Metrika counter -->
+            <script type="text/javascript">
+                (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+                ym(87733644, "init", {
+                     clickmap:true,
+                     trackLinks:true,
+                     accurateTrackBounce:true,
+                     webvisor:true
+                });
+            </script>
+            <noscript><div><img src="https://mc.yandex.ru/watch/87733644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+            <!-- /Yandex.Metrika counter -->
+            <script type="text/javascript">!function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src='https://vk.com/js/api/openapi.js?169',t.onload=function(){VK.Retargeting.Init("VK-RTRG-1318686-5SDfC"),VK.Retargeting.Hit()},document.head.appendChild(t)}();</script>
+            <noscript><img src="https://vk.com/rtrg?p=VK-RTRG-1318686-5SDfC" style="position:fixed; left:-999px;" alt="" /></noscript>
+        }
     }
-  </header>
 
-  <script>
-    //document.querySelector('img[alt=logo]').addEventListener('load', (evt)=>{
+    <script type="text/javascript">
+        const isDevelopment = @isDevelopment.ToString().ToLower();
+    </script>
 
-    //    console.log(evt);
-
-    //});
-
-  </script>
-
-  <main role="main">
-    <div class="container-fluid">
-      @RenderBody()
-    </div>
-  </main>
-
-  <footer class="footer-dark">
-    <div class="container">
-      <div class="row" style="border-top-style: none;">
-        <div class="col-sm-7 col-md-7 item">
-          <div class="accordion accordion-flush" id="footer_accordion">
-            <div class="accordion-item">
-              <h5 class="accordion-header" id="footer-flush-headingOne">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseOne" aria-expanded="false" aria-controls="footer-flush-collapseOne">
-                  Клиентам
-                </button>
-              </h5>
-              <div id="footer-flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingOne" data-bs-parent="#footer_accordion">
-                <ul class="hovered text-left mt-1 m-0">
-                  <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("PaymentRules","Home")">Способы оплаты</a></li>
-                  <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("DeliveryRules","Home")">Условия доставки</a></li>
-                  <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("Care","Home")">Уход за продукцией</a></li>
-                  <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("RefundPolicy","Home")">Политика возврата</a></li>
-                  <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("Privacy","Home")">Конфиденциальность</a></li>
-                </ul>
-              </div>
+    <header>
+        <nav class="top-bar" style="opacity:0;">
+            <div class="top-bar-inner position-fixed">
+                <div class="inline-icons">
+                    <i class="fas fa-bars fa-sm nohover" style="margin-top: 0 !important;" data-bs-toggle="modal" href="#menu_modal" role="button"></i>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a class="nohover" href="@Url.ActionLink("Index", "Admin")" aria-hidden="true">
+                            <i class="fas fa-tools d-block fa-sm nohover" count="0" role="button" aria-hidden="true"></i>
+                        </a>
+                        <a class="nohover" href="@Url.ActionLink("SignOut", "Home")" aria-hidden="true">
+                            <i class="fas d-block fa-door-open fa-sm" aria-hidden="true" role="button"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <i role="button" class="fas fa-door-closed nohover fa-sm" data-bs-toggle="modal" data-bs-target="#signin_modal" aria-hidden="true"></i>
+                    }
+                </div>
+                <a href="/" class="d-block">
+                    <img src="~/img/logo.png" alt="logo" aria-hidden="true" height="40" style="object-fit:contain;width:100%;" />
+                </a>
+                <a class="nohover" href="@Url.ActionLink("Cart", "Home")" aria-hidden="true">
+                    <i class="fas fa-shopping-cart d-block fa-sm nohover" count="@ViewData["count"]" role="button"></i>
+                </a>
             </div>
+        </nav>
 
-            <div class="accordion-item">
-              <h5 class="accordion-header" id="footer-flush-headingTwo">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseTwo" aria-expanded="false" aria-controls="footer-flush-collapseTwo">
-                  Контакты
-                </button>
-              </h5>
-              <div id="footer-flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingTwo" data-bs-parent="#footer_accordion">
-                <p style="padding-left:2rem;">
-                  ООО "ЯКУТСА"
-                  <br />
-                  Номер счета: 40702810902860010663
-                  <br />
-                  ИНН: 9725040790
-                  <br />
-                  ОГРН: 1207700466324
-                  <br />
-                  КПП: 772501001
-                  <br />
-                  Юридический адрес: 115419, РОССИЯ, г. Москва, Проезд Рощинский 2-й, д. Д. 8, квартира/офис Э/ПОМ 12/XVII
-                  <br />
-                  Телефон: +7 999 003 1000
-                  <br />
-                  Email: info@yakutsa.ru
-                  <br />
-                  <br />
-                  Реквизиты АО "АЛЬФА-БАНК"
-                  <br />
-                  БИК: 044525593
-                  <br />
-                  К/с: 30101810200000000593 в ГУ БАНКА РОССИИ ПО ЦФО
+        @{
+            await Html.RenderPartialAsync("~/Views/Partials/MainMenuPartial.cshtml");
+        }
+    </header>
+    <main role="main">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer-dark">
+        <div class="container">
+            <div class="row" style="border-top-style: none;">
+                <div class="col-sm-7 col-md-7 item">
+                    <div class="accordion accordion-flush" id="footer_accordion">
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="footer-flush-headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseOne" aria-expanded="false" aria-controls="footer-flush-collapseOne">
+                                    Клиентам
+                                </button>
+                            </h5>
+                            <div id="footer-flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingOne" data-bs-parent="#footer_accordion">
+                                <ul class="hovered text-left mt-1 m-0">
+                                    <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("PaymentRules","Home")">Способы оплаты</a></li>
+                                    <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("DeliveryRules","Home")">Условия доставки</a></li>
+                                    <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("Care","Home")">Уход за продукцией</a></li>
+                                    <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("RefundPolicy","Home")">Политика возврата</a></li>
+                                    <li class="nohover m-0 h-100"><a class="py-1" href="@Url.ActionLink("Privacy","Home")">Конфиденциальность</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="footer-flush-headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#footer-flush-collapseTwo" aria-expanded="false" aria-controls="footer-flush-collapseTwo">
+                                    Контакты
+                                </button>
+                            </h5>
+                            <div id="footer-flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="footer-flush-headingTwo" data-bs-parent="#footer_accordion">
+                                <p style="padding-left:2rem;">
+                                    ООО "ЯКУТСА"
+                                    <br />
+                                    Номер счета: 40702810902860010663
+                                    <br />
+                                    ИНН: 9725040790
+                                    <br />
+                                    ОГРН: 1207700466324
+                                    <br />
+                                    КПП: 772501001
+                                    <br />
+                                    Юридический адрес: 115419, РОССИЯ, г. Москва, Проезд Рощинский 2-й, д. Д. 8, квартира/офис Э/ПОМ 12/XVII
+                                    <br />
+                                    Телефон: +7 999 003 1000
+                                    <br />
+                                    Email: info@yakutsa.ru
+                                    <br />
+                                    <br />
+                                    Реквизиты АО "АЛЬФА-БАНК"
+                                    <br />
+                                    БИК: 044525593
+                                    <br />
+                                    К/с: 30101810200000000593 в ГУ БАНКА РОССИИ ПО ЦФО
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-sm-1 col-md-1 item">
+                    @* <ul class="d-inline-flex w-100 justify-content-center">
+                        <li class="mx-2 nohover"><i class="fa fa-cc-visa fa-3x nohover"></i></li>
+                        <li class="mx-2 nohover"><i class="fa fa-cc-mastercard fa-3x nohover"></i></li>
+                        </ul>*@
+                </div>
+                <div class="col social">
+                    <a target="_blank" href="https://t.me/YakutsaBot"><i class="fab fa-telegram fa-3x"></i></a>
+                    <a target="_blank" href="https://vk.com/yakutsa_brand"><i class="fab fa-vk fa-3x"></i></a>
+                    <a target="_blank" href="https://instagram.com/yakutsa_brand"><i class="fab fa-instagram fa-3x"></i></a>
+                    <a target="_blank" href="https://www.youtube.com/channel/UCxq6j-h92qNcrzla8Ol3XAw"><i class="fab fa-youtube fa-3x"></i></a>
+                    <a target="_blank" href="https://www.tiktok.com/@@yakutsa_brand"><i class="fab fa-tiktok fa-3x"></i></a>
+                </div>
+
+
+
+                <p class="copyright">
+                    <a href="tel:+79990031000" target="_blank">+7 (999) 003-10-00</a>
+                    <span>ООО &quot;ЯКУТСА&quot; @DateTime.Now.Year <i class="fa fa-copyright nohover"></i></span>
                 </p>
-              </div>
             </div>
-
-          </div>
-
         </div>
-        <div class="col-sm-1 col-md-1 item">
-          @* <ul class="d-inline-flex w-100 justify-content-center">
-            <li class="mx-2 nohover"><i class="fa fa-cc-visa fa-3x nohover"></i></li>
-            <li class="mx-2 nohover"><i class="fa fa-cc-mastercard fa-3x nohover"></i></li>
-            </ul>*@
-        </div>
-        <div class="col social">
-          <a target="_blank" href="https://t.me/YakutsaBot"><i class="fab fa-telegram fa-3x"></i></a>
-          <a target="_blank" href="https://vk.com/yakutsa_brand"><i class="fab fa-vk fa-3x"></i></a>
-          <a target="_blank" href="https://instagram.com/yakutsa_brand"><i class="fab fa-instagram fa-3x"></i></a>
-          <a target="_blank" href="https://www.youtube.com/channel/UCxq6j-h92qNcrzla8Ol3XAw"><i class="fab fa-youtube fa-3x"></i></a>
-          <a target="_blank" href="https://www.tiktok.com/@@yakutsa_brand"><i class="fab fa-tiktok fa-3x"></i></a>
-        </div>
+    </footer>
 
 
+    <div class="loading-cover"></div>
 
-        <p class="copyright">
-          <a href="tel:+79990031000" target="_blank">+7 (999) 003-10-00</a>
-          <span>ООО &quot;ЯКУТСА&quot; @DateTime.Now.Year <i class="fa fa-copyright nohover"></i></span>
-        </p>
-      </div>
+
+    <div class="messages-wrapper">
+        @foreach (Message item in ViewBag.Messages)
+        {
+            await Html.RenderPartialAsync("/Views/Partials/MessagePartial.cshtml", item);
+        }
     </div>
-  </footer>
 
-
-  <div class="loading-cover"></div>
-
-
-  <div class="messages-wrapper">
-    @foreach (Message item in ViewBag.Messages)
-    {
-      await Html.RenderPartialAsync("/Views/Partials/MessagePartial.cshtml", item);
+    @{
+        await Html.RenderPartialAsync("/Views/Partials/SigninModal.cshtml");
     }
-  </div>
 
-  @{
-    await Html.RenderPartialAsync("/Views/Partials/SigninModal.cshtml");
-  }
-
-  <div class="d-block toTop-toggler">
-    <i class="fa fa-arrow-up opacity-100 nohover" style="z-index: 15550;"></i>
-  </div>
+    <div class="d-block toTop-toggler">
+        <i class="fa fa-arrow-up opacity-100 nohover" style="z-index: 15550;"></i>
+    </div>
 
 
-  <script src="~/lib/owl/js/owl.carousel.js" type="text/javascript" asp-append-version="true"></script>
-  <script src="/lib/popper/popper.min.js" type="text/javascript"></script>
-  <script src="/lib/fancybox/jquery.fancybox.js" type="text/javascript" asp-append-version="true"></script>
-  <script src="~/js/labelholder.js" type="text/javascript"></script>
-  <script src="~/js/suggestion.js" type="text/javascript"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
-  <script src="~/lib/labelholder/labelholder.js" type="text/javascript"></script>
-  <script src="~/lib/vibrate/vibrate.js" type="text/javascript" asp-append-version="true"></script>
-  <script src="~/js/site.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/owl/js/owl.carousel.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="/lib/popper/popper.min.js" type="text/javascript"></script>
+    <script src="/lib/fancybox/jquery.fancybox.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/js/labelholder.js" type="text/javascript"></script>
+    <script src="~/js/suggestion.js" type="text/javascript"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+    <script src="~/lib/labelholder/labelholder.js" type="text/javascript"></script>
+    <script src="~/lib/vibrate/vibrate.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/js/site.js" type="text/javascript" asp-append-version="true"></script>
 
-  <script type="text/javascript" language="javascript">
-       let url =  '@Context.Request.Path';
-
-
-       if(detector.isPhoneSized()){
-             if(url != '/'){
-             document.querySelector('.top-bar').style.display = 'block';
-             $('.top-bar').height($('.top-bar .top-bar-inner').height() + 16);
-             $('.top-bar').css('position','static');
-            }
-       }
-       else{
-             document.querySelector('.top-bar').style.display = 'block';
-              $('.top-bar').css('position','static');
-       }
-
-           document.addEventListener("DOMContentLoaded", () => {
-                setTimeout(()=> {
-                    document.body.classList.remove('loading');
-                    document.body.classList.remove('busy');
-                }, 5250);
-
-                 window.onload = function(){
-                    setTimeout(()=> {document.body.classList.remove('loading');}, 150);
-                    setTimeout(()=> { document.body.classList.remove('busy');}, 200);
+    <script type="text/javascript" language="javascript">
+           let url =  '@Context.Request.Path';
+           if(detector.isPhoneSized()){
+                 if(url == '/'){
+                         $('.top-bar').css({'display':'none'});
+                    }
+                   document.querySelector('.top-bar').style.opacity = 1;
            }
-           });
-             (function ($) {Initialize($);})(jQuery);
-            var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
-    !function (t) {
-        var a = t.getElementsByTagName("head")[0];
-        var c = t.createElement("script");
-        c.type = "text/javascript";
-        c.src = "//c.retailcrm.tech/widget/loader.js";
-        a.appendChild(c);
-    } (document);
+           else{
+                 document.querySelector('.top-bar').style.opacity = 1;
+           }
 
-  </script>
+           $('.top-bar').css('height', Math.round($('.top-bar-inner').height() + 14));
+
+               document.addEventListener("DOMContentLoaded", () => {
+                    setTimeout(()=> {
+                        document.body.classList.remove('loading');
+                        document.body.classList.remove('busy');
+                    }, 5250);
+
+                     window.onload = function(){
+                        setTimeout(()=> {document.body.classList.remove('loading');}, 150);
+                        setTimeout(()=> { document.body.classList.remove('busy');}, 200);
+               }
+               });
+                 (function ($) {Initialize($);})(jQuery);
+                var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
+        !function (t) {
+            var a = t.getElementsByTagName("head")[0];
+            var c = t.createElement("script");
+            c.type = "text/javascript";
+            c.src = "//c.retailcrm.tech/widget/loader.js";
+            a.appendChild(c);
+        } (document);
+
+    </script>
 
 
-  @if (SignInManager.IsSignedIn(User) && User.IsInRole("admin"))
-  {
-    <script src="~/js/admin.js" type="text/javascript" asp-append-version="true"></script>
-  }
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("admin"))
+    {
+        <script src="~/js/admin.js" type="text/javascript" asp-append-version="true"></script>
+    }
 
-  @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

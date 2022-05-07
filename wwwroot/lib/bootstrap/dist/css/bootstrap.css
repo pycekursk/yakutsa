@@ -682,7 +682,7 @@ progress {
 }
 
 .row {
-  /*  --bs-gutter-x: 1.5rem;*/
+    /*  --bs-gutter-x: 1.5rem;*/
     --bs-gutter-y: 0;
     display: flex;
     flex-wrap: wrap;
@@ -4198,7 +4198,7 @@ textarea.form-control-lg {
     display: flex;
     flex-wrap: wrap;
     padding-left: 0;
-    margin-bottom: 0;
+    margin-bottom: 10px;
     list-style: none;
 }
 
@@ -4226,41 +4226,48 @@ textarea.form-control-lg {
     cursor: default;
 }
 
-.nav-tabs {
-    border-bottom: 1px solid #dee2e6;
+
+.nav-tabs btn-anim nav-link.active {
+    border-color: transparent !important;
 }
 
-    .nav-tabs .nav-link {
-        margin-bottom: -1px;
-        background: none;
-        border: 1px solid transparent;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
+/*
+.nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+}*/
+
+.nav-tabs .nav-link {
+    margin-bottom: -1px;
+    background: none;
+    border: 1px solid transparent;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    border-width: 0;
+}
+
+    .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+        border-color: #e9ecef #e9ecef #dee2e6;
+        isolation: isolate;
     }
 
-        .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
-            border-color: #e9ecef #e9ecef #dee2e6;
-            isolation: isolate;
-        }
-
-        .nav-tabs .nav-link.disabled {
-            color: #6c757d;
-            background-color: transparent;
-            border-color: transparent;
-        }
-
-        .nav-tabs .nav-link.active,
-        .nav-tabs .nav-item.show .nav-link {
-            color: #495057;
-            background-color: #fff;
-            border-color: #dee2e6 #dee2e6 #fff;
-        }
-
-    .nav-tabs .dropdown-menu {
-        margin-top: -1px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+    .nav-tabs .nav-link.disabled {
+        color: #6c757d;
+        background-color: transparent;
+        border-color: transparent;
     }
+
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link {
+        color: #495057;
+        background-color: transparent;
+        border-color: #dee2e6 #dee2e6 #fff;
+    }
+
+.nav-tabs .dropdown-menu {
+    margin-top: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
 
 .nav-pills .nav-link {
     background: none;

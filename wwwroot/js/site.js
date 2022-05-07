@@ -32,20 +32,6 @@ function observe(target) {
     });
 }
 
-
-$.fn.loader = function () {
-    return this.each((index, element) => {
-        if ($(element).find('i.fa-spinner').length == 0) {
-            this.append('<i class="fas fa-spinner"></i>')
-        }
-        let e = $(element).find('.btn');
-        if (e.length > 0) {
-            e.on('click', (evt) =>
-                evt.currentTarget.parentElement.classList.contains('active') ? evt.currentTarget.parentElement.classList.remove('active') : evt.currentTarget.parentElement.classList.add('active'));
-        }
-    });
-};
-
 //var detector;
 
 function Initialize($) {
@@ -112,11 +98,6 @@ function Initialize($) {
 
 
         $('.fancybox').fancybox({
-            opts: {
-                afterShow: function (instance, current) {
-                    console.info('done!');
-                }
-            },
             thumbs: {
                 autoStart: false, // Display thumbnails on opening
                 hideOnClose: true, // Hide thumbnail grid when closing animation starts
@@ -124,38 +105,22 @@ function Initialize($) {
                 axis: "y" // Vertical (y) or horizontal (x) scrolling
             },
             beforeShow: function (evt) {
-                $('main').addClass('blur');
+                $('main, header, footer').addClass('blur');
                 console.log('open', evt);
             },
             beforeClose: function (evt) {
-                $('main').removeClass('blur');
+                $('main, header, footer').removeClass('blur');
                 console.log('close', evt);
             }
         });
-
-        /* $('.fancybox').on("afterShow.fb", (evt) => { console.log(evt); });*/
-
-        //$('.fancybox').fancybox({
-        //    afterLoad: function (instance, current) {
-        //        var pixelRatio = window.devicePixelRatio || 1;
-
-        //        if (pixelRatio > 1.5) {
-        //            current.width = current.width / pixelRatio;
-        //            current.height = current.height / pixelRatio;
-        //        }
-        //    }
-        //});
-
 
         $('.loader').loader();
 
         $(window).on('resize', () => checkDevice());
     }
 
-
-
     function loadedHandler() {
-        $('.top-bar').css('height', Math.round($('.top-bar-inner').height() + 4));
+
         window.onload = function () {
             let sizesTable = `<h5>Таблица размеров</h5><div class='container'><div class='row row-cols-8'><div class='col'></div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>2XL</div><div class='col'>3XL</div><div class='col'>+/- см.</div></div></div>`;
             let newTable = "<div class='tooltip-table'><h5>Таблица размеров</h5><div class='container'><div class='row row-cols-12'><div class='col-5'></div><div class='col'>XS</div><div class='col'>S</div><div class='col'>M</div><div class='col'>L</div><div class='col'>XL</div><div class='col'>+/- см.</div></div><div class='row row-cols-12'><div class='col-5'>Рост</div><div class='col'>??</div><div class='col'>160</div><div class='col'>165</div><div class='col'>170</div><div class='col'>175</div><div class='col'>3</div></div><div class='row row-cols-12'><div class='col-5'>Длина по спинке</div><div class='col'>??</div><div class='col'>68</div><div class='col'>69,5</div><div class='col'>71</div><div class='col'>72,5</div><div class='col'>1,5</div></div><div class='row row-cols-12'><div class='col-5'>Ширина по груди</div><div class='col'>??</div><div class='col'>57</div><div class='col'>59</div><div class='col'>61</div><div class='col'>63</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина рукава</div><div class='col'>??</div><div class='col'>56</div><div class='col'>57</div><div class='col'>58</div><div class='col'>59</div><div class='col'>1,0</div></div><div class='row row-cols-12'><div class='col-5'>Длина плеча</div><div class='col'>??</div><div class='col'>23</div><div class='col'>23</div><div class='col'>24</div><div class='col'>24,5</div><div class='col'>0,5</div></div></div></div>";
@@ -214,6 +179,7 @@ function Initialize($) {
 
         window.onbeforeunload = function () {
             document.body.classList.add('busy');
+            document.body.classList.add('loading');
         }
 
         $(window).on("scroll", (evt) => scrollHandler(evt));

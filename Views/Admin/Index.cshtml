@@ -1,42 +1,62 @@
 ﻿
 
 <div class="row">
-  <h1 class="text-center">@ViewData["Title"]</h1>
-  <div hidden>
-  </div>
+    <h1 class="text-center">@ViewData["Title"]</h1>
+    <div hidden>
+    </div>
 </div>
 
-<div class="container p-0">
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="btn-group" role="group">
-        <div class="btn-anim">
-          <a class="btn btn-main" href="@Url.ActionLink("Products", "Admin")">Товары</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-panel">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item btn-anim active" role="presentation">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Products","Admin")">Товары</a>
+                    </li>
+                    <li class="nav-item btn-anim" role="presentation">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Categories","Admin")">Категории</a>
+                    </li>
+                    <li class="nav-item btn-anim" role="presentation">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" role="tab" data-link="@Url.ActionLink("Vk","Admin")" aria-controls="ajax">VK</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                  
+                </div>
+            </div>
         </div>
-        <div class="btn-anim">
-          <a class="btn btn-main" href="@Url.ActionLink("Categories", "Admin")">Категории</a>
-        </div>
-        <div class="btn-anim">
-          <a class="btn btn-main" href="@Url.ActionLink("Vk", "Admin")">VK</a>
-        </div>
-      </div>
     </div>
-  </div>
-  @*  <div class="row">
-    <div class="col-sm-12">
-    <div id="tab_content">
-    </div>
-    </div>
-    </div>*@
 </div>
 
-@*<script>
-  var inputs = document.querySelectorAll(".btn-anim > input");
-  var wrapper = document.getElementById("tab_content");
-  inputs.forEach((i)=> {
-  i.addEventListener('change', (evt)=> {
-  document.querySelectorAll(".btn-anim.active").forEach((ai)=> ai.removeClass('active'));
-  evt.target.parentElement.addClass('active');
-  });
-  });
-  </script>*@
+<script>
+    $.ready((function($){
+        var $tabPanel = $('.tab-panel');
+        var $tabContent = $tabPanel.find('.tab-content');
+        var $navTabs = $tabPanel.find('.nav-tabs');
+        let $navItems = $navTabs.find('.nav-item');
+        $navItems.on('click', (evt) => {
+            let $this = $(evt.currentTarget);
+            let $navLink = $this.find('.nav-link[data-link]');
+            let $tabePanes = $tabContent.find('.tab-pane');
+            $navItems.removeClass('active').find('.nav-link').removeClass('active');
+            $tabePanes.removeClass('show').removeClass('active');
+            if($navLink.length > 0){
+                let $tabPane = $tabContent.find('#ajax');
+                if($tabPane.length == 0){
+                    $tabPane = $('<div class="tab-pane loader loading fade" id="ajax" role="tabpanel" ></div>');
+                    $tabContent.append($tabPane);
+                }
+                $tabPane.addClass('loading');
+                $.get($navLink.attr('data-link'), (response)=>{
+                    $tabPane.removeClass('loading');
+                    $tabPane.html(response);
+                    $tabPane.loader();
+                });
+            }
+            $this.addClass('active').find('.nav-link').addClass('active');
+            $tabContent.find(`#${$this.find('.nav-link').attr('aria-controls')}`).addClass('show').addClass('active');
+        });
+        $tabPanel.find('.nav-item.active').click();
+    })(jQuery));
+</script>

@@ -1,0 +1,18 @@
+﻿@model ProductGroup
+
+<div class="row">
+    <h1 class="text-center">@ViewData["Title"]</h1>
+</div>
+
+<div class="container p-0">
+    <div class="row">
+        <div class="col-sm-12">
+            @using (Html.BeginForm(actionName: Model.GetType().Name, "Admin", method: FormMethod.Post))
+            {
+                @Html.HiddenFor(e => e.id)
+                @Html.TextBoxFor(e => e.name)
+                @Html.TextAreaFor(e => e.description)
+            }
+        </div>
+    </div>
+</div>

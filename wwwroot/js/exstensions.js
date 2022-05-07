@@ -89,6 +89,22 @@ function sizeAdaptation(videos) {
     }
 }
 
+$.fn.loader = function () {
+    return this.each((index, element) => {
+        if ($(element).find('i.fa-spinner').length == 0) {
+            this.append('<i class="fas fa-spinner fa-3x" style="position:absolute;text-align: center;top: 20px;width:100%;user-select: none;pointer-events: none;"></i>');
+        }
+
+        //this.css('position', 'relative');
+
+        //let e = $(element).find('.btn');
+        //if (e.length > 0) {
+        //    e.on('click', (evt) =>
+        //        evt.currentTarget.parentElement.classList.contains('active') ? evt.currentTarget.parentElement.classList.remove('active') : evt.currentTarget.parentElement.classList.add('active'));
+        //}
+    });
+};
+
 function scrollHandler(evt) {
     return new Promise((resolve) => {
         if ($(window).scrollTop() > 90) {
