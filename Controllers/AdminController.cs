@@ -78,12 +78,18 @@ namespace yakutsa.Controllers
         [HttpGet]
         public IActionResult Vk()
         {
-            //PortalActionResult actionResult = new PortalActionResult();
             ViewData["Description"] = new HtmlString("Интеграция VK");
             ViewData["Title"] = new HtmlString("");
-            //actionResult.Success = true;
+            var vk = _context.Vk.FirstOrDefault();
+            if (vk == null)
+            {
+                _context.Vk.Add(_vk);
+                _context.SaveChanges();
+                _vk = _context.Vk.FirstOrDefault();
+            }
+            else
+                _vk = vk;
 
-            _vk.WallJson = _vk.GetWall();
             return PartialView(_vk);
         }
 
@@ -91,13 +97,9 @@ namespace yakutsa.Controllers
         [HttpPost]
         public IActionResult Vk(Vk vk)
         {
-            //PortalActionResult actionResult = new PortalActionResult();
-            ViewData["Description"] = new HtmlString("Интеграция VK");
-            ViewData["Title"] = new HtmlString("");
-            //actionResult.Success = true;
-
-            _vk.WallJson = _vk.GetWall();
-            return PartialView(_vk);
+            _context.Vk.Update(vk);
+            _context.SaveChanges();
+            return View(model: vk);
         }
 
         [Route("Admin/Vk/Code")]
@@ -121,7 +123,7 @@ namespace yakutsa.Controllers
             if (!_signIn.IsSignedIn(User)) return NotFound();
             ViewData["Description"] = new HtmlString("");
             ViewData["Title"] = new HtmlString("Управление товарами");
-            List<Product>? products = _retailCRM.GetResponse<Product>().Array?.ToList();
+            List<object>? products = _retailCRM.GetResponse<Product>()?.Array?.Select(p => p as object).ToList();
             return PartialView(products);
         }
 

@@ -262,6 +262,7 @@ body.mobile #footer_accordion {
     }
 
 body main {
+    transition: filter 250ms;
     margin-bottom: 50px !important;
     min-height: 85vh;
 }
@@ -323,10 +324,10 @@ body.busy .loading-cover {
 }
 
 
-body.mobile.busy .loading-cover {
+/*body.mobile.busy .loading-cover {
     background-size: 10em;
 }
-
+*/
 h1 {
     font-size: calc(0.8rem + 1.5vw) !important;
 }
@@ -486,6 +487,14 @@ label[for], input[type=checkbox] {
 .container-table .description {
     text-align: justify;
 }
+
+th[scope=row] {
+    min-width: 40px;
+}
+
+    th[scope=row] a {
+        padding-left: 10px;
+    }
 
 /*main > .container-fluid > .container {
     margin-top: 1.5rem !important;
@@ -737,7 +746,7 @@ ul {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 9000;
 }
 
 /*  .top-bar.fade {

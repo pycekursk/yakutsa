@@ -1,8 +1,6 @@
 ﻿@using System.Reflection
 @model List<object>
 
-
-
 @{
     var properties = Model.First().GetType().GetProperties().Where(p => p.GetCustomAttribute(typeof(TableAttribute)) != null).ToList();
 }
@@ -11,11 +9,11 @@
     <table class="table table-sm table-dark table-hover">
         <thead>
             <tr>
-                <th scope="col" style="text-align:center">№</th>
+                <th scope="col">№</th>
                 @foreach (PropertyInfo prop in properties)
                 {
-                    var columnName = prop.GetCustomAttribute<TableAttribute>()?.ColumnName;
-                    <th scope="col" style="text-align:center">@columnName</th>
+                    var val = prop.GetCustomAttribute<TableAttribute>()?.ColumnName;
+                    <th scope="col">@val</th>
                 }
             </tr>
         </thead>
@@ -27,7 +25,7 @@
             {
                 <tr style="position:relative">
                     <th scope="row">
-                        <a style="position: absolute;left:10px;right: 0;top: 0;bottom: 0;text-align:start" href="@Url.ActionLink(Model.First().GetType().Name, values: new { id = item.GetPropertyValue("id")})">@index</a>
+                        <a style="position: absolute;left:0; right: 0;top: calc(50% - 0.75em);bottom: 0;text-align:start" href="@Url.ActionLink(Model.First().GetType().Name, values: new { id = item.GetPropertyValue("id")})">@index</a>
                     </th>
                     @foreach (PropertyInfo prop in properties)
                     {

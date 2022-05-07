@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using yakutsa.Data;
 
@@ -10,9 +11,10 @@ using yakutsa.Data;
 namespace yakutsa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220507161129_AppendVk")]
+    partial class AppendVk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,30 +283,37 @@ namespace yakutsa.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AccessToken")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<long>("ApplicationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("ClientSecret")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<long>("GroupId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("GroupToken")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RedirectUrl")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ServiceToken")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("WallJson")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

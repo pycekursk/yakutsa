@@ -1,25 +1,11 @@
-﻿@model List<Product>?
+﻿@model List<object>
 
 <div class="row">
-    <h1 class="text-center">@ViewData["Title"]</h1>
+    <h4 class="text-center">@ViewData["Title"]</h4>
 </div>
 
-<div class="container p-0 container-table" id="products_control">
-    <div class="row container-table-header">
-        <div class="col-1"><input type="checkbox" /></div>
-        <div class="col-3"><span>Название</span></div>
-        <div class="col-8"><span>Описание</span></div>
+<div class="row">
+    <div class="col-sm-12">
+        @Html.Partial("/Views/Partials/TablePartial.cshtml", (List<object>)Model)
     </div>
-    @foreach (Product? product in Model!)
-    {
-        <a href="@Url.ActionLink("Product","Admin", new {id = product.id})">
-            <div class="row item" data-id="@product.id">
-                <div class="col-2 col-md-1 selector"><span><input type="checkbox" /></span></div>
-                <div class="col-10 col-md-3 name"><span>@product.name</span></div>
-                <div class="col-12 col-md-8 description"><span>@product.description</span></div>
-            </div>
-        </a>
-    }
 </div>
-
-

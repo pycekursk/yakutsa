@@ -1,0 +1,38 @@
+﻿@using System.Reflection
+@model object
+
+@{
+    var properties = Model.GetType().GetProperties();
+    //var fields = Model.GetType().GetFields();
+    <form action="/@ViewData["Controller"].ToString()/@Model.GetType().Name" method="post">
+        @foreach (PropertyInfo prop in properties)
+        {
+            var type = string.Empty;
+            var access = prop.CanWrite ? "" : "readonly";
+            var value = Model.GetPropertyValue(prop.Name);
+            switch (prop.PropertyType.Name.ToLower())
+            {
+                case "string":
+                    type = "text";
+                    break;
+                case "int":
+                    type = "num";
+                    break;
+                case "int64":
+                    type = "num";
+                    break;
+                case "boolean":
+                    type = "checkbox";
+                    break;
+                default: break;
+            }
+            <div class="labelholder has-labelholder floating" data-label="@prop.Name" style="margin:5px 0;">
+                <input type="@type" value="@value" @access class="form-control" name="@prop.Name" />
+            </div>
+        }
+        <div class="btn-anim">
+            <input class="btn" type="submit" value="Сохранить" />
+        </div>
+    </form>
+}
+
