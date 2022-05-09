@@ -1,15 +1,17 @@
 ﻿@using System.Reflection
+@using Microsoft.AspNetCore.Html
 @model object
 
 @{
     var properties = Model.GetType().GetProperties();
-    //var fields = Model.GetType().GetFields();
-    <form action="/@ViewData["Controller"].ToString()/@Model.GetType().Name" method="post">
+    <form action="/@ViewData["Controller"]?.ToString()/@Model.GetType().Name" method="post">
         @foreach (PropertyInfo prop in properties)
         {
+            if ((prop.PropertyType.IsClass || prop.PropertyType.IsArray) && prop.PropertyType != typeof(String)) continue;
             var type = string.Empty;
             var access = prop.CanWrite ? "" : "readonly";
-            var value = Model.GetPropertyValue(prop.Name);
+            var value = new HtmlString($"value=\"{Model.GetPropertyValue(prop.Name)}\"");
+            var cssClass = "form-control";
             switch (prop.PropertyType.Name.ToLower())
             {
                 case "string":
@@ -23,16 +25,31 @@
                     break;
                 case "boolean":
                     type = "checkbox";
+                    cssClass = "form-check";
+                    value = ((bool)Model.GetPropertyValue(prop.Name)) == true ? new HtmlString("checked") : HtmlString.Empty;
                     break;
                 default: break;
             }
-            <div class="labelholder has-labelholder floating" data-label="@prop.Name" style="margin:5px 0;">
-                <input type="@type" value="@value" @access class="form-control" name="@prop.Name" />
+            <div class="labelholder has-labelholder floating" data-label="@prop.GetDisplayName()" style="margin:5px 0;">
+                <input type="@type" @value @access class="@cssClass" name="@prop.Name" />
             </div>
         }
+
         <div class="btn-anim">
             <input class="btn" type="submit" value="Сохранить" />
         </div>
     </form>
+    var actions = Model.GetType().GetProperties().Where(p => p.GetCustomAttribute<RetailCRMCore.Models.ActionAttribute>() != null).Select(p => new { property = p.Name, action = p.GetCustomAttribute<RetailCRMCore.Models.ActionAttribute>()?.ActionName });
+
+    if (actions.Count() > 0)
+    {
+        <div id="actions" target-type="@Model.GetType().FullName">
+            @foreach (var action in actions)
+            {
+                <input type="button" onclick="sendAjaxForm({obj: '@Model.GetType().FullName', action: '@action.action' }, this.getAttribute('target-action'), (response)=>{ console.log(response); document.querySelector(`input[name=@action.property]`).value = response.Data; }, true)" target-action="/@ViewData["Controller"]?.ToString()/Action/" value="@action.property" />
+            }
+        </div>
+    }
+
 }
 

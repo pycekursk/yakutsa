@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 
 using yakutsa.Data;
+using yakutsa.Extensions;
 using yakutsa.Models;
 using yakutsa.Services;
 
@@ -51,17 +52,30 @@ namespace yakutsa.Controllers
 
         [HttpGet]
         [Route("Admin/ProductGroup")]
-        public IActionResult ProductGroup(int id)
+        public IActionResult Category(int id)
         {
             if (!_signIn.IsSignedIn(User)) return NotFound();
-            var category = _retailCRM.GetResponse<ProductGroup>()?.Array?.FirstOrDefault(gr => gr.id == id);
+            var category = _retailCRM.GetResponse<ProductGroup>()?.Array?.FirstOrDefault(cg => cg.id == id);
             if (category == null) return NotFound();
 
-            ViewData["Title"] = new HtmlString(category.name);
             ViewData["Description"] = new HtmlString(category.description);
-
+            ViewData["Title"] = new HtmlString(category.name);
             return View(category);
         }
+
+        //[HttpGet]
+        //[Route("Admin/ProductGroup")]
+        //public IActionResult ProductGroup(int id)
+        //{
+        //    if (!_signIn.IsSignedIn(User)) return NotFound();
+        //    var category = _retailCRM.GetResponse<ProductGroup>()?.Array?.FirstOrDefault(gr => gr.id == id);
+        //    if (category == null) return NotFound();
+
+        //    ViewData["Title"] = new HtmlString(category.name);
+        //    ViewData["Description"] = new HtmlString(category.description);
+
+        //    return View(category);
+        //}
 
         [HttpPost]
         [Route("Admin/ProductGroup")]
@@ -80,16 +94,6 @@ namespace yakutsa.Controllers
         {
             ViewData["Description"] = new HtmlString("Интеграция VK");
             ViewData["Title"] = new HtmlString("");
-            var vk = _context.Vk.FirstOrDefault();
-            if (vk == null)
-            {
-                _context.Vk.Add(_vk);
-                _context.SaveChanges();
-                _vk = _context.Vk.FirstOrDefault();
-            }
-            else
-                _vk = vk;
-
             return PartialView(_vk);
         }
 
@@ -97,9 +101,10 @@ namespace yakutsa.Controllers
         [HttpPost]
         public IActionResult Vk(Vk vk)
         {
-            _context.Vk.Update(vk);
+            _vk = vk;
+            _context.Vk.Update(_vk);
             _context.SaveChanges();
-            return View(model: vk);
+            return View(model: _vk);
         }
 
         [Route("Admin/Vk/Code")]
@@ -147,6 +152,23 @@ namespace yakutsa.Controllers
             product.groups = groups.Select(p => new ProductGroup { id = p }).ToArray();
             _retailCRM.UpdateProductsAsync(new Product[] { product }).ContinueWith(t => actionResult.Success = t.Result.Value).Wait();
             return actionResult;
+        }
+
+        [Route("Admin/Action")]
+        public IActionResult Action(string obj, string action)
+        {
+            PortalActionResult portalActionResult = new();
+            var fieldName = this.GetType().GetFields().First(f => f.FieldType.FullName == obj).Name;
+            var field = this.GetFieldValue(fieldName);
+            var method = field.GetType().GetMethod(action);
+            portalActionResult.Data = (string?)method?.Invoke(field, null);
+            portalActionResult.Success = true;
+            return portalActionResult;
+        }
+
+        private void SetPropertyValue()
+        {
+            throw new NotImplementedException();
         }
     }
 }

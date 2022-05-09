@@ -1,4 +1,7 @@
 ﻿
+using RetailCRMCore.Models;
+
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -6,6 +9,8 @@ using System.Text;
 using VkNet;
 using VkNet.Enums.Filters;
 using VkNet.Model;
+
+using yakutsa.Data;
 
 namespace yakutsa.Services
 {
@@ -32,34 +37,42 @@ namespace yakutsa.Services
         [NotMapped]
         private static object syncRoot = new Object();
 
-        public long ApplicationId { get; set; } = 8158232;
-        public long GroupId { get; set; } = -188269001;
+        [Display(Name = "Id приложения")]
+        public long ApplicationId { get; set; }
 
-        public string? WallJson { get; set; }
+        [Display(Name = "Id группы")]
+        public long GroupId { get; set; }
+
+        [Action("CodeRequest")]
+        [Display(Name = "Код ответа")]
         public string? Code { get => code; private set => code = value; }
+
+        [Display(Name = "Ключ доступа")]
         public string? AccessToken { get => accessToken; set => accessToken = value; }
+
+        [Display(Name = "Защищённый ключ")]
         public string? ClientSecret { get => clientSecret; set => clientSecret = value; }
+
+        [Display(Name = "Адрес ответа")]
         public string? RedirectUrl { get => redirectUrl; set => redirectUrl = value; }
-        public string? ServiceToken { get; set; } = "d5812709d5812709d5812709dfd5fd5b11dd581d5812709b7f25c86441788da50ab5927";
-        public string? GroupToken { get; set; } = "0c863021b012ce3ee4f8417dc0dbf8e377ccfdd681a1e8ce4de60c8fa940685909f05ad9af024b0aa37e1";
+
+        [Display(Name = "Сервисный ключ")]
+        public string? ServiceToken { get; set; }
+
+        [Display(Name = "Ключ группы")]
+        public string? GroupToken { get; set; }
 
         [NotMapped]
         public VkApi Client = new VkApi();
 
-        private string accessToken;
-        private string code;
-        private string clientSecret;
-        private string redirectUrl = @"https://yakutsa.ru/Admin/Vk/Code";
+        private string? accessToken;
+        private string? code;
+        private string? clientSecret;
+        private string? redirectUrl;
 
         public Vk()
         {
-            Client.Authorize(new ApiAuthParams
-            {
-                AccessToken = GroupToken,// "507f821fb7688395d37e67836ca6edaf388cfd8d5a6c4da03fa381f40decc6b0f8fc488b8296d0a36ad5a",
-                Settings = Settings.All
-            });
 
-            //var products = Client.Markets.Get(_groupId);
         }
 
         public string GetWall()
@@ -77,7 +90,7 @@ namespace yakutsa.Services
             return result;
         }
 
-        string CodeRequest()
+        public string CodeRequest()
         {
             string result = string.Empty;
             Task.Run(async () =>
@@ -94,13 +107,19 @@ namespace yakutsa.Services
             if (_instance == null)
                 lock (syncRoot)
                 {
-                    if (_instance == null)
+                    using (var ctx = new ApplicationDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext>()))
                     {
-                        _instance = new Vk();
-                        _instance.Code = _instance.CodeRequest();
+                        _instance = ctx.Vk.FirstOrDefault();
+
+                        if (_instance == null)
+                        {
+                            _instance = new Vk();
+                            ctx.Vk.Add(_instance);
+                            ctx.SaveChanges();
+                            _instance = ctx.Vk.First();
+                        }
                     }
                 }
-
             return _instance;
         }
 

@@ -22,9 +22,14 @@ function sendAjaxForm(data, url, callback, busyTrigger) {
         }
         return formData;
     }
-    let isAsync = callback ? true : false;
 
-    data = data instanceof HTMLFormElement ? new FormData(data) : data instanceof FormData ? data : getProps(data);
+    let isAsync = callback ? true : false;
+    let method = "GET";
+
+    if (data != null && data != undefined) {
+        data = data instanceof HTMLFormElement ? new FormData(data) : data instanceof FormData ? data : getProps(data);
+        method = "POST";
+    }
 
     if (busyTrigger)
         setTimeout(() => {
@@ -33,7 +38,7 @@ function sendAjaxForm(data, url, callback, busyTrigger) {
 
     return $.ajax({
         url: url,
-        type: "POST",
+        type: method,
         data: data,
         async: isAsync,
         processData: false,

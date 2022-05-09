@@ -6,10 +6,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using yakutsa;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using RetailCRMCore.Models;
 
 namespace yakutsa.Extensions
 {
-   
+
 
     public static class ImageResizer
     {
@@ -91,7 +93,7 @@ namespace yakutsa.Extensions
 
 
 
-        public static TAttribute GetAttribute<TAttribute>(this Enum enumValue)
+        public static TAttribute? GetAttribute<TAttribute>(this Enum enumValue)
           where TAttribute : Attribute
         {
             return enumValue.GetType()
@@ -103,6 +105,18 @@ namespace yakutsa.Extensions
         public static string? GetDisplayName(this Enum enumValue)
         {
             return enumValue.GetAttribute<DisplayAttribute>()?.Name?.ToString();
+        }
+
+        public static string? GetDisplayName(this PropertyInfo propertyInfo)
+        {
+            var displayName = propertyInfo.GetCustomAttribute<DisplayAttribute>()?.Name;
+            return string.IsNullOrEmpty(displayName) ? propertyInfo.Name : displayName;
+        }
+
+        public static string? GetPropertyAction(this object obj)
+        {
+            var displayName = obj.GetType().GetCustomAttribute<ActionAttribute>()?.ActionName;
+            return string.IsNullOrEmpty(displayName) ? obj.ToString() : displayName;
         }
 
         public static object GetPropertyValue(this object obj, string propertyName)
@@ -120,6 +134,24 @@ namespace yakutsa.Extensions
                  .Single(pi => pi.Name == propertyName)
                  .SetValue(obj, value);
         }
+
+        public static object GetFieldValue(this object obj, string fieldName)
+        {
+#pragma warning disable CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
+            return obj.GetType().GetFields()
+                 .Single(pi => pi.Name == fieldName)
+                 .GetValue(obj);
+#pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
+        }
+
+        public static void SetFieldValue(this object obj, string fieldName, object value)
+        {
+            obj.GetType().GetProperties()
+                 .Single(pi => pi.Name == fieldName)
+                 .SetValue(obj, value);
+        }
+
+    
 
         public static List<string> ToArray<T>()
         {
