@@ -30,9 +30,16 @@
                     break;
                 default: break;
             }
-            <div class="labelholder has-labelholder floating" data-label="@prop.GetDisplayName()" style="margin:5px 0;">
-                <input type="@type" @value @access class="@cssClass" name="@prop.Name" />
-            </div>
+            if (prop.PropertyType == typeof(Enum))
+            {
+
+            }
+            else
+            {
+                <div class="labelholder has-labelholder floating" data-label="@prop.GetDisplayName()" style="margin:5px 0;">
+                    <input type="@type" @value @access class="@cssClass" name="@prop.Name" />
+                </div>
+            }
         }
 
         <div class="btn-anim">
@@ -50,6 +57,5 @@
             }
         </div>
     }
-
 }
 

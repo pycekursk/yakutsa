@@ -1,13 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.Extensions.Caching.Memory;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using RetailCRMCore.Models;
 
+using System.ComponentModel;
 using System.Globalization;
+using System.IO.Pipelines;
 using System.Linq;
+using System.Text.Json;
 
 using yakutsa.Data;
 using yakutsa.Extensions;
@@ -26,6 +34,7 @@ namespace yakutsa.Controllers
         public AdminController(IMemoryCache memoryCache, RetailCRM retailCRM, UserManager<AppUser> userManager, SignInManager<AppUser> signIn, ApplicationDbContext context, IWebHostEnvironment environment, ILogger<BaseController> logger, Vk vk) : base(retailCRM, userManager, signIn, context, environment, logger, vk)
         {
             _cache = memoryCache;
+
         }
 
         [Route("Admin")]
@@ -107,19 +116,34 @@ namespace yakutsa.Controllers
             return View(model: _vk);
         }
 
-        [Route("Admin/Vk/Code")]
-        public IActionResult VkCallback(string code)
+
+        [Route("Admin/Vk/Callback/{data?}")]
+        public async Task<IActionResult> VkCallback()//string type, object @object, long group_id
         {
-            PortalActionResult result = new PortalActionResult();
+            HttpContext.Request.EnableBuffering();
 
-            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(code);
-
-            foreach (var item in obj)
+            await Task.Run(async () =>
             {
-                result.Json += $"Name={item.Key}, Value={item.Value}\b";
-            }
+                Request.EnableBuffering();
+                var data = string.Empty;
+                try
+                {
+                    byte[] buffer = new byte[Request.ContentLength.Value];
+                    await Request.Body.ReadAsync(buffer);
+                    data = System.Text.Encoding.UTF8.GetString(buffer);
+                    var obj = JObject.Parse(data).Value<string>("type");
+                    var genericType = typeof(VkCallbackRootobject<>).MakeGenericType(Type.GetType(obj));
+                    var inputObject = Newtonsoft.Json.JsonConvert.DeserializeObject(data, genericType);
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc.Message);
+                }
 
-            return result;
+                data = $"{DateTime.Now}\n{data}\n__________________\n\n\n";
+                await System.IO.File.AppendAllTextAsync($"{_environment.WebRootPath}/logs/vk_input.txt", data);
+            });
+            return StatusCode(200);
         }
 
         [Route("Admin/Products")]
@@ -161,14 +185,179 @@ namespace yakutsa.Controllers
             var fieldName = this.GetType().GetFields().First(f => f.FieldType.FullName == obj).Name;
             var field = this.GetFieldValue(fieldName);
             var method = field.GetType().GetMethod(action);
-            portalActionResult.Data = (string?)method?.Invoke(field, null);
+            portalActionResult.Data = Newtonsoft.Json.JsonConvert.SerializeObject(method?.Invoke(field, null));
             portalActionResult.Success = true;
             return portalActionResult;
         }
-
-        private void SetPropertyValue()
-        {
-            throw new NotImplementedException();
-        }
     }
+}
+
+
+public class VkCallbackRootobject<T>
+{
+    public int group_id { get; set; }
+    public string type { get; set; }
+    public string event_id { get; set; }
+    public string v { get; set; }
+
+    [JsonProperty("object")]
+    public T @object { get; set; }
+
+
+}
+
+public class like_add
+{
+    public int liker_id { get; set; }
+    public string object_type { get; set; }
+    public int object_owner_id { get; set; }
+    public int object_id { get; set; }
+    public int thread_reply_id { get; set; }
+    public int post_id { get; set; }
+}
+
+public class group_leave
+{
+    public int self { get; set; }
+    public int user_id { get; set; }
+}
+public class group_join
+{
+    public string join_type { get; set; }
+    public int user_id { get; set; }
+}
+
+public class wall_repost
+{
+    public int id { get; set; }
+    public int from_id { get; set; }
+    public int owner_id { get; set; }
+    public int date { get; set; }
+    public int postponed_id { get; set; }
+    public int marked_as_ads { get; set; }
+    public bool is_favorite { get; set; }
+    public string post_type { get; set; }
+    public string text { get; set; }
+    public Copy_History[] copy_history { get; set; }
+    public Comments comments { get; set; }
+    public Donut donut { get; set; }
+    public float short_text_rate { get; set; }
+    public string hash { get; set; }
+}
+
+public class Comments
+{
+    public int count { get; set; }
+}
+
+public class Donut
+{
+    public bool is_donut { get; set; }
+}
+
+public class Copy_History
+{
+    public int id { get; set; }
+    public int owner_id { get; set; }
+    public int from_id { get; set; }
+    public int date { get; set; }
+    public string post_type { get; set; }
+    public string text { get; set; }
+    public Attachment[] attachments { get; set; }
+    public Post_Source post_source { get; set; }
+}
+
+public class Post_Source
+{
+    public string type { get; set; }
+}
+
+public class Attachment
+{
+    public string type { get; set; }
+    public Video video { get; set; }
+    public VkMarket market { get; set; }
+}
+
+public class Video
+{
+    public string access_key { get; set; }
+    public int can_comment { get; set; }
+    public int can_like { get; set; }
+    public int can_repost { get; set; }
+    public int can_subscribe { get; set; }
+    public int can_add_to_faves { get; set; }
+    public int can_add { get; set; }
+    public int comments { get; set; }
+    public int date { get; set; }
+    public string description { get; set; }
+    public int duration { get; set; }
+    public VkImage[] image { get; set; }
+    public First_Frame[] first_frame { get; set; }
+    public int width { get; set; }
+    public int height { get; set; }
+    public int id { get; set; }
+    public int owner_id { get; set; }
+    public string title { get; set; }
+    public bool is_favorite { get; set; }
+    public string track_code { get; set; }
+    public int repeat { get; set; }
+    public string type { get; set; }
+    public int views { get; set; }
+}
+
+public class VkImage
+{
+    public string url { get; set; }
+    public int width { get; set; }
+    public int height { get; set; }
+    public int with_padding { get; set; }
+}
+
+public class First_Frame
+{
+    public string url { get; set; }
+    public int width { get; set; }
+    public int height { get; set; }
+}
+
+public class VkMarket
+{
+    public int availability { get; set; }
+    public Category category { get; set; }
+    public string description { get; set; }
+    public int id { get; set; }
+    public int owner_id { get; set; }
+    public Price price { get; set; }
+    public string title { get; set; }
+    public string button_title { get; set; }
+    public string thumb_photo { get; set; }
+    public string url { get; set; }
+}
+
+public class Category
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public Section section { get; set; }
+}
+
+public class Section
+{
+    public int id { get; set; }
+    public string name { get; set; }
+}
+
+public class Price
+{
+    public string amount { get; set; }
+    public Currency currency { get; set; }
+    public string text { get; set; }
+}
+
+public class Currency
+{
+    public int id { get; set; }
+    public string name { get; set; }
+    public string title { get; set; }
 }
