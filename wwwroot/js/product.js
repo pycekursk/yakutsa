@@ -29,7 +29,6 @@
         });
 
         $carousel.on('slide.bs.carousel', (evt) => {
-            console.log(evt.type);
             $(evt.currentTarget).find('.carousel-preview .preview-item.active').removeClass('active');
             $(evt.currentTarget).find(`.carousel-preview .preview-item[index=${$(evt.relatedTarget).attr('index')}]`).addClass('active');
         });

@@ -5,15 +5,12 @@ using Microsoft.Extensions.Caching.Memory;
 
 using RetailCRMCore.Models;
 
-using System.Globalization;
-using System.Linq;
-using System.Text.Json;
-
 using yakutsa.Data;
 using yakutsa.Models;
 using yakutsa.Services;
+using yakutsa.Services.Sdek.Models;
 
-using static yakutsa.Services.RetailCRM;
+using Package = yakutsa.Services.Sdek.Models.Package;
 
 namespace yakutsa.Controllers
 {
@@ -32,15 +29,10 @@ namespace yakutsa.Controllers
       return await Task.Run<IActionResult>(() =>
       {
         List<Product>? products = new();
-
-
         ProductGroup[]? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array;
         ProductGroup? productGroup = productGroups?.FirstOrDefault(g => g.name.ToLower() == categoryName);
-        //products = _retailCRM.GetResponse<Product>()!.Array!.Where(p => p.groups?.FirstOrDefault(g => g.id == productGroup?.id) != null && p.active && p.quantity != 0).ToList();
         products = _retailCRM.GetProducts()?.Where(p => p.groups?.FirstOrDefault(g => g.id == productGroup?.id) != null && p.active && p.quantity != 0).ToList();
-
         if (products?.Count == 0) return NotFound();
-
         products?.ForEach(p =>
         {
           p.groups = productGroups?.Where(g => p?.groups?.FirstOrDefault(c => c.id == g.id) != null)?.ToArray();
@@ -65,12 +57,9 @@ namespace yakutsa.Controllers
             }
           });
         });
-
         ViewData["Description"] = new HtmlString("");
         ViewData["Title"] = new HtmlString(productGroup?.name);
-
         ViewBag.Category = productGroup;
-
         return View(products);
       });
     }
@@ -81,17 +70,11 @@ namespace yakutsa.Controllers
       return await Task.Run<IActionResult>(() =>
       {
         var products = _retailCRM.GetResponse<Product>();
-
         Product? product = products?.Array?.FirstOrDefault(p => p.name.ToLower() == productName.ToLower() && p.active && p.quantity > 0)!;
-
         if (product == null) return NotFound();
-
         product!.imageUrl ??= $"https://{HttpContext.Request.Host}/img/t-shirt.png";
-
         List<ProductGroup>? productGroups = _retailCRM.GetResponse<ProductGroup>()?.Array?.ToList();
-
         var currentProductGroups = product.groups;
-
         foreach (ProductGroup currentProductGroup in currentProductGroups!)
         {
           foreach (var prod in products?.Array!)
@@ -106,36 +89,23 @@ namespace yakutsa.Controllers
             }
           }
         }
-
         ProductGroup? category = productGroups?.FirstOrDefault(p => product?.groups?.FirstOrDefault(c => c.id == p.id) != null);
-
         category!.SubGroups = productGroups?.Where(p => p.parentId == category?.id).ToArray();
         ViewBag.Category = category;
-
         ViewData["backUrl"] = category?.name.ToLower();
         ViewData["categoryName"] = category?.name;
-
         ViewData["Description"] = new HtmlString($"{product.description}");
         ViewData["Title"] = new HtmlString(product.name);
-
-
         ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
-
-
         product.modelPath =
           Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
-
         int index = 0;
         foreach (var group in product.groups)
         {
           product.groups[index] = productGroups?.FirstOrDefault(g => g.id == group.id);
           index++;
         }
-
         ToHistory(product);
-
-
-
         return View("/Views/Store/Productv2.cshtml", product);
       });
     }
@@ -145,15 +115,11 @@ namespace yakutsa.Controllers
       return await Task.Run<IActionResult>(() =>
       {
         PortalActionResult result = new PortalActionResult();
-
         var offers = _retailCRM.GetResponse<Offer>();
         var offer = offers.Array?.FirstOrDefault(o => o.name == "ITW");
-
         if (offers == null || offer == null) return NotFound();
-
         result.Json = Newtonsoft.Json.JsonConvert.SerializeObject(offer);
         result.Success = true;
-
         return result;
       });
     }
@@ -169,6 +135,47 @@ namespace yakutsa.Controllers
         result.Success = true;
         return result;
       });
+    }
+
+    //UNDONE: нужна отладка
+    [HttpPost]
+    [Route("Products/CalculateDelivery")]
+    public async Task<IActionResult> CalculateDelivery(Address address)
+    {
+      PortalActionResult actionResult = new();
+      yakutsa.Services.Sdek.ApiClient sdekApi = new Services.Sdek.ApiClient("EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI", "PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG", Services.Sdek.Enums.WorkMode.Demo);
+      try
+      {
+        Location to = (await sdekApi.Cities(new AreaRequestOptions { city = address.City, postal_code = address.PostalCode })).FirstOrDefault();
+        Location from = (await sdekApi.Cities(new AreaRequestOptions { city = "Москва", postal_code = "115419" })).FirstOrDefault();
+
+        var result = (await sdekApi.Calculate(new Services.Sdek.Models.CalculationOptions
+        {
+          from_location = from,
+          to_location = to,
+          packages = new Package[] {
+                      new Package
+                      {
+                        height = 11,
+                        weight = 500,
+                        length = 35,
+                        width = 26
+                      }
+        },
+          date = DateTime.Now.AddDays(1)
+        })).Tariffs.Where(t => !t.TariffName.Contains("дверь-")).ToList();
+
+        Tariff tariff = new Tariff();
+
+        if (result == null) return actionResult;
+        actionResult.Success = true;
+        actionResult.Json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+      }
+      catch (Exception exc)
+      {
+        actionResult.Message = exc.Message;
+      }
+      return actionResult;
     }
   }
 }

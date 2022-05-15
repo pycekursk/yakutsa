@@ -1,103 +1,106 @@
 ﻿@using static yakutsa.Services.RetailCRM
 @model CreateOrderObject
 <div class="container">
+ <div class="row">
+  <div class="col-sm-12 mt-5">
+   <h1 class="text-center">@ViewData["Title"]</h1>
+  </div>
+ </div>
+ @using (Html.BeginForm(actionName: "OrderOptions", controllerName: "Home", FormMethod.Post, new { id = "order_configure_form" }))
+ {
   <div class="row">
-    <div class="col-sm-12 mt-5">
-      <h1 class="text-center">@ViewData["Title"]</h1>
+   <div class="col-sm-12 col-md-6 my-1">
+    <div class="labelholder">
+     @Html.TextBoxFor(m => m.firstName,null, new {@class="form-control", placeholder="Имя", suggestion="fio", required=true, autocomplete="off"})
     </div>
+   </div>
+   <div class="col-sm-12 col-md-6 my-1">
+    <div class="labelholder">
+     @Html.TextBoxFor(m => m.lastName,null, new {@class="form-control", placeholder="Фамилия", suggestion="fio", required=true, autocomplete="off"})
+    </div>
+   </div>
   </div>
-  @using (Html.BeginForm(actionName: "OrderOptions", controllerName: "Home", FormMethod.Post, new { id = "order_configure_form" }))
-  {
-    <div class="row">
-      <div class="col-sm-12 col-md-6 my-1">
-        <div class="labelholder">
-          @Html.TextBoxFor(m => m.firstName,null, new {@class="form-control", placeholder="Имя", suggestion="fio", required=true, autocomplete="off"})
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 my-1">
-        <div class="labelholder">
-          @Html.TextBoxFor(m => m.lastName,null, new {@class="form-control", placeholder="Фамилия", suggestion="fio", required=true, autocomplete="off"})
-        </div>
-      </div>
+  <div class="row">
+   <div class="col-sm-12 col-md-6 my-1">
+    <div class="labelholder">
+     @Html.TextBoxFor(m => m.email,null, new {@class="form-control", placeholder="Ел. почта", required=true})
     </div>
-    <div class="row">
-      <div class="col-sm-12 col-md-6 my-1">
-        <div class="labelholder">
-          @Html.TextBoxFor(m => m.email,null, new {@class="form-control", placeholder="Ел. почта", required=true})
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 my-1">
-        <div class="labelholder">
-          @Html.TextBoxFor(m => m.phone,null, new {@class="form-control", placeholder="Телефон", required=true, type="tel", autocomplete="off"})
-        </div>
-      </div>
+   </div>
+   <div class="col-sm-12 col-md-6 my-1">
+    <div class="labelholder">
+     @Html.TextBoxFor(m => m.phone,null, new {@class="form-control", placeholder="Телефон", required=true, type="tel", autocomplete="off"})
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-      </div>
+   </div>
+  </div>
+  <div class="row">
+   <div class="col-sm-12">
+   </div>
+  </div>
+  <div class="row">
+   <div class="col-sm-12 my-1">
+    @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })
+    <div class="labelholder">
+     @Html.TextBoxFor(m => m.address.Text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
     </div>
-    <div class="row">
-      <div class="col-sm-12 my-1">
-        @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })
-        <div class="labelholder">
-          @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
-        </div>
-      </div>
-      <div class="col-sm-12 my-1">
-        @{
-          var deliveryTypes = new List<SelectListItem>() { new SelectListItem { Text = "Способ доставки" } };
-          foreach (var item in (DeliveryType[])ViewBag.DeliveryTypes)
-          {
-            var selected = item.code == Model?.deliveryType ? true : false;
-            deliveryTypes.Add(new SelectListItem { Value = item.code, Text = item.name, Selected = selected });
-          }
-        }
+   </div>
+   <div class="col-sm-12 my-1">
+    @{
+     var deliveryTypes = new List<SelectListItem>() { new SelectListItem { Text = "Способ доставки" } };
+     foreach (var item in (DeliveryType[])ViewBag.DeliveryTypes)
+     {
+      var selected = item.code == Model?.deliveryType ? true : false;
+      //var hasTariffs = item.HasTariffs ? "true" : "false";
+      deliveryTypes.Add(new SelectListItem { Value = item.code, Text = item.name, Selected = selected });
+     }
+    }
 
-        @Html.HiddenFor(m => m.deliveryType, new { name="deliveryTypeCode" })
-        @Html.DropDownListFor(m=> m.deliveryType, deliveryTypes, new { @class="form-select",size=1, required = true})
-      </div>
+    @Html.HiddenFor(m => m.delivery.code, new { id="delivery_Text" })
+    @Html.DropDownListFor(m=> m.deliveryType, deliveryTypes, new { @class="form-select",size=1, required = true})
+   </div>
+   <div class="input-wrapper hidden-wrapper">
+    <div class="col-sm-12 my-1">
+     @Html.DropDownList("deliveryTariff", new List<SelectListItem>() { new SelectListItem { Text = "Тариф доставки" } }, new { @class="form-select",size=1, required = true, id="deliveryTariff"})
     </div>
-    <div class="row">
-      <div class="col-sm-12 my-1">
-        <div class="labelholder">
-          @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100 form-control", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
-        </div>
-      </div>
+   </div>
+  </div>
+  <div class="row">
+   <div class="col-sm-12 my-1">
+    <div class="labelholder">
+     @Html.TextAreaFor(m => m.comment, new { name="comment" , rows=7, @class="w-100 form-control", style="font-size: 1rem;", placeholder="Комментарий к заказу"})
     </div>
-    <div class="row mt-2" style="font-size: 12px;">
-      <div class="col-md-12 col-xl-12 my-2">
-        <div class="text-center">
-          @Html.CheckBox("agreement", false, new {required=true, style="width: 15px;height:15px;"})
-          <label style="cursor:pointer;vertical-align: super;" for="agreement">Я согласен с <a style="text-decoration:underline !important" href="@Url.ActionLink("Privacy", "Home")">положением о конфиденциальности</a></label>
-        </div>
-      </div>
-      <div class="col-md-12 col-xl-12 my-2">
-        <div class="btn-anim d-block mx-auto">
-          <input type="submit" class="btn btn-main d-block mx-auto" style="padding: 0.5em 5em;" value="К оплате" />
-        </div>
-      </div>
+   </div>
+  </div>
+  <div class="row mt-2" style="font-size: 12px;">
+   <div class="col-md-12 col-xl-12 my-2">
+    <div class="text-center">
+     @Html.CheckBox("agreement", false, new {required=true, style="width: 15px;height:15px;"})
+     <label style="cursor:pointer;vertical-align: super;" for="agreement">Я согласен с <a style="text-decoration:underline !important" href="@Url.ActionLink("Privacy", "Home")">положением о конфиденциальности</a></label>
     </div>
-
-  }
+   </div>
+   <div class="col-md-12 col-xl-12 my-2">
+    <div class="btn-anim d-block mx-auto">
+     <input type="submit" class="btn btn-main d-block mx-auto" style="padding: 0.5em 5em;" value="К оплате" />
+    </div>
+   </div>
+  </div>
+ }
 </div>
-
-
 <div id="payment_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="payment_modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen-xl-down modal-xl">
-    <div class="modal-content">
-      <div class="modal-body p-0">
-        <iframe style="min-height: 700px;width: 100%;" frameborder="0" allowfullscreen="" allow="payment"></iframe>
-      </div>
-    </div>
+ <div class="modal-dialog modal-fullscreen-xl-down modal-xl">
+  <div class="modal-content">
+   <div class="modal-body p-0">
+    <iframe style="min-height: 700px;width: 100%;" frameborder="0" allowfullscreen="" allow="payment"></iframe>
+   </div>
   </div>
+ </div>
 </div>
 
 <script>
-  function showPaymentModal(url){
-      $('#payment_modal').modal('show');
-      $('#payment_modal iframe').attr('src', url);
-          $('#payment_modal button').click(function () {
-              $('#payment_modal iframe').removeAttr('src');
-          });
-      }
+ function showPaymentModal(url) {
+     $('#payment_modal').modal('show');
+     $('#payment_modal iframe').attr('src', url);
+     $('#payment_modal button').click(function () {
+         $('#payment_modal iframe').removeAttr('src');
+     });
+ }
 </script>

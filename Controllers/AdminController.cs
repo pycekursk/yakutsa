@@ -361,3 +361,12 @@ public class Currency
     public string name { get; set; }
     public string title { get; set; }
 }
+
+public class poll_vote_new
+{
+    public int owner_id { get; set; }
+    public int poll_id { get; set; }
+    public int option_id { get; set; }
+    public int user_id { get; set; }
+}
+

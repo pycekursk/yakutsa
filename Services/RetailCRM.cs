@@ -19,6 +19,8 @@ using System.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+using yakutsa.Extensions;
+using System.Security.Cryptography;
 
 namespace yakutsa.Services
 {
@@ -27,20 +29,21 @@ namespace yakutsa.Services
     public int paymentId { get; set; }
     public string returnUrl { get; set; }
   }
-  //public class ApiCreateInvoiceRequest
-  //{
-  //  public CreateInvoice createInvoice { get; set; }
-  //}
 
   public partial class RetailCRM
   {
     const string _key = "h0NsTuUjjscl7JG5SEk6NZPJPuw4dryy";
     const string _url = "https://yakutsa.retailcrm.ru";
     Client _client;
+    Sdek.ApiClient _sdek;
+
 
     public RetailCRM()
     {
       _client = new Client(_url, _key);
+      //_sdek = new Sdek.ApiClient("cdek-92", _client);//
+
+      //var dt = _client.DeliveryTypes().GetRawResponse();
     }
 
     public async Task<bool?> UpdateProductsAsync(Product[] products)
@@ -128,12 +131,6 @@ namespace yakutsa.Services
       });
     }
 
-    //class OrderResponse
-    //{
-    //  public bool success { get; set; }
-    //  public Order order { get; set; }
-    //}
-
     class CreateInvoiceResult
     {
       public bool success { get; set; }
@@ -213,7 +210,6 @@ namespace yakutsa.Services
       return products;
     }
 
-    //public async Task<Response<T>> GetResponseAsync<T>() => await Task.Run(() => GetResponse<T>());
     public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
     {
       RetailCRMCore.Models.Order order = new RetailCRMCore.Models.Order();
@@ -229,9 +225,9 @@ namespace yakutsa.Services
         order.phone = createOrderObject.phone;
         order.items = createOrderObject.items.ToArray();
         order.summ = createOrderObject.price;
-        order.delivery = new Delivery { address = createOrderObject.address, code = createOrderObject.deliveryType };
-        order.toPaySumm = createOrderObject.price;
-        order.totalSumm = createOrderObject.price;
+        order.delivery = createOrderObject.delivery;
+        order.toPaySumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
+        order.totalSumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
         order.customerComment = createOrderObject.comment;
         order.customer = createOrderObject.customer;
         order.managerId = createOrderObject.managerId;
@@ -249,7 +245,8 @@ namespace yakutsa.Services
         var resultOrder = result?.order;
         try
         {
-          string link = await CreatePayment(resultOrder.payments.LastOrDefault().id, host);
+          int parsedId = int.Parse((string)resultOrder.payments.LastOrDefault().GetPropertyValue("id"));
+          string link = await CreatePayment(parsedId, host);
           string id = resultOrder.externalId;
           return (link, id);
         }
@@ -257,7 +254,6 @@ namespace yakutsa.Services
         {
           throw exc;
         }
-
       }
       catch (Exception exc)
       {
@@ -265,28 +261,68 @@ namespace yakutsa.Services
         return default;
       }
     }
-    public async Task<Address> ParseAddress(string address)
+
+    //undone: не дописано
+    public Task CalculateDelivery(Order order)
     {
-      Address result = new();
-      var token = "aa9b411a0851eb8344a4fe5fc9cfc272a994c6ab";
-      var secret = "15178f7ea73ba5e799adde3745bae8d9dc5de767";
-      var api = new CleanClientAsync(token, secret);
-      var response = await api.Clean<Dadata.Model.Address>(address);
-      result.countryIso = response.country_iso_code;
-      result.text = String.IsNullOrEmpty(response.result) ? address : response.result;
-      result.streetType = response.street_type_full;
-      result.cityType = response.city_type_full;
-      result.city = response.city;
-      result.index = response.postal_code;
-      result.building = response.house;
-      result.street = response.street;
-      result.flat = response.flat;
-      result.floor = response.floor != null ? int.Parse(response.floor) : null;
-      result.region = response.region_with_type;
-      result.block = response.entrance != null ? int.Parse(response.entrance) : null;
-      result.metro = response.metro?.FirstOrDefault()?.name;
-      return result;
+      return Task.Run(async () =>
+      {
+        var obj = JObject.Parse(_client.IntegrationsSettingGet("dalli-service").GetRawResponse()).Property("integrationModule").Value.ToString();
+        var dalliIntegrationModule = JsonConvert.DeserializeObject<IntegrationModule>(obj);
+        //var obj = new { apiKey = "loos0oR7ZWVA6f5DideneWakKIqhmKYQ", };
+
+
+        HMACSHA256 hMACSHA256 = new HMACSHA256();
+        byte[] inputString = Encoding.ASCII.GetBytes("loos0oR7ZWVA6f5DideneWakKIqhmKYQ");
+        hMACSHA256.ComputeHash(inputString);
+
+        var url = _url + $"/api/v5/integration-modules/calculate?apiKey={_key}";
+        //HttpClient client = new HttpClient();
+        //client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
+        //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+        //var json = "deliveryTypeCodes=" + JsonConvert.SerializeObject(new string[] { "cdek-92" }) + "&order=" + System.Text.Json.JsonSerializer.Serialize(order);
+        //client.DefaultRequestHeaders
+        //.Accept
+        //.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //requestMessage.Content = new StringContent(json,
+        //                           Encoding.UTF8,
+        //                           "application/x-www-form-urlencoded");
+        //HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
+        //string result = await responseMessage.Content.ReadAsStringAsync();
+      });
     }
+
+    //public Task<Response<DeliveryType>> DeliveryTypesAsync()
+    //{
+    //  return Task.Run<Response<DeliveryType>>(() =>
+    //  {
+    //    return GetResponse<DeliveryType>();
+    //  });
+    //}
+
+    //public async Task<Address> ParseAddress(string address)
+    //{
+    //  Address result = new();
+    //  var token = "aa9b411a0851eb8344a4fe5fc9cfc272a994c6ab";
+    //  var secret = "15178f7ea73ba5e799adde3745bae8d9dc5de767";
+    //  var api = new CleanClientAsync(token, secret);
+    //  var response = await api.Clean<Dadata.Model.Address>(address);
+    //  result.countryIso = response.country_iso_code;
+    //  result.text = String.IsNullOrEmpty(response.result) ? address : response.result;
+    //  result.streetType = response.street_type_full;
+    //  result.cityType = response.city_type_full;
+    //  result.city = response.city;
+    //  result.index = response.postal_code;
+    //  result.building = response.house;
+    //  result.street = response.street;
+    //  result.flat = response.flat;
+    //  result.floor = response.floor != null ? int.Parse(response.floor) : null;
+    //  result.region = response.region_with_type;
+    //  result.block = response.entrance != null ? int.Parse(response.entrance) : null;
+    //  result.metro = response.metro?.FirstOrDefault()?.name;
+    //  return result;
+    //}
 
     public class Rootobject
     {
@@ -298,7 +334,6 @@ namespace yakutsa.Services
     public class CreateOrderObject
     {
       private DateTime _createdAt;
-
       public int externalId { get; set; }
       public DateTime createdAt { get => _createdAt; set => _createdAt = value; }
       public string lastName { get; set; }
@@ -314,21 +349,8 @@ namespace yakutsa.Services
       public string patronymic { get; internal set; }
       public int managerId { get; set; }
       public Customer? customer { get; set; }
+      public Delivery? delivery { get; set; }
     }
-
-    //public class CreateOrderObjectItem
-    //{
-    //  public int initialPrice { get; set; }
-    //  public int quantity { get; set; }
-    //  public int productId { get; set; }
-    //  public string productName { get; set; }
-    //}
-
-    //public enum RequestMethod
-    //{
-    //  GET = 0,
-    //  POST = 1
-    //}
 
     public class Response<T>
     {
@@ -343,6 +365,7 @@ namespace yakutsa.Services
           PropertyNamingPolicy = new ArrayNamingProlicy<T>(),
           AllowTrailingCommas = true,
           PropertyNameCaseInsensitive = true,
+
         };
         options.Converters.Add(new JsonDateTimeConverter());
 
@@ -380,15 +403,16 @@ namespace yakutsa.Services
           Regex regex = new Regex("(?<=\"offers\":)\\[.+?\\](?=,\"updatedAt\")");
           List<T>? offers = new List<T>();
           var matches = regex.Matches(response.GetRawResponse());
-          JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-          {
-            //ContractResolver = new PortalContractResolver(),
-            //SerializationBinder = serializationBinder
-          };
+          //JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+          //{
+
+          //ContractResolver = new PortalContractResolver(),
+          //SerializationBinder = serializationBinder
+          // };
 
           foreach (Match match in matches)
           {
-            List<T>? offer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<T>>(match.Value, jsonSerializerSettings);
+            List<T>? offer = Newtonsoft.Json.JsonConvert.DeserializeObject<List<T>>(match.Value);//, jsonSerializerSettings);
             offers.AddRange(offer);
           }
           result.Array = offers.ToArray();
@@ -415,63 +439,4 @@ namespace yakutsa.Services
       }
     }
   }
-
-  //public class PortalSerializationBinder : DefaultSerializationBinder
-  //{
-  //  public override void BindToName(Type serializedType, out string? assemblyName, out string? typeName)
-  //  {
-  //    base.BindToName(serializedType, out assemblyName, out typeName);
-  //  }
-
-  //  public override Type BindToType(string? assemblyName, string typeName)
-  //  {
-  //    Type result = base.BindToType(assemblyName, typeName);
-  //    return result;
-  //  }
-  //}
-
-  //public class PortalContractResolver : Newtonsoft.Json.Serialization.DefaultContractResolver
-  //{
-  //  public override JsonContract ResolveContract(Type type)
-  //  {
-  //    var contract = base.ResolveContract(type);
-  //    return contract;
-  //  }
-
-  //  protected override string ResolveDictionaryKey(string dictionaryKey)
-  //  {
-  //    if (dictionaryKey == null) return null;
-
-  //    return base.ResolveDictionaryKey(dictionaryKey);
-  //  }
-
-  //  protected override Newtonsoft.Json.Serialization.JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-  //  {
-  //    var prop = base.CreateProperty(member, memberSerialization);
-  //    var temp = this.ResolvePropertyName("isNumeric");
-
-
-  //    if (!prop.Writable)
-  //    {
-  //      var property = member as PropertyInfo;
-  //      if (property != null)
-  //      {
-  //        var hasPrivateSetter = property.GetSetMethod(true) != null;
-  //        prop.Writable = hasPrivateSetter;
-  //      }
-  //    }
-
-  //    return prop;
-  //  }
-
-  //  protected override List<MemberInfo> GetSerializableMembers(Type objectType)
-  //  {
-  //    return base.GetSerializableMembers(objectType);
-  //  }
-
-  //  protected override IList<Newtonsoft.Json.Serialization.JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-  //  {
-  //    return base.CreateProperties(type, memberSerialization);
-  //  }
-  //}
 }
