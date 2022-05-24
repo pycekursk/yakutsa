@@ -40,6 +40,7 @@ namespace yakutsa.Controllers
       //TODO: добавлено для отладки, убрать после
       if (_environment.IsDevelopment())
       {
+        _retailCRM.GetDeliveryTariffs();
         if (Cart.Count == 0)
         {
           var product = products.FirstOrDefault(p => p.name.ToLower() == "joggers");
@@ -202,7 +203,15 @@ namespace yakutsa.Controllers
       if (_environment.IsDevelopment() && string.IsNullOrEmpty(createOrder?.email))
       {
         createOrder.email = "pycek@list.ru";
-        createOrder.address = new() { City = "Курск", Street = "Кулакова", Building = "9", Flat = "206", Text = "г Курск, пр-кт Кулакова, д 9, кв 206" };
+        createOrder.address = new()
+        {
+          region = "Курская",
+          city = "Курск",
+          street = "Кулакова",
+          building = "9",
+          flat = "206",
+          text = "г Курск, пр-кт Кулакова, д 9, кв 206"
+        };
         createOrder.firstName = "Руслан";
         createOrder.lastName = "Бредихин";
         createOrder.phone = "+79207048884";
@@ -211,7 +220,12 @@ namespace yakutsa.Controllers
 
       createOrder.paymentType = "cp";
 
-      ViewBag.DeliveryTypes = _retailCRM.GetResponse<DeliveryType>()?.Array?.Where(t => t.active).ToArray();
+
+
+      ViewBag.DeliveryTypes = _retailCRM.GetResponse<DeliveryType>()?.Array?.Where(t => t.active && t.code != "dalli").ToArray();
+
+      var devTypesJson = _retailCRM.GetDeliveryTypes();
+
 
       //ViewBag.PaymentTypes = _retailCRM.GetResponse<PaymentType>()?.Array?.Where(t => t.active).ToArray();
 
@@ -222,15 +236,30 @@ namespace yakutsa.Controllers
     [Route("OrderOptions")]
     public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, string deliveryTypeCode, string paymentTypeCode)
     {
-      //_retailCRM.ParseAddress(createOrder.address.text).ContinueWith(t => createOrder.address = t.Result).Wait();
-
-      return Task.Run<IActionResult>(() =>
+      return Task.Run<IActionResult>(async () =>
       {
         PortalActionResult result = new();
-        //  _retailCRM.ParseAddress(createOrder.address.text).ContinueWith(t => createOrder.address = t.Result).Wait();
+
+        //createOrder.delivery.address = await _retailCRM.ParseAddress(createOrder.address.text);
+        createOrder.address = createOrder.delivery.address;
+
+        if (Startup.Environment.IsDevelopment())
+        {
+          createOrder.delivery.code = "dalli";
+          createOrder.delivery.data = new
+          {
+            locked = true,
+            payerType = "sender",
+            extraData = new
+            {
+              partner = "SDEK"
+            }
+          };
+        }
+
         var managerId = 0;
         var users = _retailCRM.GetResponse<User>();
-        int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager && u.active)?.id.ToString(), out managerId);
+        int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager)?.id.ToString(), out managerId);
         var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
         if (customer != null)
         {
@@ -265,8 +294,9 @@ namespace yakutsa.Controllers
         });
 
         createOrder.price = Cart.Price + (int)createOrder.delivery.cost;
-          string link = string.Empty;
-          string id = string.Empty;
+        
+        string link = string.Empty;
+        string id = string.Empty;
         _retailCRM.OrderCreate(createOrder, HttpContext.Request.Host.Value, _environment.IsDevelopment()).ContinueWith(t =>
         {
           link = t.Result.link;

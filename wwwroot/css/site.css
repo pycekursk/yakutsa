@@ -88,6 +88,12 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: 'CeraPro';
+  src: url('../fonts/CeraPro-Regular.woff2') format('woff2');
+  font-display: block;
+}
+
 /*ul.hovered li > *::before {
     width: 0;
     content: " - ";
@@ -184,7 +190,7 @@ body {
   background-color: black;
   color: var(--main-text-color) !important;
   font-size: 14px;
-  font-family: Batman !important;
+  font-family: CeraPro !important;
   overflow-x: hidden;
 }
 

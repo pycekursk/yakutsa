@@ -81,18 +81,14 @@ namespace yakutsa.Services
       HttpClient client = new HttpClient();
       client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
       HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
-      client.DefaultRequestHeaders
-      .Accept
-      .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+      //client.DefaultRequestHeaders
+      //.Accept
+      //.Add(new MediaTypeWithQualityHeaderValue("application/json"));
       var serializerOptions = new JsonSerializerOptions
       {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
       };
-      //serializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-
-
       var json = "createInvoice=" + System.Text.Json.JsonSerializer.Serialize(data, serializerOptions);
       requestMessage.Content = new StringContent(json,
                                     Encoding.UTF8,
@@ -159,6 +155,57 @@ namespace yakutsa.Services
       }
     }
 
+    public Task<string> GetDeliveryTariffs(Order order = null)
+    {
+      return Task.Run<string>(async () =>
+      {
+        string result = String.Empty;
+        HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders
+        .Accept
+        .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+        var requestXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><deliverycost><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><partner>SDEK</partner><townto>Курск</townto><oblname>Курская</oblname><weight>0.8</weight><price>7000</price><inshprice>7000</inshprice><cashservices>NO</cashservices><length>50</length><width>50</width><height>50</height><output>x2</output></deliverycost>";
+        var stringContent = new StringContent(requestXml, Encoding.UTF8, "application/xml");
+        var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+        result = await response.Content.ReadAsStringAsync();
+        return result;
+      });
+    }
+
+    public async Task<string> GetPVZList(string partner)
+    {
+      var requestXml = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><pvzlist><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><town>Курск</town><partner>{partner}</partner></pvzlist>";
+      string result = String.Empty;
+      HttpClient httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders
+      .Accept
+      .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+
+      var stringContent = new StringContent(requestXml, Encoding.UTF8, "application/xml");
+      var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+      result = await response.Content.ReadAsStringAsync();
+      return result;
+    }
+
+    public async Task<string> GetDeliveryTypes()
+    {
+      string result = String.Empty;
+      HttpClient httpClient = new HttpClient();
+      httpClient.DefaultRequestHeaders
+      .Accept
+      .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+      var someXmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><services><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth></services>";
+      var stringContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
+      var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+      result = await response.Content.ReadAsStringAsync();
+
+      GetPVZList("BOXBERRY");
+
+      GetPVZList("SDEK");
+
+      return result;
+    }
+
     public Response<T> GetResponse<T>()
     {
       Response? response = null;
@@ -214,51 +261,42 @@ namespace yakutsa.Services
     {
       RetailCRMCore.Models.Order order = new RetailCRMCore.Models.Order();
 
+      order.createdAt = createOrderObject.createdAt;
+      order.externalId = Guid.NewGuid().ToString();
+      order.lastName = createOrderObject.lastName;
+      order.firstName = createOrderObject.firstName;
+      order.patronymic = createOrderObject.patronymic;
+      order.email = createOrderObject.email;
+      order.phone = createOrderObject.phone;
+      order.items = createOrderObject.items.ToArray();
+      order.summ = createOrderObject.price;
+      order.delivery = createOrderObject.delivery;
+      //order.toPaySumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
+      //order.totalSumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
+      order.customerComment = createOrderObject.comment;
+      order.customer = createOrderObject.customer;
+      order.managerId = createOrderObject.managerId;
+      order.anyPhone = createOrderObject.phone;
+      order.anyEmail = createOrderObject.email;
+
+      CalculateDelivery(order);
+
+      var json = _client.OrdersCreate(order).GetRawResponse();
+
+      var jObject = JObject.Parse(json);
+
+      JToken property = null;
+      jObject.TryGetValue("order", out property);
       try
       {
-        order.createdAt = createOrderObject.createdAt;
-        order.externalId = Guid.NewGuid().ToString();
-        order.lastName = createOrderObject.lastName;
-        order.firstName = createOrderObject.firstName;
-        order.patronymic = createOrderObject.patronymic;
-        order.email = createOrderObject.email;
-        order.phone = createOrderObject.phone;
-        order.items = createOrderObject.items.ToArray();
-        order.summ = createOrderObject.price;
-        order.delivery = createOrderObject.delivery;
-        order.toPaySumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
-        order.totalSumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
-        order.customerComment = createOrderObject.comment;
-        order.customer = createOrderObject.customer;
-        order.managerId = createOrderObject.managerId;
-        order.anyPhone = createOrderObject.phone;
-        order.anyEmail = createOrderObject.email;
-        var json = _client.OrdersCreate(order).GetRawResponse();
-
-        var options = new JsonSerializerOptions
-        {
-          WriteIndented = true,
-          PropertyNameCaseInsensitive = true,
-        };
-        options.Converters.Add(new JsonDateTimeConverter());
-        Rootobject result = System.Text.Json.JsonSerializer.Deserialize<Rootobject>(json: json, options: options);
-        var resultOrder = result?.order;
-        try
-        {
-          int parsedId = int.Parse((string)resultOrder.payments.LastOrDefault().GetPropertyValue("id"));
-          string link = await CreatePayment(parsedId, host);
-          string id = resultOrder.externalId;
-          return (link, id);
-        }
-        catch (Exception exc)
-        {
-          throw exc;
-        }
+        var payment = (property as dynamic).payments[0];
+        string link = await CreatePayment((int)payment.id, host);
+        string id = (property as dynamic).externalId;
+        return (link, id);
       }
       catch (Exception exc)
       {
-        Debug.WriteLine(exc.Message);
-        return default;
+        throw exc;
       }
     }
 
@@ -269,27 +307,22 @@ namespace yakutsa.Services
       {
         var obj = JObject.Parse(_client.IntegrationsSettingGet("dalli-service").GetRawResponse()).Property("integrationModule").Value.ToString();
         var dalliIntegrationModule = JsonConvert.DeserializeObject<IntegrationModule>(obj);
-        //var obj = new { apiKey = "loos0oR7ZWVA6f5DideneWakKIqhmKYQ", };
-
-
-        HMACSHA256 hMACSHA256 = new HMACSHA256();
-        byte[] inputString = Encoding.ASCII.GetBytes("loos0oR7ZWVA6f5DideneWakKIqhmKYQ");
-        hMACSHA256.ComputeHash(inputString);
 
         var url = _url + $"/api/v5/integration-modules/calculate?apiKey={_key}";
-        //HttpClient client = new HttpClient();
-        //client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
-        //HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
-        //var json = "deliveryTypeCodes=" + JsonConvert.SerializeObject(new string[] { "cdek-92" }) + "&order=" + System.Text.Json.JsonSerializer.Serialize(order);
-        //client.DefaultRequestHeaders
-        //.Accept
-        //.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        //requestMessage.Content = new StringContent(json,
-        //                           Encoding.UTF8,
-        //                           "application/x-www-form-urlencoded");
-        //HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
-        //string result = await responseMessage.Content.ReadAsStringAsync();
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
+        HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+        var json = "deliveryTypeCodes=" + JsonConvert.SerializeObject(new string[] { "dalli-service" }) + "&order=" + System.Text.Json.JsonSerializer.Serialize(order);
+        client.DefaultRequestHeaders
+        .Accept
+        .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        requestMessage.Content = new StringContent(json,
+                                   Encoding.UTF8,
+                                   "application/x-www-form-urlencoded");
+        HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
+        string result = await responseMessage.Content.ReadAsStringAsync();
       });
     }
 
@@ -307,7 +340,7 @@ namespace yakutsa.Services
     //  var token = "aa9b411a0851eb8344a4fe5fc9cfc272a994c6ab";
     //  var secret = "15178f7ea73ba5e799adde3745bae8d9dc5de767";
     //  var api = new CleanClientAsync(token, secret);
-    //  var response = await api.Clean<Dadata.Model.Address>(address);
+    //  var response = await api.Clean<Object>(address);
     //  result.countryIso = response.country_iso_code;
     //  result.text = String.IsNullOrEmpty(response.result) ? address : response.result;
     //  result.streetType = response.street_type_full;
@@ -317,9 +350,19 @@ namespace yakutsa.Services
     //  result.building = response.house;
     //  result.street = response.street;
     //  result.flat = response.flat;
-    //  result.floor = response.floor != null ? int.Parse(response.floor) : null;
     //  result.region = response.region_with_type;
-    //  result.block = response.entrance != null ? int.Parse(response.entrance) : null;
+
+    //  try
+    //  {
+    //    result.floor = response.floor != null ? int.Parse(response.floor) : null;
+    //    result.block = response.entrance != null ? int.Parse(response.entrance) : null;
+    //  }
+    //  catch (Exception exc)
+    //  {
+    //    Debug.WriteLine(exc.Message);
+    //  }
+
+
     //  result.metro = response.metro?.FirstOrDefault()?.name;
     //  return result;
     //}

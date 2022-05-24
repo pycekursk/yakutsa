@@ -240,7 +240,7 @@ function Initialize($) {
       sendAjaxForm('', 'CheckOffers', (response) => {
         //TODO: дополнить formdata адресом из аттрибутов
         let data = new FormData(evt.currentTarget);
-        let attributes = Array.from(document.getElementById('address_Text').attributes);
+        let attributes = Array.from(document.getElementById('address_text').attributes);
         attributes.forEach(attr => {
           if (attr.name.includes('sd')) {
             let str = attr.name.replace('sd-', '');
@@ -306,7 +306,7 @@ function Initialize($) {
       let $wrapper = $('#deliveryTariff').closest('.input-wrapper');
       let $tariffSelect = $('#deliveryTariff');
       if (value == "sdek-portal") {
-        let attributes = Array.from(document.getElementById('address_Text').attributes);
+        let attributes = Array.from(document.getElementById('address_text').attributes);
         let formData = new FormData();
         attributes.forEach(attr => {
           if (attr.name.includes('sd')) {

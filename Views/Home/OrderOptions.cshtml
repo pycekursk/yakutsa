@@ -40,7 +40,7 @@
    <div class="col-sm-12 my-1">
     @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })
     <div class="labelholder">
-     @Html.TextBoxFor(m => m.address.Text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
+     @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
     </div>
    </div>
    <div class="col-sm-12 my-1">

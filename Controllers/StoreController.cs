@@ -143,38 +143,39 @@ namespace yakutsa.Controllers
     public async Task<IActionResult> CalculateDelivery(Address address)
     {
       PortalActionResult actionResult = new();
-      yakutsa.Services.Sdek.ApiClient sdekApi = new Services.Sdek.ApiClient("EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI", "PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG", Services.Sdek.Enums.WorkMode.Demo);
-      try
-      {
-        Location to = (await sdekApi.Cities(new AreaRequestOptions { city = address.City, postal_code = address.PostalCode })).FirstOrDefault();
-        Location from = (await sdekApi.Cities(new AreaRequestOptions { city = "Москва", postal_code = "115419" })).FirstOrDefault();
 
-        var result = (await sdekApi.Calculate(new Services.Sdek.Models.CalculationOptions
-        {
-          from_location = from,
-          to_location = to,
-          packages = new Package[] {
-                      new Package
-                      {
-                        height = 11,
-                        weight = 500,
-                        length = 35,
-                        width = 26
-                      }
-        },
-          date = DateTime.Now.AddDays(1)
-        })).Tariffs.Where(t => !t.TariffName.Contains("дверь-")).ToList();
+      //yakutsa.Services.Sdek.ApiClient sdekApi = new Services.Sdek.ApiClient("EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI", "PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG", Services.Sdek.Enums.WorkMode.Demo);
+      //try
+      //{
+      //  Location to = (await sdekApi.Cities(new AreaRequestOptions { city = address.City, postal_code = address.PostalCode })).FirstOrDefault();
+      //  Location from = (await sdekApi.Cities(new AreaRequestOptions { city = "Москва", postal_code = "115419" })).FirstOrDefault();
 
-        Tariff tariff = new Tariff();
+      //  var result = (await sdekApi.Calculate(new Services.Sdek.Models.CalculationOptions
+      //  {
+      //    from_location = from,
+      //    to_location = to,
+      //    packages = new Package[] {
+      //                new Package
+      //                {
+      //                  height = 11,
+      //                  weight = 500,
+      //                  length = 35,
+      //                  width = 26
+      //                }
+      //  },
+      //    date = DateTime.Now.AddDays(1)
+      //  })).Tariffs.Where(t => !t.TariffName.Contains("дверь-")).ToList();
 
-        if (result == null) return actionResult;
-        actionResult.Success = true;
-        actionResult.Json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
-      }
-      catch (Exception exc)
-      {
-        actionResult.Message = exc.Message;
-      }
+      //  Tariff tariff = new Tariff();
+
+      //  if (result == null) return actionResult;
+      //  actionResult.Success = true;
+      //  actionResult.Json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+      //}
+      //catch (Exception exc)
+      //{
+      //  actionResult.Message = exc.Message;
+      //}
       return actionResult;
     }
   }
