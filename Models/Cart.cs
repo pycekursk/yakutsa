@@ -24,11 +24,19 @@ namespace yakutsa.Models
       }
     }
 
+    public double Weight
+    {
+      get
+      {
+        double result = 0;
+        CartProducts.ForEach(x => result += x.Offer.weight);
+        return result;
+      }
+    }
+
     public List<CartProduct> CartProducts { get; set; } = new List<CartProduct>();
 
     public int Count { get { int count = 0; CartProducts.ForEach(cp => count += cp.Count); return count; } }
-
-
 
     public List<CartProduct> Add(Product product, Offer offer, int count)
     {

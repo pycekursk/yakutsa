@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using VkNet;
 using VkNet.Enums.Filters;
 using VkNet.Model;
+using VkNet.Model.Attachments;
 
 using yakutsa.Data;
 using yakutsa.Extensions;
@@ -69,6 +70,12 @@ namespace yakutsa.Services
         [Action("GetComments")]
         [Display(Name = "Комментарии")]
         public List<ProductComments> ProductsComments { get => productsComments; set => productsComments = value; }
+
+        //todo дописать метод синхронизации фотографий из вк
+        public void SyncProductsAlbums(ref List<Product>? products)
+        {
+            GetMarketAlbums();
+        }
 
         [Display(Name = "Ключ группы")]
         public string? GroupAccessToken { get => groupAccessToken; set => groupAccessToken = value; }
@@ -171,6 +178,23 @@ namespace yakutsa.Services
             }
             return ProductsComments;
         }
+
+        public List<MarketCategory> GetMarketAlbums()
+        {
+            if (!Connected) Connect();
+            var markets = Client.Markets.Get(GroupId, extended: true).ToList();
+            markets.ForEach(ma =>
+            {
+
+
+
+            });
+
+
+            return default;
+        }
+
+
 
         public static Vk Initialize()
         {

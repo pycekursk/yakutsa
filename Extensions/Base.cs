@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using yakutsa;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using RetailCRMCore.Models;
+using Newtonsoft.Json;
 
 namespace yakutsa.Extensions
 {
@@ -96,16 +97,47 @@ namespace yakutsa.Extensions
         public static TAttribute? GetAttribute<TAttribute>(this Enum enumValue)
           where TAttribute : Attribute
         {
-            return enumValue.GetType()
-                            .GetMember(enumValue.ToString())
-                            .First()
-                            .GetCustomAttribute<TAttribute>();
+            try
+            {
+                return enumValue.GetType()
+                             .GetMember(enumValue.ToString())
+                             .First()
+                             .GetCustomAttribute<TAttribute>();
+            }
+            catch
+            {
+                return default;
+            }
         }
+
+
+        public static TAttribute? GetAttribute<TAttribute>(this object obj)
+         where TAttribute : Attribute
+        {
+            try
+            {
+                return obj.GetType()
+                                .GetMember(obj.ToString())
+                                .First()
+                                .GetCustomAttribute<TAttribute>();
+            }
+            catch (Exception)
+            {
+                return default;
+            }
+        }
+
 
         public static string? GetDisplayName(this Enum enumValue)
         {
             return enumValue.GetAttribute<DisplayAttribute>()?.Name?.ToString();
         }
+
+        public static string? GetDisplayName(this object obj)
+        {
+            return obj.GetAttribute<DisplayAttribute>()?.Name?.ToString();
+        }
+
 
         public static string? GetDisplayName(this PropertyInfo propertyInfo)
         {
@@ -151,7 +183,7 @@ namespace yakutsa.Extensions
                  .SetValue(obj, value);
         }
 
-    
+
 
         public static List<string> ToArray<T>()
         {
@@ -171,6 +203,26 @@ namespace yakutsa.Extensions
                 content.WriteTo(writer, HtmlEncoder.Default);
                 return writer.ToString();
             }
+        }
+    }
+
+    public class FloatFormatConverter : JsonConverter<float>
+    {
+        public override void WriteJson(JsonWriter writer, float value,
+                                        JsonSerializer serializer)
+        {
+
+            writer.WriteValue(string.Format("{0:F2}", value));
+        }
+
+        public override float ReadJson(JsonReader reader, Type objectType, float existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanRead
+        {
+            get { return false; }
         }
     }
 }

@@ -368,7 +368,10 @@ select {
 }
 
     select:disabled {
-        opacity: 1;
+        background-color: #495057;
+        color: #000;
+        border-color: #0000 !important;
+        cursor: not-allowed !important;
     }
 
 [list]::-webkit-calendar-picker-indicator {
@@ -2438,6 +2441,8 @@ textarea.form-control-lg {
     -moz-appearance: none;
     appearance: none;
 }
+
+
 
 @media (prefers-reduced-motion: reduce) {
     .form-select {

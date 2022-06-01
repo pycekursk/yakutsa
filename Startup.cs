@@ -6,9 +6,14 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
+using Newtonsoft.Json;
+
+using System.Globalization;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 using yakutsa.Data;
+using yakutsa.Extensions;
 using yakutsa.Models;
 using yakutsa.Services;
 
@@ -28,6 +33,12 @@ public class Startup
             options.UseMySql("server=37.77.105.24;database=yakutsa;uid=pycek;password=6m7sd38L;ConvertZeroDateTime=True", new MySqlServerVersion(new Version(8, 0, 23))));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
+
+        services.AddControllers().AddJsonOptions(x =>
+        {
+            // serialize enums as strings in api responses (e.g. Role)
+            x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
         services.AddIdentity<AppUser, IdentityRole>(options =>
         {

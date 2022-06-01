@@ -1,4 +1,6 @@
-﻿function showMessage(text, type) {
+﻿
+
+function showMessage(text, type) {
     let $msg = $(`<div class="alert alert-${type == undefined ? 'main' : type}" role="alert">${text}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button></div>`);
     $('.messages-wrapper').append($msg);
 
