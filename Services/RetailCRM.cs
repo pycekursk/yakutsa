@@ -47,29 +47,6 @@ namespace yakutsa.Services
         {
             _client = new Client(_url, _key);
             deliveryModules.Add(new yakutsa.Services.Dalli.ApiClient { Code = "dalli-service" });
-
-            var order = _client.OrdersGet("441", by: "id").GetRawResponse();
-            var jObject = JObject.Parse(order);
-
-            JToken property = null;
-            jObject.TryGetValue("order", out property);
-            try
-            {
-                var tempData = property["delivery"]["data"];
-                tempData["tariff"] = "9";
-                tempData["pickuppointId"] = "KRS10";
-                tempData["tariffName"] = "ПВЗ СДЭК";
-                //((dynamic)(property as dynamic).delivery.data = delivery;
-
-
-                var newJson = Newtonsoft.Json.JsonConvert.SerializeObject(property);
-                var resp = _client.OrderUpdate(property);
-                var rowResp = resp.GetRawResponse();
-            }
-            catch (Exception exc)
-            {
-                throw exc;
-            }
         }
 
         public string GetOrdersJson()
@@ -238,11 +215,6 @@ namespace yakutsa.Services
 
         public Response<T> GetResponse<T>()
         {
-
-
-            //var temp = _client.IntegrationsSettingGet("dalli-service");
-
-
             Response? response = null;
             switch (typeof(T).Name)
             {
@@ -316,31 +288,9 @@ namespace yakutsa.Services
 
         public async Task<(string link, string id)> OrderCreate(CreateOrderObject createOrderObject, string host, bool isDevelopment = false)
         {
-            RetailCRMCore.Models.Order order = new RetailCRMCore.Models.Order();
+            createOrderObject.externalId = Guid.NewGuid().ToString();
 
-            order.createdAt = createOrderObject.createdAt;
-            order.externalId = Guid.NewGuid().ToString();
-            order.lastName = createOrderObject.lastName;
-            order.firstName = createOrderObject.firstName;
-            order.patronymic = createOrderObject.patronymic;
-            order.email = createOrderObject.email;
-            order.phone = createOrderObject.phone;
-            order.items = createOrderObject.items.ToArray();
-            order.summ = createOrderObject.price;
-            order.delivery = createOrderObject.delivery;
-            //order.toPaySumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
-            //order.totalSumm = createOrderObject.price + (int)createOrderObject.delivery.cost;
-            order.customerComment = createOrderObject.comment;
-            order.customer = createOrderObject.customer;
-            order.managerId = createOrderObject.managerId;
-            order.anyPhone = createOrderObject.phone;
-            order.anyEmail = createOrderObject.email;
-            order.deliveryAddress = order.delivery.address;
-            //todo впилить добавление стоимости по результатам доставки
-
-            //DeliveryCalculate();
-
-            var json = _client.OrdersCreate(order, "YAKUTSA.RU").GetRawResponse();
+            var json = _client.OrdersCreate(createOrderObject, "YAKUTSA.RU").GetRawResponse();
 
             var jObject = JObject.Parse(json);
 
@@ -360,32 +310,6 @@ namespace yakutsa.Services
         }
 
 
-        //undone: не дописано
-        //public Task CalculateDelivery(Order order)
-        //{
-        //  return Task.Run(async () =>
-        //  {
-        //    var obj = JObject.Parse(_client.IntegrationsSettingGet("dalli-service").GetRawResponse()).Property("integrationModule").Value.ToString();
-        //    var dalliIntegrationModule = JsonConvert.DeserializeObject<IntegrationModule>(obj);
-
-        //    var url = _url + $"/api/v5/integration-modules/calculate?apiKey={_key}";
-
-        //    HttpClient client = new HttpClient();
-        //    client.DefaultRequestHeaders.Host = "yakutsa.retailcrm.ru";
-        //    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
-        //    var json = "deliveryTypeCodes=" + JsonConvert.SerializeObject(new string[] { "dalli-service" }) + "&order=" + System.Text.Json.JsonSerializer.Serialize(order);
-        //    client.DefaultRequestHeaders
-        //    .Accept
-        //    .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //    requestMessage.Content = new StringContent(json,
-        //                               Encoding.UTF8,
-        //                               "application/x-www-form-urlencoded");
-        //    HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
-        //    string result = await responseMessage.Content.ReadAsStringAsync();
-        //  });
-        //}
-
         public class Rootobject
         {
             public bool success { get; set; }
@@ -393,26 +317,7 @@ namespace yakutsa.Services
             public Order order { get; set; }
         }
 
-        public class CreateOrderObject
-        {
-            private DateTime _createdAt;
-            public int externalId { get; set; }
-            public DateTime createdAt { get => _createdAt; set => _createdAt = value; }
-            public string lastName { get; set; }
-            public string firstName { get; set; }
-            public string email { get; set; }
-            public string phone { get; set; }
-            public List<OrderProduct> items { get; set; } = new List<OrderProduct>();
-            public Address address { get; set; }
-            public string deliveryType { get; set; }
-            public string paymentType { get; set; }
-            public string comment { get; set; }
-            public double price { get; internal set; }
-            public string patronymic { get; internal set; }
-            public int managerId { get; set; }
-            public Customer? customer { get; set; }
-            public Delivery? delivery { get; set; }
-        }
+
 
         public class Response<T>
         {

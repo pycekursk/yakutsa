@@ -1,0 +1,56 @@
+﻿@model RetailCRMCore.V2.Models.Address
+
+
+@Html.HiddenFor(m => m.CountryIso)
+@Html.HiddenFor(m => m.Index)
+@Html.HiddenFor(m => m.CityId)
+@Html.HiddenFor(m => m.RegionId)
+@Html.HiddenFor(m => m.StreetId)
+
+<div class="col-6 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Region, null, new { @class="form-control", placeholder = "Регион/Область"})
+    </div>
+</div>
+
+<div class="col-6 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.City, null, new { @class="form-control", placeholder = "Город"})
+    </div>
+</div>
+
+<div class="col-9 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Street, null, new { @class="form-control", placeholder = "Улица"})
+    </div>
+</div>
+
+<div class="col-3 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Building, null, new { @class="form-control", placeholder = "Дом"})
+    </div>
+</div>
+
+<div class="col-4 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Block, null, new { @class="form-control", placeholder = "Подъезд"})
+    </div>
+</div>
+
+<div class="col-4 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Floor, null, new { @class="form-control", placeholder = "Этаж"})
+    </div>
+</div>
+
+<div class="col-4 p-1">
+    <div class="labelholder">
+        @Html.TextBoxFor(m => m.Flat, null, new { @class="form-control", placeholder = "Квартира"})
+    </div>
+</div>
+
+<div class="col-12">
+    <div class="btn-anim d-block mx-auto mt-2">
+        <input class="btn btn-main" id="DeliveryTypesButton" type="button" value="Выбрать способ доставки" />
+    </div>
+</div>

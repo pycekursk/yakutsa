@@ -4097,6 +4097,7 @@ textarea.form-control-lg {
     position: relative;
     display: inline-flex;
     vertical-align: middle;
+    align-items: center;
 }
 
     .btn-group > .btn,

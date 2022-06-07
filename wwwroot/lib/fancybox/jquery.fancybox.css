@@ -2,8 +2,16 @@ body.compensate-for-scrollbar {
     overflow: hidden;
 }
 
+body.fancybox-active main {
+    filter: blur(10px);
+}
+
 .fancybox-active {
     height: auto;
+}
+
+.fancybox-button {
+    display: none;
 }
 
 .fancybox-is-hidden {
@@ -27,7 +35,7 @@ body.compensate-for-scrollbar {
     transform: translateZ(0);
     width: 100%;
     z-index: 99992;
-  /*  backdrop-filter: blur(10px) contrast(90%);
+    /*  backdrop-filter: blur(10px) contrast(90%);
     -webkit-backdrop-filter: blur(10px) contrast(90%);*/
 }
 

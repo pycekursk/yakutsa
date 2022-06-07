@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using Dadata;
+
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -46,6 +48,8 @@ namespace yakutsa.Controllers
             //TODO: добавлено для отладки, убрать после
             if (_environment.IsDevelopment())
             {
+
+
                 if (Cart.Count == 0)
                 {
                     var product = products.FirstOrDefault(p => p.name.ToLower() == "joggers");
@@ -209,9 +213,9 @@ namespace yakutsa.Controllers
 
 
 
-            var orders = _retailCRM.GetOrdersJson();
+            //var orders = _retailCRM.GetOrdersJson();
             //var paymentTypes = _retailCRM.GetPaymentTypesJson();
-            //var deliveryTypes = _retailCRM.GetDeliveryTypesJson();
+            var deliveryTypes = _retailCRM.GetDeliveryTypesJson();
 
             CreateOrderObject createOrder = new();
 
@@ -219,39 +223,54 @@ namespace yakutsa.Controllers
             if (_environment.IsDevelopment() && string.IsNullOrEmpty(createOrder?.email))
             {
                 createOrder.email = "pycek@list.ru";
-                createOrder.address = new()
-                {
-                    region = "Курская",
-                    city = "Курск",
-                    street = "Кулакова",
-                    building = "9",
-                    flat = "206",
-                    text = "г Курск, пр-кт Кулакова, д 9, кв 206"
-                };
+                //createOrder.address = new()
+                //{
+                //    region = "Курская",
+                //    city = "Курск",
+                //    street = "Кулакова",
+                //    building = "9",
+                //    flat = "206",
+                //    text = "г Курск, пр-кт Кулакова, д 9, кв 206"
+                //};
                 createOrder.firstName = "Руслан";
                 createOrder.lastName = "Бредихин";
                 createOrder.phone = "+79207048884";
                 createOrder.patronymic = "Владимирович";
+
+                ViewBag.Address = new RetailCRMCore.V2.Models.Address
+                {
+                    Region = "Курская область",
+                    City = "Курск",
+                    CityId = 3255,
+                    RegionId = 27,
+                    StreetId = 1403926,
+                    Street = "проспект Кулакова",
+                    Flat = "206",
+                    Building = "9",
+                    Block = 5,
+                    Index = "305018",
+                    Floor = 1
+                };
             }
 
-            //createOrder.paymentType = "cp";
+            createOrder.paymentType = "cp";
 
             return View(createOrder);
         }
 
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, string deliveryPartner, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
         {
             return Task.Run<IActionResult>(() =>
             {
                 PortalActionResult result = new();
-
+                createOrder.delivery.address.building = createOrder.delivery.address.house;
+                createOrder.delivery.address.streetType += ".";
+                createOrder.delivery.address.house = null;
                 createOrder.address = createOrder.delivery.address;
-
-                createOrder.paymentType = createOrder.delivery.data.extraData.paytype == Paytype.NO.ToString() ? "cp" : "cash";
-
-                //createOrder.delivery.data.pickuppointId = "4643";
+                createOrder.paymentType = "cp";
+                createOrder.deliveryType = "dalli";
 
                 var managerId = 0;
                 var users = _retailCRM.GetResponse<User>();
@@ -281,16 +300,16 @@ namespace yakutsa.Controllers
                 //}
 
                 Cart?.CartProducts.ForEach(cp =>
+        {
+            createOrder.items.Add(new OrderProduct
             {
-                createOrder.items.Add(new OrderProduct
-                {
-                    initialPrice = (int)cp.Product.maxPrice,
-                    productId = cp.Product.id.ToString(),
-                    productName = cp.Product.name,
-                    quantity = cp.Count,
-                    offer = cp.Offer
-                });
+                initialPrice = (int)cp.Product.maxPrice,
+                productId = cp.Product.id.ToString(),
+                productName = cp.Product.name,
+                quantity = cp.Count,
+                offer = cp.Offer
             });
+        });
 
                 createOrder.price = Cart.Price + (int)createOrder.delivery.cost;
 

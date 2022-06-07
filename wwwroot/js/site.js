@@ -225,10 +225,6 @@ function Initialize($) {
             }
         });
 
-
-
-        $('.labelholder').labelholder();
-
         $('#menu_modal li a').on('click', (evt) => {
             $(evt.currentTarget).closest('.modal').modal('hide');
         });
@@ -248,7 +244,7 @@ function Initialize($) {
                             prop += w.charAt(0).toUpperCase() + w.slice(1);
                         });
                         data.append(`delivery.address.${prop}`, attr.value);
-                        console.log(`delivery.address.${prop}`, attr.value);
+                        //console.log(`delivery.address.${prop}`, attr.value);
                     }
                 });
 
@@ -356,7 +352,7 @@ function Initialize($) {
                             for (var i = 0; i < tariffs.length; i++) {
                                 for (var x = 0; x < tariffs[i].Price.length; x++) {
                                     let rupost = tariffs[i].Partner == "rupost" ? `(${tariffs[i].Price[x].RupostFriendlyName})` : "";
-                                    $tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-data_extraData_partner="${tariffs[i].Partner}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
+                                    $tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
                                 }
                             }//tariffs[i].Price[x].ServiceType.replace(/^_/, '')
                             //  value="${tariffs[i].Partner + "_" + tariffs[i].Price[x].Service}"
@@ -527,6 +523,8 @@ function Initialize($) {
 
 
         //$('.toTop-toggler').vibrate(10);
+
+        $('.labelholder').labelholder();
 
         setTimeout(() => { $msg.fadeOut(350, () => $msg.remove()); }, 5000);
     }

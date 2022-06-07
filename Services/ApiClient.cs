@@ -32,6 +32,7 @@ namespace yakutsa.Services.Sdek
         oAuth = value;
       }
     }
+
     public string client_secret { get; set; }
     public string client_id { get; set; }
     string urlReal = "https://api.cdek.ru/v2/";
