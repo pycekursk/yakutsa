@@ -13,7 +13,7 @@
 @*<p class="text-center mb-0"><a href="@Url.ActionLink("Offer", "Products", new {pid = Model?.id, oid=467})">467</a></p>*@
 
 
-@if (!String.IsNullOrEmpty(Model?.modelPath))
+@if (!String.IsNullOrEmpty(Model?.texturePath))
 {
   <div id="model_fancybox" style="display:none">
     <div class="model-wrapper"></div>
@@ -31,7 +31,7 @@
   <div class="row">
     <div class="col-md-6 px-0" style="display:flex; justify-content:center">
       <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
-        @if (!String.IsNullOrEmpty(Model?.modelPath))
+        @if (!String.IsNullOrEmpty(Model?.texturePath))
         {
           <a data-bs-toggle="tooltip" data-bs-placement="top" title="Посмотреть в 3D" data-fancybox href="#model_fancybox" class="position-absolute">
             <img src="~/img/3dicon.png" alt="@Model?.name" />
@@ -367,7 +367,7 @@
   //            animate();
   //         }
   //(function () {
-  //    $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath');});
+  //    $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.texturePath');});
   //})();
 
 </script>

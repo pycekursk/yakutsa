@@ -97,8 +97,8 @@ namespace yakutsa.Controllers
         ViewData["Description"] = new HtmlString($"{product.description}");
         ViewData["Title"] = new HtmlString(product.name);
         ViewData["Image"] = new HtmlString(product?.images?.FirstOrDefault(i => i.Size == ImageSize.m && i.Side == ImageSide.front)?.Url);
-        product.modelPath =
-          Directory.Exists($"{_environment.WebRootPath}/3d/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
+        product.texturePath =
+          Directory.Exists($"{_environment.WebRootPath}/3d/Textures/{product.article}") ? $"../../3d/{product.article}/scene.gltf" : "";
         int index = 0;
         foreach (var group in product.groups)
         {

@@ -22,7 +22,7 @@
 @*<p class="text-center mb-0"><a href="@Url.ActionLink("Offer", "Products", new {pid = Model?.id, oid=467})">467</a></p>*@
 
 
-@if (!String.IsNullOrEmpty(Model?.modelPath))
+@if (!String.IsNullOrEmpty(Model?.texturePath))
 {
     <div id="model_fancybox" style="display:none">
         <div class="model-wrapper loading">
@@ -44,7 +44,7 @@
     <div class="row pb-5">
         <div class="col-md-6 px-0" style="display:flex; justify-content:center">
             <div id="product_carousel" pause class="carousel mx-0 slide carousel-fade wrapper nohover" data-bs-interval="0" data-bs-ride="carousel">
-                @if (!String.IsNullOrEmpty(Model?.modelPath))
+                @if (!String.IsNullOrEmpty(Model?.texturePath))
                 {
                     <a data-bs-toggle="tooltip" data-bs-placement="top" title="Посмотреть в 3D" data-fancybox href="#model_fancybox" class="position-absolute">
                         <img src="~/img/3dicon.png" alt="@Model?.name" />
@@ -373,7 +373,7 @@
     import { GUI } from '../../lib/three/lil-gui.module.min.js';
     import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
 
-    var modelsArray = ["../../3d/hoody/hoody.gltf", "../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
+    //var modelsArray = ["../../3d/hoody/hoody.gltf", "../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
 
     function renderModel(wrapper, modelSource) {
         if (wrapper == null || modelSource == null) return;
@@ -385,7 +385,7 @@
             window.innerWidth / window.innerHeight,   // aspect
             0.05, // near
             500); // far
-        camera.position.z = 4;
+        camera.position.z = 7;
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         const loader = new GLTFLoader();
         renderer.setClearColor(0x000000, 0);
@@ -420,7 +420,6 @@
         controls.minDistance = 1;
         controls.maxDistance = 8;
 
-
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -428,19 +427,48 @@
             animate();
         }
 
-        window.addEventListener('resize', onWindowResize, false);
+        var vendorCode = '@Model.article';
+
+        var texturePath = `../../3d/Textures/${vendorCode}/Color.jpg`;
+
+             var onProgress = function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            };
+
+            var onError = function (xhr) {
+                console.log('An error happened');
+             };
+
+
+        var texture = new THREE.TextureLoader().load(texturePath, (xhr)=>{ console.log(xhr)}, onProgress, onError);
+
+        texture.flipY = false;
+
+        //texture.rotation = 90;
 
         //let material = new THREE.MeshStandardMaterial();
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
 
-        var texture = new THREE.TextureLoader().load("../../3d/TTST-/textures/shirt.png");
-        //texture.wrapS = THREE.RepeatWrapping;
-        //texture.wrapT = THREE.RepeatWrapping;
+         //texture.offset.set( 0, 0 );
+         //texture.repeat.set( 2, 2 );
 
-        console.log(texture);
+
+         function changeTextureOffset(x, y){
+              texture.offset.set( x, y );
+              animate();
+         }
+
+        //var texture = THREE.ImageUtils.loadTexture(texturePath, {}, function() {
+        //    renderer.render(scene);
+        //}),
+
+
+        //console.log(texture, material);
 
         loader.load(modelSource, function (gltf) {
             obj = gltf;
-            obj.scene.scale.set(2, 2, 2);
+            obj.scene.scale.set(1, 1, 1);
             obj.scene.position.z = 0;
             obj.scene.position.y = 0;
             obj.scene.position.x = 0;
@@ -452,19 +480,24 @@
             let model = gltf.scene.children[0].material;
             let color = model.color;
             console.log(obj.scene.children[0].material.map);
-            //obj.scene.children[0].material.map = texture;
+
+            obj.scene.children[0].material.map = texture;
 
             let wrapper = $('#model_fancybox > .model-wrapper');
 
-            wrapper.prepend('<div id="color_picker" class="position-absolute" style="top: 80px;"><input type="color" /></div>');
+            //wrapper.prepend('<div id="color_picker" class="position-absolute" style="top: 80px;"><input type="color" /></div>');
 
-            let colors = $('#model_fancybox').find('input[type=color]');
+            //wrapper.prepend('<div class="position-absolute" style="top: 80px;"><input id="x_offset" type="number" /><input id="y_offset" type="number" /></div>');
+            let colors = $('#x_offset, #y_offset').find('input');
             colors.on('change', (evt) => {
-                let newColor = hexToRgb(evt.target.value);
-                color.r = newColor.r;
-                color.g = newColor.g;
-                color.b = newColor.b;
-                animate();
+                //let newColor = hexToRgb(evt.target.value);
+                //color.r = newColor.r;
+                //color.g = newColor.g;
+                //color.b = newColor.b;
+                //animate();
+
+                changeTextureOffset(document.getElementById('x_offset').value, document.getElementById('y_offset').value);
+
             });
             controls.update(wrapper);
         });
@@ -474,10 +507,15 @@
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         };
+
+
+
+        window.addEventListener('resize', onWindowResize, false);
         animate();
     }
+
     (function () {
-        $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath'); });
+        $('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/Model/Base.gltf'); });
     })();
 
 </script>
