@@ -39,17 +39,11 @@ namespace yakutsa.Controllers
             List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
             List<ProductGroup>? groups = _retailCRM.GetResponse<ProductGroup>().Array?.ToList();
 
-            //_vk.SyncProductsAlbums(products);
-
             products?.ForEach(p => p.groups = groups?.Where(g => p.groups.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray());
-
-            var json = _retailCRM.GetOrdersJson();
 
             //TODO: добавлено для отладки, убрать после
             if (_environment.IsDevelopment())
             {
-
-
                 if (Cart.Count == 0)
                 {
                     var product = products.FirstOrDefault(p => p.name.ToLower() == "joggers");

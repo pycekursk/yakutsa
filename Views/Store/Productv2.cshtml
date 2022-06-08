@@ -51,17 +51,17 @@
                     </a>
                 }
                 @*  <div class="carousel-indicators">
-                    @{
-                    int index = 0;
-                    foreach (Image? image in Model?.images!)
-                    {
-                    if (image.Size != ImageSize.l) continue;
-                    string active = index == 0 ? "active" : "";
-                    <button type="button" data-bs-target="#product_carousel" class="@active" data-bs-slide-to="@index" aria-label="@index"></button>
-                    index++;
-                    }
-                    }
-                    </div>*@
+                @{
+                int index = 0;
+                foreach (Image? image in Model?.images!)
+                {
+                if (image.Size != ImageSize.l) continue;
+                string active = index == 0 ? "active" : "";
+                <button type="button" data-bs-target="#product_carousel" class="@active" data-bs-slide-to="@index" aria-label="@index"></button>
+                index++;
+                }
+                }
+                </div>*@
                 <div class="carousel-inner">
                     @{
                         int index = 0;
@@ -129,25 +129,14 @@
             @if (Model?.models.Count > 1)
             {
                 <div id="sub_categories" style="position:relative">
-                    <label class="mt-4 mb-1">
-                        Выберите модель:
-                    </label>
-                    <div class="btn-group" role="group" notify>
-                        @{
-                            index = 0;
-                            foreach (var mod in Model.models)
-                            {
-                                <div class="btn-anim m-1">
-                                    <input type="radio" class="btn-check btn-main" name="subgroupradio" id="@mod-button" value="@mod" autocomplete="off">
-                                    <label class="btn btn-primary" for="@mod-button">@mod</label>
-                                </div>
-                                index++;
-                            }
-                            <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
-                        }
+                    <div class="d-inline">
+                        <label class="mt-4 mb-1">
+                            Выберите модель:
+                        </label>
+                        <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
                     </div>
                     <!-- Modal -->
-                <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-body p-0">
@@ -159,6 +148,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="btn-group" role="group" notify>
+                        @{
+                            index = 0;
+                            foreach (var mod in Model.models)
+                            {
+                                <div class="btn-anim m-1">
+                                    <input type="radio" class="btn-check btn-main" name="subgroupradio" id="@mod-button" value="@mod" autocomplete="off">
+                                    <label class="btn btn-primary" for="@mod-button">@mod</label>
+                                </div>
+                                index++;
+                            }
+                        }
+                    </div>
+
                     <div class="sizes">
                         <div class="sizes-inner">
                             <label class="mt-4 mb-1">
@@ -194,11 +197,37 @@
             {
                 <div class="sizes">
                     <div class="sizes-inner">
-                        <label class="mt-4 mb-1">
-                            Размеры:
-                        </label>
-                        <div class="position-relative d-inline">
-                        </div>
+
+                        @if (Model?.groups?.FirstOrDefault(g => g.name.ToLower() == "joggers") == null)
+                        {
+                            <div class="d-inline">
+                                <label class="mt-4 mb-1">
+                                    Размеры:
+                                </label>
+                                <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
+                                <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body p-0">
+                                                <i class="fas fa-times fa-2x position-absolute" aria-hidden="true" data-bs-dismiss="modal" style="right:15px;top:10px;color:var(--main-text-color-hover)"></i>
+                                                <a class="fancybox" href="~/img/hoodie_sizes.jpg">
+                                                    <img src="~/img/hoodie_sizes.jpg" class="w-100" style="object-fit: contain;" alt="Таблица размеров" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <label class="mt-4 mb-1">
+                                Размеры:
+                            </label>
+                        }
+
+
+
                         <div class="btn-group w-100" role="group">
                             @foreach (var mod in Model?.models!)
                             {
@@ -218,23 +247,7 @@
                                     }
                                 </div>
                             }
-                            @if (Model?.groups?.FirstOrDefault(g => g.name.ToLower() == "joggers") == null)
-                            {
-                                <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
 
-                                <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-body p-0">
-                                                <i class="fas fa-times fa-2x position-absolute" aria-hidden="true" data-bs-dismiss="modal" style="right:15px;top:10px;color:var(--main-text-color-hover)"></i>
-                                                <a class="fancybox" href="~/img/hoodie_sizes.jpg">
-                                                    <img src="~/img/hoodie_sizes.jpg" class="w-100" style="object-fit: contain;" alt="Таблица размеров" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
                         </div>
                     </div>
                 </div>
@@ -327,12 +340,12 @@
 <script src="~/js/product.js" asp-append-version="true"></script>
 
 <script>
-     if (!isDevelopment) {
+    if (!isDevelopment) {
         try {
             ym(87733644, 'reachGoal', 'contentview');
-            window.onload = function(){
-                setTimeout(()=>{
-                  VK.Goal('view_content');
+            window.onload = function () {
+                setTimeout(() => {
+                    VK.Goal('view_content');
                 }, 150);
             }
         }
@@ -341,144 +354,144 @@
         }
     }
 
-      $(document).ready(function(){
-          let items = $('.owl-wrapper[loop=false] .owl-item');
-          items.each((i,e)=>{
-              let $this = $(e);
-              let id = e.getAttribute('data');
-              let button = $this.find('.card-buttons i.fas.fa-times');
-              button.on('click', (evt)=>{
+    $(document).ready(function () {
+        let items = $('.owl-wrapper[loop=false] .owl-item');
+        items.each((i, e) => {
+            let $this = $(e);
+            let id = e.getAttribute('data');
+            let button = $this.find('.card-buttons i.fas.fa-times');
+            button.on('click', (evt) => {
                 evt.preventDefault();
                 $this.addClass('opacity-25');
-                sendAjaxForm({id:id}, "@Url.ActionLink("RemoveFromHistoryAsync","Products")",
-                (responce)=>{
-                    if(responce.Success){
-                        if($('.owl-wrapper[loop=false] .owl-item').length == 1){
+                sendAjaxForm({ id: id }, "@Url.ActionLink("RemoveFromHistoryAsync","Products")",
+                    (responce) => {
+                        if (responce.Success) {
+                            if ($('.owl-wrapper[loop=false] .owl-item').length == 1) {
                                 $('#history h5').addClass('fade');
-                                setTimeout(()=>   $this.remove(), 300);
-                           }
-                           else{
+                                setTimeout(() => $this.remove(), 300);
+                            }
+                            else {
                                 $this.remove();
-                           }
-                    }
-                }, false);
-              });
-          });
-      });
+                            }
+                        }
+                    }, false);
+            });
+        });
+    });
 
 </script>
 
 <script type="module">
-              import * as three from '../../build/three.js';
-              import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
-              import { GUI } from '../../lib/three/lil-gui.module.min.js';
-              import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
+    import * as three from '../../build/three.js';
+    import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
+    import { GUI } from '../../lib/three/lil-gui.module.min.js';
+    import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
 
-              var modelsArray = ["../../3d/hoody/hoody.gltf" ,"../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
+    var modelsArray = ["../../3d/hoody/hoody.gltf", "../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
 
-              function renderModel(wrapper, modelSource) {
-                if (wrapper == null || modelSource == null) return;
-                if (wrapper == null) return;
+    function renderModel(wrapper, modelSource) {
+        if (wrapper == null || modelSource == null) return;
+        if (wrapper == null) return;
 
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(
-                    40,  // fov
-                    window.innerWidth / window.innerHeight,   // aspect
-                    0.05, // near
-                    500); // far
-                camera.position.z = 4;
-                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                const loader = new GLTFLoader();
-                renderer.setClearColor(0x000000, 0);
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                wrapper.appendChild(renderer.domElement);
-                const pLight = new THREE.PointLight(0xFFFFFF, 4);
-                const pLight2 = new THREE.PointLight(0xFFFFFF, 4);
-                const pLight3 = new THREE.PointLight(0xFFFFFF, 4);
-                const pLight4 = new THREE.PointLight(0xFFFFFF, 4);
-                pLight.position.z = 1;
-                pLight.position.y = 1;
-                pLight.position.x = 0;
-                pLight2.position.z = -1;
-                pLight2.position.y = 1;
-                pLight2.position.x = 0;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+            40,  // fov
+            window.innerWidth / window.innerHeight,   // aspect
+            0.05, // near
+            500); // far
+        camera.position.z = 4;
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        const loader = new GLTFLoader();
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        wrapper.appendChild(renderer.domElement);
+        const pLight = new THREE.PointLight(0xFFFFFF, 4);
+        const pLight2 = new THREE.PointLight(0xFFFFFF, 4);
+        const pLight3 = new THREE.PointLight(0xFFFFFF, 4);
+        const pLight4 = new THREE.PointLight(0xFFFFFF, 4);
+        pLight.position.z = 1;
+        pLight.position.y = 1;
+        pLight.position.x = 0;
+        pLight2.position.z = -1;
+        pLight2.position.y = 1;
+        pLight2.position.x = 0;
 
-                pLight3.position.z = 0;
-                pLight3.position.y = 1;
-                pLight3.position.x = 2;
+        pLight3.position.z = 0;
+        pLight3.position.y = 1;
+        pLight3.position.x = 2;
 
-                pLight4.position.z = 0;
-                pLight4.position.y = 1;
-                pLight4.position.x = -2;
+        pLight4.position.z = 0;
+        pLight4.position.y = 1;
+        pLight4.position.x = -2;
 
-                scene.add(pLight3);
-                scene.add(pLight4);
-                scene.add(pLight2);
-                scene.add(pLight);
+        scene.add(pLight3);
+        scene.add(pLight4);
+        scene.add(pLight2);
+        scene.add(pLight);
 
-                let obj = null;
-                const controls = new OrbitControls(camera, renderer.domElement);
-                controls.minDistance = 1;
-                controls.maxDistance = 8;
+        let obj = null;
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 1;
+        controls.maxDistance = 8;
 
 
-                function onWindowResize() {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                    animate();
-                }
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            animate();
+        }
 
-                window.addEventListener('resize', onWindowResize, false);
+        window.addEventListener('resize', onWindowResize, false);
 
-                //let material = new THREE.MeshStandardMaterial();
+        //let material = new THREE.MeshStandardMaterial();
 
-                var texture = new THREE.TextureLoader().load("../../3d/TTST-/textures/shirt.png");
-                //texture.wrapS = THREE.RepeatWrapping;
-                //texture.wrapT = THREE.RepeatWrapping;
+        var texture = new THREE.TextureLoader().load("../../3d/TTST-/textures/shirt.png");
+        //texture.wrapS = THREE.RepeatWrapping;
+        //texture.wrapT = THREE.RepeatWrapping;
 
-                console.log(texture);
+        console.log(texture);
 
-                loader.load(modelSource, function (gltf) {
-                    obj = gltf;
-                    obj.scene.scale.set(2, 2, 2);
-                    obj.scene.position.z = 0;
-                    obj.scene.position.y = 0;
-                    obj.scene.position.x = 0;
-                    scene.add(obj.scene);
-                    controls.enableDamping = true;
-                    controls.dampingFactor = 0.25;
-                    controls.enableZoom = true;
+        loader.load(modelSource, function (gltf) {
+            obj = gltf;
+            obj.scene.scale.set(2, 2, 2);
+            obj.scene.position.z = 0;
+            obj.scene.position.y = 0;
+            obj.scene.position.x = 0;
+            scene.add(obj.scene);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
 
-                    let model = gltf.scene.children[0].material;
-                    let color = model.color;
-                    console.log(obj.scene.children[0].material.map);
-                    //obj.scene.children[0].material.map = texture;
+            let model = gltf.scene.children[0].material;
+            let color = model.color;
+            console.log(obj.scene.children[0].material.map);
+            //obj.scene.children[0].material.map = texture;
 
-                    let wrapper = $('#model_fancybox > .model-wrapper');
+            let wrapper = $('#model_fancybox > .model-wrapper');
 
-                    wrapper.prepend('<div id="color_picker" class="position-absolute" style="top: 80px;"><input type="color" /></div>');
+            wrapper.prepend('<div id="color_picker" class="position-absolute" style="top: 80px;"><input type="color" /></div>');
 
-                    let colors = $('#model_fancybox').find('input[type=color]');
-                    colors.on('change', (evt)=> {
-                        let newColor = hexToRgb(evt.target.value);
-                        color.r = newColor.r;
-                        color.g = newColor.g;
-                        color.b = newColor.b;
-                        animate();
-                    });
-                    controls.update(wrapper);
-                });
-
-                function animate() {
-                    controls.update();
-                    requestAnimationFrame(animate);
-                    renderer.render(scene, camera);
-                };
+            let colors = $('#model_fancybox').find('input[type=color]');
+            colors.on('change', (evt) => {
+                let newColor = hexToRgb(evt.target.value);
+                color.r = newColor.r;
+                color.g = newColor.g;
+                color.b = newColor.b;
                 animate();
-             }
+            });
+            controls.update(wrapper);
+        });
+
+        function animate() {
+            controls.update();
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        };
+        animate();
+    }
     (function () {
-        $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath');});
+        $('.model-wrapper').each((i, e) => { renderModel(e, '@Model.modelPath'); });
     })();
 
 </script>

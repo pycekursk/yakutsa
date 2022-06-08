@@ -1185,14 +1185,14 @@ ul li {
         animation-play-state: running;
         animation-iteration-count: infinite;
         animation-duration: 4s;*/
-        background-image: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%);
+      /*  background-image: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%);
         background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
         background-size: 8px 3px, 8px 3px, 3px 8px, 3px 8px;
-        animation: btn-animation 0.5s linear infinite;
+        animation: btn-animation 0.5s linear infinite;*/
     }
 
 .btn-anim:not(.disabled):hover:after, .btn-anim.active:not(.disabled):after {
-    animation-play-state: running;
+   /* animation-play-state: running;*/
 }
 
 .btn-group .btn-anim .btn {
