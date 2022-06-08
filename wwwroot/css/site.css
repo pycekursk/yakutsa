@@ -61,7 +61,7 @@
     to {
         background-position: 8px 0, 0 100%, 0 0, 100% 8px;
     }
-   /* 0% {
+    /* 0% {
         right: 0;
     }
 
@@ -466,14 +466,32 @@ p {
     text-align: justify;
 }
 
-#sizes {
+/*#sizes {
     position: relative;
 }
 
     #sizes .tooltip-inner {
         width: 370px;
-    }
+    }*/
 
+
+.subline-wrapper {
+    position: relative;
+}
+
+.subline-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.8em;
+    bottom: -1.5em;
+    cursor: pointer;
+}
+
+    .subline-text:hover {
+        color: var(--main-text-color-hover);
+    }
 
 
 .tooltip-table .container {
@@ -1177,22 +1195,22 @@ ul li {
 }
 
 
-    .btn-group .btn-anim {
-       /* animation-name: btn-animation;
+.btn-group .btn-anim {
+    /* animation-name: btn-animation;
         animation-delay: 0;
         animation-direction: normal;
         animation-fill-mode: forwards;
         animation-play-state: running;
         animation-iteration-count: infinite;
         animation-duration: 4s;*/
-      /*  background-image: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%);
+    /*  background-image: linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(90deg, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%), linear-gradient(0, white 50%, transparent 50%);
         background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
         background-size: 8px 3px, 8px 3px, 3px 8px, 3px 8px;
         animation: btn-animation 0.5s linear infinite;*/
-    }
+}
 
 .btn-anim:not(.disabled):hover:after, .btn-anim.active:not(.disabled):after {
-   /* animation-play-state: running;*/
+    /* animation-play-state: running;*/
 }
 
 .btn-group .btn-anim .btn {

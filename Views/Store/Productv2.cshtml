@@ -50,18 +50,6 @@
                         <img src="~/img/3dicon.png" alt="@Model?.name" />
                     </a>
                 }
-                @*  <div class="carousel-indicators">
-                @{
-                int index = 0;
-                foreach (Image? image in Model?.images!)
-                {
-                if (image.Size != ImageSize.l) continue;
-                string active = index == 0 ? "active" : "";
-                <button type="button" data-bs-target="#product_carousel" class="@active" data-bs-slide-to="@index" aria-label="@index"></button>
-                index++;
-                }
-                }
-                </div>*@
                 <div class="carousel-inner">
                     @{
                         int index = 0;
@@ -129,14 +117,16 @@
             @if (Model?.models.Count > 1)
             {
                 <div id="sub_categories" style="position:relative">
-                    <div class="d-inline">
+                    <div class="d-inline subline-wrapper">
                         <label class="mt-4 mb-1">
                             Выберите модель:
                         </label>
-                        <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
+                        <span class="subline-text" data-bs-toggle="modal" data-bs-target="#sizesModal">
+                            таблица размеров
+                        </span>
                     </div>
                     <!-- Modal -->
-                    <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
+                <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-body p-0">
@@ -169,7 +159,7 @@
                             </label>
                             <div class="position-relative d-inline">
                             </div>
-                            <div class="btn-group w-100" role="group">
+                            <div class="btn-group d-block w-100" role="group">
                                 @foreach (var mod in Model.models)
                                 {
                                     <div value="@mod" notify class="justify-content-md-start justify-content-center flex-wrap">
@@ -197,14 +187,13 @@
             {
                 <div class="sizes">
                     <div class="sizes-inner">
-
                         @if (Model?.groups?.FirstOrDefault(g => g.name.ToLower() == "joggers") == null)
                         {
                             <div class="d-inline">
                                 <label class="mt-4 mb-1">
                                     Размеры:
                                 </label>
-                                <i class="fas fa-question fa-2x" data-bs-toggle="modal" data-bs-target="#sizesModal"></i>
+                                <span data-bs-toggle="modal" data-bs-target="#sizesModal" class="subline-text">таблица размеров</span>
                                 <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -225,10 +214,7 @@
                                 Размеры:
                             </label>
                         }
-
-
-
-                        <div class="btn-group w-100" role="group">
+                        <div class="btn-group d-block w-100" role="group">
                             @foreach (var mod in Model?.models!)
                             {
                                 <div value="@mod" notify class="w-100 active d-flex justify-content-md-start justify-content-center flex-nowrap">
