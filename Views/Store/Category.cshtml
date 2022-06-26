@@ -30,7 +30,7 @@
                             @foreach (var img in images)
                             {
                                 string active = img.Side == ImageSide.front ? "active" : "";
-                                <img onclick="" src="@img.Url" style="object-fit: contain;" height="500" class="card-img px-3 @active" alt="@p.name">
+                                <img src="@img.Url" style="object-fit: contain;" height="500" class="card-img px-3 @active" alt="@p.name">
 
                             }
 
