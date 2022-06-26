@@ -1,5 +1,7 @@
 ﻿@model List<Product>?
 
+<link rel="stylesheet" href="~/css/images_slider.css" />
+
 <div class="container-fluid p-0">
     <div class="row mx-0 mt-0 pt-0">
         <div class="col-sm-12 p-0">
@@ -16,11 +18,28 @@
                 <div class="col">
                     <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
                         <div class="card">
-                            <div class="card-img-bottom">
-                                <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" class="card-img px-3" style="object-fit:contain" alt="@p.name" height="500">
+                            @{
+                                var images = p.images?.Where(i => i.Size == ImageSize.m).OrderBy(i => i.Side).ToList();
+                            }
+                            <div class="card-img-bottom images-slider" images-count="@images.Count">
+                                @foreach (var img in images)
+                                {
+                                    string active = img.Side == ImageSide.front ? "active" : "";
+                                    <img src="@img.Url" style="object-fit: contain;" height="500" class="card-img px-3 @active" alt="@p.name">
+
+                                }
+
+                                <div class="indicators">
+                                    @foreach (var img in images)
+                                    {
+                                        string active = img.Side == ImageSide.front ? "active" : "";
+                                        <div class="indicator @active"></div>
+                                    }
+                                </div>
                             </div>
+
                             <div class="card-body pt-0">
-                                <h5 class="card-title fa-2x text-center nohover">@p.name</h5>
+                                <h5 class="card-title fa-2x text-center">@p.name</h5>
                                 <p class="card-text fa-sm text-center">
                                     @p.maxPrice <i class="fa fa-rub nohover"></i>
                                 </p>
@@ -31,52 +50,52 @@
             }
         </div>
         @*
-            @if (!Startup.Environment.IsDevelopment())
-            {
-            <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 mt-3 px-1 px-md-3">
-            @foreach (Product p in Model!)
-            {
-            <div class="col">
-            <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="">
-            <div class="card h-100 pb-0" style="justify-content: center;align-items: center;overflow: hidden;">
-            <img src="@p.imageUrl" class="card-img" alt="@p.name">
-            <div class="card-body">
-            <h5 class="card-title text-center">@p.name</h5>
-            <p class="card-text fa-sm text-end">
-            @p.maxPrice <i class="fa fa-rub opacity-100" style="color:white;"></i>
-            </p>
-            </div>
-            </div>
-            </a>
-            </div>
-            }
-            </div>
-            }
-            else
-            {
-            <div class="row row-cols-1">
-            @foreach (Product p in Model!)
-            {
-            <div class="col mx-auto">
-            <div class="card" style="max-width: 540px;overflow: hidden;align-items: center;justify-content: center;">
-            <div class="row g-0">
-            <div class="col-md-4">
-            <img src="@p.imageUrl" class="img-fluid rounded-start" alt="@p.name">
-            </div>
-            <div class="col-md-8">
-            <div class="card-body">
-            <h5 class="card-title">@p.name</h5>
-            <p class="card-text">@p.description</p>
-            <p class="card-text">@p.maxPrice</p>
-            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-            </div>
-            </div>
-            </div>
-            </div>
-            </div>
-            }
-            </div>
-            }
+        @if (!Startup.Environment.IsDevelopment())
+        {
+        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5 g-1 g-sm-2 mt-3 px-1 px-md-3">
+        @foreach (Product p in Model!)
+        {
+        <div class="col">
+        <a href="@Url.ActionLink("Product","Home",new {id = p.id})" class="">
+        <div class="card h-100 pb-0" style="justify-content: center;align-items: center;overflow: hidden;">
+        <img src="@p.imageUrl" class="card-img" alt="@p.name">
+        <div class="card-body">
+        <h5 class="card-title text-center">@p.name</h5>
+        <p class="card-text fa-sm text-end">
+        @p.maxPrice <i class="fa fa-rub opacity-100" style="color:white;"></i>
+        </p>
+        </div>
+        </div>
+        </a>
+        </div>
+        }
+        </div>
+        }
+        else
+        {
+        <div class="row row-cols-1">
+        @foreach (Product p in Model!)
+        {
+        <div class="col mx-auto">
+        <div class="card" style="max-width: 540px;overflow: hidden;align-items: center;justify-content: center;">
+        <div class="row g-0">
+        <div class="col-md-4">
+        <img src="@p.imageUrl" class="img-fluid rounded-start" alt="@p.name">
+        </div>
+        <div class="col-md-8">
+        <div class="card-body">
+        <h5 class="card-title">@p.name</h5>
+        <p class="card-text">@p.description</p>
+        <p class="card-text">@p.maxPrice</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        }
+        </div>
+        }
         *@
 
 
@@ -89,3 +108,4 @@
     </div>
 </div>
 
+<script src="~/js/images_slider.js" type="text/javascript" asp-append-version="true"></script>

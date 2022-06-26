@@ -1,0 +1,38 @@
+.images-slider img:not(.active) {
+  display: none;
+  opacity: 0;
+  transition: 150ms;
+}
+
+.images-slider img.active {
+  opacity: 1;
+}
+
+.images-slider {
+  position: relative;
+}
+
+body.mobile .images-slider .indicators {
+  display: none;
+}
+
+.images-slider .indicators {
+  position: absolute;
+  height: 5px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  bottom: 7px;
+}
+
+  .images-slider .indicators .indicator {
+    flex: 1 1 auto;
+    background-color: var(--main-text-color);
+    margin-left: 6px;
+    margin-right: 6px;
+    border-radius: 1em;
+  }
+
+    .images-slider .indicators .indicator.active {
+      background-color: var(--main-text-color-hover);
+    }

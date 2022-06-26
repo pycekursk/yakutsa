@@ -1,5 +1,7 @@
 ﻿@model List<Product>
 
+<link rel="stylesheet" href="~/css/images_slider.css" />
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -21,9 +23,26 @@
             <div class="col">
                 <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
                     <div class="card">
-                        <div class="card-img-bottom">
-                            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" height="500" class="card-img px-3" alt="@p.name">
+                        @{
+                            var images = p.images?.Where(i => i.Size == ImageSize.m).OrderBy(i => i.Side).ToList();
+                        }
+                        <div class="card-img-bottom images-slider" images-count="@images.Count">
+                            @foreach (var img in images)
+                            {
+                                string active = img.Side == ImageSide.front ? "active" : "";
+                                <img src="@img.Url" style="object-fit: contain;" height="500" class="card-img px-3 @active" alt="@p.name">
+
+                            }
+
+                            <div class="indicators">
+                                @foreach (var img in images)
+                                {
+                                    string active = img.Side == ImageSide.front ? "active" : "";
+                                    <div class="indicator @active"></div>
+                                }
+                            </div>
                         </div>
+
                         <div class="card-body pt-0">
                             <h5 class="card-title fa-2x text-center">@p.name</h5>
                             <p class="card-text fa-sm text-center">
@@ -37,3 +56,4 @@
     </div>
 </div>
 
+<script src="~/js/images_slider.js" type="text/javascript" asp-append-version="true"></script>
