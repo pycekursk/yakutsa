@@ -7,7 +7,6 @@
         </div>
     </div>
     <div class="row mx-0">
-
         <div class="mb-2 mr-auto goback-wrapper">
             <a href="@Url.ActionLink("Index", "Home")">
                 <i class="fas fa-arrow-left md ms-0 ms-md-5 nohover" style="opacity:1;color:var(--main-text-color-hover)"></i>
@@ -22,10 +21,12 @@
             <div class="col">
                 <a href="@Url.ActionLink(p.name.ToLower(), p.groups?.FirstOrDefault()?.name?.ToLower())" class="nohover">
                     <div class="card">
-                        <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" height="500" class="card-img" alt="@p.name">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">@p.name</h5>
-                            <p class="card-text fa-sm text-end">
+                        <div class="card-img-bottom">
+                            <img src="@p.images?.FirstOrDefault(i => i.Side == ImageSide.front && i.Size == ImageSize.m)?.Url" style="object-fit: contain;" height="500" class="card-img px-3" alt="@p.name">
+                        </div>
+                        <div class="card-body pt-0">
+                            <h5 class="card-title fa-2x text-center">@p.name</h5>
+                            <p class="card-text fa-sm text-center">
                                 @p.maxPrice <i class="fa fa-rub nohover"></i>
                             </p>
                         </div>

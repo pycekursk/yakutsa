@@ -53,6 +53,26 @@
 }
 
 
+@keyframes image-shadow {
+    from {
+        filter: drop-shadow(0px 0px 20px rgba(150, 11, 11, 0));
+    }
+
+    to {
+        filter: drop-shadow(0px 0px 20px rgba(150, 11, 11, 1));
+    }
+}
+
+@-webkit-keyframes image-shadow {
+    from {
+        -webkit-filter: drop-shadow(0px 0px 20px rgba(150, 11, 11, 0));
+    }
+
+    to {
+        -webkit-filter: drop-shadow(0px 0px 20px rgba(150, 11, 11, 1));
+    }
+}
+
 @keyframes btn-animation {
     from {
         background-position: 0 0, 8px 100%, 0 8px, 100% 0;
@@ -134,6 +154,41 @@
     width: 0;
     content: " - ";
 }*/
+
+#model_fancybox {
+    padding: 0 !important;
+}
+
+
+.dg.main.a {
+    background-color: transparent;
+    top: 50px;
+    left: 5px;
+    position: absolute !important;
+    z-index: 100000;
+}
+
+
+
+.dg .cr {
+    width: 100%;
+    padding: 0;
+}
+
+.dg .title {
+    width: 100%;
+}
+
+.dg ul .cr:not(.boolean) {
+    display: flex !important;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+}
+
+.cr .c input[type="text"] {
+    margin: 0 !important;
+}
 
 hr {
     color: var(--main-bg-color) !important;
@@ -313,25 +368,36 @@ body.busy > div:not(.messages-wrapper), body.busy main > .container-fluid > div:
     opacity: .35;
 }
 
-
+/*
 a {
     text-decoration: none !important;
     color: var(--main-text-color) !important;
+}*/
+
+*.hover {
+    text-decoration: dotted;
+    color: var(--main-text-color) !important;
+    cursor: pointer;
+    border-bottom: 1px dashed;
 }
 
-    a.nohover, i.nohover:not(.fa-rub, i.fa-copyright, .fa-cart-plus) {
+    *.hover:hover {
         color: var(--main-text-color-hover) !important;
     }
 
-        a.nohover:hover {
-            text-decoration: none;
-            color: var(--main-text-color) !important;
-        }
+a.nohover, i.nohover:not(.fa-rub, i.fa-copyright, .fa-cart-plus) {
+    color: var(--main-text-color-hover) !important;
+}
 
-    a:not(.nohover):hover *, .messengers__item {
+    a.nohover:hover {
         text-decoration: none;
-        color: var(--main-text-color-hover) !important;
+        color: var(--main-text-color) !important;
     }
+
+a:not(.nohover):hover *, .messengers__item {
+    text-decoration: none;
+    color: var(--main-text-color-hover) !important;
+}
 
 i:not(.nohover) {
     color: var(--main-text-color);
@@ -366,9 +432,14 @@ body.busy .loading-cover {
 }
 
 .model-wrapper.loading canvas {
+    opacity: 0;
+}
+
+.model-wrapper.loading {
     background-image: url(../img/circle_loader.gif);
     background-repeat: no-repeat;
     background-position: center;
+    background-size: 100px;
 }
 
 /*body.mobile.busy .loading-cover {
@@ -485,8 +556,10 @@ p {
     right: 0;
     text-align: center;
     font-size: 0.8em;
-    bottom: -1.5em;
+    bottom: -1.2em;
     cursor: pointer;
+    overflow: visible;
+    white-space: nowrap;
 }
 
     .subline-text:hover {
