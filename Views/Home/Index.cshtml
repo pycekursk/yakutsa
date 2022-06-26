@@ -33,7 +33,7 @@
                                     @foreach (var img in images)
                                     {
                                         string active = img.Side == ImageSide.front ? "active" : "";
-                                        <div class="indicator @active"></div>
+                                        <div class="indicator @active" indicator-target="@img.Url"></div>
                                     }
                                 </div>
                             </div>

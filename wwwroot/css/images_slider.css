@@ -12,10 +12,6 @@
   position: relative;
 }
 
-body.mobile .images-slider .indicators {
-  display: none;
-}
-
 .images-slider .indicators {
   position: absolute;
   height: 5px;
