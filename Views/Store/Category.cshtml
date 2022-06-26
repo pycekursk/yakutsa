@@ -26,7 +26,7 @@
                         @{
                             var images = p.images?.Where(i => i.Size == ImageSize.m).OrderBy(i => i.Side).ToList();
                         }
-                        <div class="card-img-bottom images-slider" images-count="@images.Count">
+                        <div class="card-img-bottom images-slider" images-count="@images?.Count">
                             @foreach (var img in images)
                             {
                                 string active = img.Side == ImageSide.front ? "active" : "";
