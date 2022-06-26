@@ -1,7 +1,7 @@
 ﻿(function ($) {
   var touchStart = null; //Точка начала касания
   var touchPosition = null; //Текущая позиция
-  const sensitivity = 20;
+  const sensitivity = 5;
 
   function TouchStart(e) {
     //Получаем текущую позицию касания
