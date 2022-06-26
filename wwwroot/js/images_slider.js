@@ -40,7 +40,6 @@
     {
       if (Math.abs(d.x) > sensitivity) //Проверяем, было ли движение достаточно длинным
       {
-
         let nextElement;
         let nextActiveIndicator;
         if (d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
@@ -86,10 +85,10 @@
   function loadedHandler() {
     //if (document.body.classList.contains('mobile')) return;
 
-    document.addEventListener("touchstart", function (e) { TouchStart(e); }, { capture: true });
-    document.addEventListener("touchmove", function (e) { TouchMove(e); }, { capture: true });
-    document.addEventListener("touchend", function (e) { TouchEnd(e, "green"); });
-    document.addEventListener("touchcancel", function (e) { TouchEnd(e, "red"); });
+    document.addEventListener("touchstart", function (e) { return TouchStart(e); }, { capture: true });
+    document.addEventListener("touchmove", function (e) { return TouchMove(e); }, { capture: true });
+    document.addEventListener("touchend", function (e) { return TouchEnd(e, "green"); }, { capture: true });
+    //document.addEventListener("touchcancel", function (e) { TouchEnd(e, "red"); });
 
 
     var cards = document.querySelectorAll('.images-slider');
