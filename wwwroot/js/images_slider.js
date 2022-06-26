@@ -86,8 +86,8 @@
   function loadedHandler() {
     //if (document.body.classList.contains('mobile')) return;
 
-    document.addEventListener("touchstart", function (e) { TouchStart(e); }, false);
-    document.addEventListener("touchmove", function (e) { TouchMove(e); });
+    document.addEventListener("touchstart", function (e) { TouchStart(e); }, { capture: true });
+    document.addEventListener("touchmove", function (e) { TouchMove(e); }, { capture: true });
     document.addEventListener("touchend", function (e) { TouchEnd(e, "green"); });
     document.addEventListener("touchcancel", function (e) { TouchEnd(e, "red"); });
 
