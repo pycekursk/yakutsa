@@ -23,6 +23,7 @@ body.mobile .images-slider .indicators {
   display: flex;
   flex-direction: row;
   bottom: 7px;
+  justify-content: center;
 }
 
   .images-slider .indicators .indicator {
@@ -31,6 +32,7 @@ body.mobile .images-slider .indicators {
     margin-left: 6px;
     margin-right: 6px;
     border-radius: 1em;
+    max-width: 50px;
   }
 
     .images-slider .indicators .indicator.active {
