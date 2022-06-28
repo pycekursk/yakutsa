@@ -1,7 +1,7 @@
 ﻿(function ($) {
   var touchStart = null; //Точка начала касания
   var touchPosition = null; //Текущая позиция
-  const sensitivity = 5;
+  const sensitivity = 25;
 
   function TouchStart(e) {
     //Получаем текущую позицию касания
@@ -14,8 +14,8 @@
     touchPosition = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
   }
 
-  function TouchEnd(e, color) {
-    CheckAction(e); //Определяем, какой жест совершил пользователь
+  function TouchEnd(e) {
+    CheckAction(e);  //Определяем, какой жест совершил пользователь
     //Очищаем позиции
     touchStart = null;
     touchPosition = null;
@@ -28,67 +28,55 @@
       y: touchStart.y - touchPosition.y
     };
 
-    var target = evt.path.find((e) => e.classList.contains("images-slider"));
-    if (!target) return;
+    let activeElement = evt.currentTarget.querySelector("img.active");
+    let activeIndicator = evt.currentTarget.querySelector(".indicator.active");
 
-    let activeElement = target.querySelector("img.active");
-    let activeIndicator = target.querySelector(".indicator.active");
-
-    var msg = ""; //Сообщение
-
-    if (Math.abs(d.x) > Math.abs(d.y)) //Проверяем, движение по какой оси было длиннее
+    if (Math.abs(d.x) > Math.abs(d.y) && !(Math.abs(d.x) < sensitivity && Math.abs(d.y) < sensitivity)) //Проверяем, движение по какой оси было длиннее
     {
-      if (Math.abs(d.x) > sensitivity) //Проверяем, было ли движение достаточно длинным
+      let nextElement;
+      let nextActiveIndicator;
+
+      if (d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
       {
-        let nextElement;
-        let nextActiveIndicator;
-        if (d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
-        {
-          nextElement = activeElement.nextElementSibling;
-        }
-        else //Иначе он двигал им слева направо
-        {
-          nextElement = activeElement.previousElementSibling;
-        }
-
-        if (nextElement && nextElement instanceof HTMLImageElement) {
-          activeElement.classList.remove('active');
-          nextElement.classList.add('active');
-          activeElement = nextElement;
-
-          let url = nextElement.getAttribute('src');
-          nextActiveIndicator = target.querySelector(`.indicator[indicator-target="${url}"`);
-
-          activeIndicator.classList.remove('active');
-          nextActiveIndicator.classList.add('active');
-
-          activeIndicator = nextActiveIndicator;
-        }
+        nextElement = activeElement.nextElementSibling;
       }
-    }
-    else //Аналогичные проверки для вертикальной оси
-    {
-      if (Math.abs(d.y) > sensitivity) {
-        if (d.y > 0) //Свайп вверх
-        {
-          msg = "Swipe up";
-        }
-        else //Свайп вниз
-        {
-          msg = "Swipe down";
-        }
+      else //Иначе он двигал им слева направо
+      {
+        nextElement = activeElement.previousElementSibling;
+      }
+
+      //showMessage(`${nextElement.src}`);
+
+      evt.preventDefault();
+
+      if (nextElement && nextElement instanceof HTMLImageElement) {
+        activeElement.classList.remove('active');
+        nextElement.classList.add('active');
+        activeElement = nextElement;
+
+        let url = nextElement.getAttribute('src');
+        nextActiveIndicator = evt.currentTarget.querySelector(`.indicator[indicator-target="${url}"`);
+
+        activeIndicator.classList.remove('active');
+        nextActiveIndicator.classList.add('active');
+
+        activeIndicator = nextActiveIndicator;
       }
     }
   }
 
-
   function loadedHandler() {
-    //if (document.body.classList.contains('mobile')) return;
+    document.querySelectorAll('.images-slider').forEach(e => {
+      e.addEventListener("touchstart", function (evt) { return TouchStart(evt); }, { passive: false });
+      e.addEventListener("touchmove", function (evt) { return TouchMove(evt); }, { passive: false });
+      e.addEventListener("touchend", function (evt) { return TouchEnd(evt); }, { passive: false });
+      e.addEventListener("touchcancel", function (e) { TouchEnd(e); }, { passive: false });
+    });
 
-    document.addEventListener("touchstart", function (e) { return TouchStart(e); }, { capture: true });
-    document.addEventListener("touchmove", function (e) { return TouchMove(e); }, { capture: true });
-    document.addEventListener("touchend", function (e) { return TouchEnd(e, "green"); }, { capture: true });
-    //document.addEventListener("touchcancel", function (e) { TouchEnd(e, "red"); });
+
+
+
+
 
 
     var cards = document.querySelectorAll('.images-slider');

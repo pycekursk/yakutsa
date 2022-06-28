@@ -4910,7 +4910,7 @@ textarea.form-control-lg {
   color: var(--main-text-color-hover);
 }
 
-.card:not(.nohover):hover img {
+body:not(.mobile) .card:not(.nohover):hover img {
   /*box-shadow: 0px 1px 0.3rem 0rem var(--main-shadow-color) !important;*/
   transform: translateY(-0.5em);
   animation: image-shadow 200ms;

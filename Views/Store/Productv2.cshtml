@@ -166,7 +166,7 @@
                             </div>
                         </div>
                         <!-- Modal -->
-                    <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="sizesModal" tabindex="-1" aria-labelledby="sizesModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-body p-0">
@@ -360,274 +360,275 @@
 </script>
 
 <script type="module">
-            import * as three from '../../build/three.js';
-            import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
-            //import Stats from '../../lib/three/stats.module.js';
-            import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
-            import { GUI } from '../../lib/three/dat.gui.module.js';
+    import * as three from '../../lib/three/three.js';
+    import { OrbitControls } from '../../lib/three/controls/OrbitControls.js';
+    import { GLTFLoader } from '../../lib/three/GLTFLoader.js';
+    import { GUI } from '../../lib/three/dat.gui.module.js';
 
 
-            //var modelsArray = ["../../3d/hoody/hoody.gltf", "../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
+    //var modelsArray = ["../../3d/hoody/hoody.gltf", "../../3d/demo/shirt/scene.gltf", "../../3d/itwiki/scene.gltf"];
 
-            class ColorGUIHelper {
-      constructor(object, prop) {
-        this.object = object;
-        this.prop = prop;
-      }
-      get value() {
-        return `#${this.object[this.prop].getHexString()}`;
-      }
-      set value(hexString) {
-        this.object[this.prop].set(hexString);
-      }
+    class ColorGUIHelper {
+        constructor(object, prop) {
+            this.object = object;
+            this.prop = prop;
+        }
+        get value() {
+            return `#${this.object[this.prop].getHexString()}`;
+        }
+        set value(hexString) {
+            this.object[this.prop].set(hexString);
+        }
     }
 
-            function renderModel(wrapper, modelSource) {
-                if (wrapper == null || modelSource == null) return;
-                if (wrapper == null) return;
+    function renderModel(wrapper, modelSource) {
+        if (wrapper == null || modelSource == null) return;
+        if (wrapper == null) return;
 
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(
-                    40,  // fov
-                    window.innerWidth / window.innerHeight,   // aspect
-                    0.05, // near
-                    500); // far
-                camera.position.z = 5;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+            40,  // fov
+            window.innerWidth / window.innerHeight,   // aspect
+            0.05, // near
+            500); // far
+        camera.position.z = 5;
 
-                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                const loader = new GLTFLoader();
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        const loader = new GLTFLoader();
 
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                wrapper.appendChild(renderer.domElement);
-
-
-
-                  let lightHeight = 2;
-                  let lightHeight_2 = 0;
-                  let lightIntens = 1;
-                   let lightScale = 2;
-                   let lightColor = 0xFFFFFF;
-
-
-                   var lights = new Array();
-
-                const pLight = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight2 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight3 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight4 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight_2 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight2_2 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight3_2 = new THREE.PointLight(lightColor, lightIntens, 100);
-                const pLight4_2 = new THREE.PointLight(lightColor, lightIntens, 100);
-
-                 lights.push(pLight);
-                  lights.push(pLight2);
-                   lights.push(pLight3);
-                    lights.push(pLight4);
-                  //       lights.push(pLight_2);
-                  //lights.push(pLight2_2);
-                  // lights.push(pLight3_2);
-                  //  lights.push(pLight4_2);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        wrapper.appendChild(renderer.domElement);
 
 
 
-                pLight.position.z = 10;
-                pLight.position.y = lightHeight;
-                pLight.position.x = 0;
-
-                pLight.scale.x = lightScale;
-                pLight.scale.z = lightScale;
-                pLight.scale.y = lightScale;
-
-                pLight2.position.z = 0;
-                pLight2.position.y = lightHeight;
-                pLight2.position.x = 10;
-
-                 pLight2.scale.x = lightScale;
-                pLight2.scale.z = lightScale;
-                pLight2.scale.y = lightScale;
-
-                pLight3.position.z = 0;
-                pLight3.position.y = lightHeight;
-                pLight3.position.x = -10;
-
-                 pLight3.scale.x = lightScale;
-                pLight3.scale.z = lightScale;
-                pLight3.scale.y = lightScale;
-
-                pLight4.position.z = -10;
-                pLight4.position.y = lightHeight;
-                pLight4.position.x = 0;
-
-                pLight4.scale.x = lightScale;
-                pLight4.scale.z = lightScale;
-                pLight4.scale.y = lightScale;
-
-                pLight_2.position.z = 10;
-                pLight_2.position.y = lightHeight_2;
-                pLight_2.position.x = 0;
+        let lightHeight = 2;
+        let lightHeight_2 = 0;
+        let lightIntens = 1;
+        let lightScale = 2;
+        let lightColor = 0xFFFFFF;
 
 
-                  pLight_2.scale.x = lightScale;
-                pLight_2.scale.z = lightScale;
-                pLight_2.scale.y = lightScale;
+        var lights = new Array();
 
-                pLight2_2.position.z = 0;
-                pLight2_2.position.y = lightHeight_2;
-                pLight2_2.position.x = 10;
+        const pLight = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight2 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight3 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight4 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight_2 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight2_2 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight3_2 = new THREE.PointLight(lightColor, lightIntens, 100);
+        const pLight4_2 = new THREE.PointLight(lightColor, lightIntens, 100);
 
-                  pLight2_2.scale.x = lightScale;
-                pLight2_2.scale.z = lightScale;
-                pLight2_2.scale.y = lightScale;
-
-                pLight3_2.position.z = 0;
-                pLight3_2.position.y = lightHeight_2;
-                pLight3_2.position.x = -10;
-
-                   pLight3_2.scale.x = lightScale;
-                pLight3_2.scale.z = lightScale;
-                pLight3_2.scale.y = lightScale;
-
-                pLight4_2.position.z = -10;
-                pLight4_2.position.y = lightHeight_2;
-                pLight4_2.position.x = 0;
-
-                pLight4_2.scale.x = lightScale;
-                pLight4_2.scale.z = lightScale;
-                pLight4_2.scale.y = lightScale;
-
-                scene.add(pLight3);
-                scene.add(pLight4);
-                scene.add(pLight2);
-                scene.add(pLight);
-
-                //scene.add(pLight3_2);
-                //scene.add(pLight4_2);
-                //scene.add(pLight2_2);
-                //scene.add(pLight_2);
-
-                let obj = null;
-                const controls = new OrbitControls(camera, renderer.domElement);
-                controls.minDistance = 2;
-                controls.maxDistance = isDevelopment ? 30 : 8;
-                controls.maxPolarAngle = 2.10;
-                controls.minPolarAngle = 0.80;
-                //controls.maxAzimuthAngle = 0.10;
-
-                function onWindowResize() {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                    animate();
-                }
-
-                var vendorCode = '@Model.article';
-
-                     var onProgress = function (xhr) {
-                         $(document.body).removeClass('busy');
-                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                    };
-
-                    var onError = function (xhr) {
-                        console.log('An error happened');
-                     };
-
-                loader.load(modelSource, function (gltf) {
-                    obj = gltf;
-                    obj.scene.scale.set(1, 1, 1);
-                    obj.scene.position.z = 0;
-                    obj.scene.position.y = -0.4;
-                    obj.scene.position.x = 0;
-                    scene.add(obj.scene);
-                    controls.enableDamping = true;
-                    controls.dampingFactor = 0.25;
-                    controls.enableZoom = true;
-
-                    var material = new THREE.MeshStandardMaterial();
+        lights.push(pLight);
+        lights.push(pLight2);
+        lights.push(pLight3);
+        lights.push(pLight4);
+        //       lights.push(pLight_2);
+        //lights.push(pLight2_2);
+        // lights.push(pLight3_2);
+        //  lights.push(pLight4_2);
 
 
 
+        pLight.position.z = 10;
+        pLight.position.y = lightHeight;
+        pLight.position.x = 0;
 
-                    new THREE.TextureLoader().load(
-                    `../../3d/Textures/${vendorCode}/Color.jpg`,
-                    (xhr)=>{
-                        xhr.flipY = false;
-                        material.map = xhr;
-                        material.needsUpdate = true;
-                        wrapper.removeClass('loading');
-                    },
-                    onProgress,
-                    onError);
+        pLight.scale.x = lightScale;
+        pLight.scale.z = lightScale;
+        pLight.scale.y = lightScale;
 
-                     new THREE.TextureLoader().load(
-                    `../../3d/Textures/${vendorCode}/Roughness.jpg`,
-                    (xhr)=>{
-                        xhr.flipY = false;
-                        material.roughnessMap = xhr;
-                        material.needsUpdate = true;
-                    },
-                    onProgress,
-                    onError);
+        pLight2.position.z = 0;
+        pLight2.position.y = lightHeight;
+        pLight2.position.x = 10;
 
-                                new THREE.TextureLoader().load(
-                    `../../3d/Textures/${vendorCode}/Normal map.jpg`,
-                    (xhr)=>{
-                        xhr.flipY = false;
-                        material.normalMap = xhr;
-                        material.needsUpdate = true;
-                    },
-                    onProgress,
-                    onError);
+        pLight2.scale.x = lightScale;
+        pLight2.scale.z = lightScale;
+        pLight2.scale.y = lightScale;
 
-                    //if(isDevelopment){
-                    // const gui = new GUI();
-                    // const materialGui = gui.addFolder('Material');
-                    // const lightsGui = gui.addFolder('Lights');
-                    // lights.forEach((l, i)=> {
-                    //     let pointLightHelper = new THREE.PointLightHelper(l);
-                    //     obj.scene.add(pointLightHelper);
-                    //     let lightFolder = lightsGui.addFolder(`Точечный свет ${++i}`);
-                    //     lightFolder.add(l, "intensity", 0, 5, 0.05);
-                    //     let scale = lightFolder.addFolder("Масштаб");
-                    //     let position = lightFolder.addFolder("Позиция");
-                    //     scale.add(l.scale, "x", 0, 5, 0.05);
-                    //     scale.add(l.scale, "y", 0, 5, 0.05);
-                    //     scale.add(l.scale, "z", 0, 5, 0.05);
-                    //     position.add(l.position, 'x', -10, 10);
-                    //     position.add(l.position, 'z', -10, 10);
-                    //     position.add(l.position, 'y', -10, 10);
-                    //});
+        pLight3.position.z = 0;
+        pLight3.position.y = lightHeight;
+        pLight3.position.x = -10;
 
-                    // $(document.body).append(gui.domElement);
+        pLight3.scale.x = lightScale;
+        pLight3.scale.z = lightScale;
+        pLight3.scale.y = lightScale;
 
-                    //  materialGui.add(material.normalScale, "x");
-                    //  materialGui.add(material.normalScale, "y");
+        pLight4.position.z = -10;
+        pLight4.position.y = lightHeight;
+        pLight4.position.x = 0;
 
-                    //  materialGui.add(material, "metalness", 0, 1, 0.01);
-                    //  materialGui.add(material, "roughness", 0, 1, 0.01);
-                    //  materialGui.add(material, "wireframe");
-                    //}
+        pLight4.scale.x = lightScale;
+        pLight4.scale.z = lightScale;
+        pLight4.scale.y = lightScale;
+
+        pLight_2.position.z = 10;
+        pLight_2.position.y = lightHeight_2;
+        pLight_2.position.x = 0;
+
+
+        pLight_2.scale.x = lightScale;
+        pLight_2.scale.z = lightScale;
+        pLight_2.scale.y = lightScale;
+
+        pLight2_2.position.z = 0;
+        pLight2_2.position.y = lightHeight_2;
+        pLight2_2.position.x = 10;
+
+        pLight2_2.scale.x = lightScale;
+        pLight2_2.scale.z = lightScale;
+        pLight2_2.scale.y = lightScale;
+
+        pLight3_2.position.z = 0;
+        pLight3_2.position.y = lightHeight_2;
+        pLight3_2.position.x = -10;
+
+        pLight3_2.scale.x = lightScale;
+        pLight3_2.scale.z = lightScale;
+        pLight3_2.scale.y = lightScale;
+
+        pLight4_2.position.z = -10;
+        pLight4_2.position.y = lightHeight_2;
+        pLight4_2.position.x = 0;
+
+        pLight4_2.scale.x = lightScale;
+        pLight4_2.scale.z = lightScale;
+        pLight4_2.scale.y = lightScale;
+
+        scene.add(pLight3);
+        scene.add(pLight4);
+        scene.add(pLight2);
+        scene.add(pLight);
+
+        //scene.add(pLight3_2);
+        //scene.add(pLight4_2);
+        //scene.add(pLight2_2);
+        //scene.add(pLight_2);
+
+        let obj = null;
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 2;
+        controls.maxDistance = isDevelopment ? 30 : 8;
+        controls.maxPolarAngle = 2.10;
+        controls.minPolarAngle = 0.80;
+        //controls.maxAzimuthAngle = 0.10;
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            animate();
+        }
+
+        var vendorCode = '@Model.article';
+
+        var onProgress = function (xhr) {
+            $(document.body).removeClass('busy');
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        };
+
+        var onError = function (xhr) {
+            console.log('An error happened');
+        };
+
+        loader.load(modelSource, function (gltf) {
+            obj = gltf;
+            obj.scene.scale.set(1, 1, 1);
+            obj.scene.position.z = 0;
+            obj.scene.position.y = -0.4;
+            obj.scene.position.x = 0;
+            scene.add(obj.scene);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
+
+            var material = new THREE.MeshStandardMaterial();
 
 
 
 
-                   obj.scene.children[0].material = material;
-                });
+            new THREE.TextureLoader().load(
+                `../../3d/Textures/${vendorCode}/Color.jpg`,
+                (xhr) => {
+                    xhr.flipY = false;
+                    material.map = xhr;
+                    material.needsUpdate = true;
+                    wrapper.removeClass('loading');
+                },
+                onProgress,
+                onError);
 
-                function animate() {
-                    controls.update();
-                    requestAnimationFrame(animate);
-                    renderer.render(scene, camera);
-                };
+            new THREE.TextureLoader().load(
+                `../../3d/Textures/${vendorCode}/Roughness.jpg`,
+                (xhr) => {
+                    xhr.flipY = false;
+                    material.roughnessMap = xhr;
+                    material.needsUpdate = true;
+                },
+                onProgress,
+                onError);
 
-                window.addEventListener('resize', onWindowResize, false);
-                animate();
-            }
+            new THREE.TextureLoader().load(
+                `../../3d/Textures/${vendorCode}/Normal map.jpg`,
+                (xhr) => {
+                    xhr.flipY = false;
+                    material.normalMap = xhr;
+                    material.needsUpdate = true;
+                },
+                onProgress,
+                onError);
 
-            (function () {
-                //$('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/scene.gltf'); });
-                //$('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/JOJO/Jojo.gltf'); });
-                $('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/Model/Base.gltf'); });
-            })();
+            //if(isDevelopment){
+            // const gui = new GUI();
+            // const materialGui = gui.addFolder('Material');
+            // const lightsGui = gui.addFolder('Lights');
+            // lights.forEach((l, i)=> {
+            //     let pointLightHelper = new THREE.PointLightHelper(l);
+            //     obj.scene.add(pointLightHelper);
+            //     let lightFolder = lightsGui.addFolder(`Точечный свет ${++i}`);
+            //     lightFolder.add(l, "intensity", 0, 5, 0.05);
+            //     let scale = lightFolder.addFolder("Масштаб");
+            //     let position = lightFolder.addFolder("Позиция");
+            //     scale.add(l.scale, "x", 0, 5, 0.05);
+            //     scale.add(l.scale, "y", 0, 5, 0.05);
+            //     scale.add(l.scale, "z", 0, 5, 0.05);
+            //     position.add(l.position, 'x', -10, 10);
+            //     position.add(l.position, 'z', -10, 10);
+            //     position.add(l.position, 'y', -10, 10);
+            //});
+
+            // $(document.body).append(gui.domElement);
+
+            //  materialGui.add(material.normalScale, "x");
+            //  materialGui.add(material.normalScale, "y");
+
+            //  materialGui.add(material, "metalness", 0, 1, 0.01);
+            //  materialGui.add(material, "roughness", 0, 1, 0.01);
+            //  materialGui.add(material, "wireframe");
+            //}
+
+
+
+
+            obj.scene.children[0].material = material;
+        });
+
+        function animate() {
+            controls.update();
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        };
+
+        window.addEventListener('resize', onWindowResize, false);
+        document.querySelector('.model-wrapper canvas').addEventListener('webglcontextlost', () => { renderer.forceContextRestore(); });
+
+        animate();
+    }
+
+    (function () {
+        //$('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/scene.gltf'); });
+        //$('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/JOJO/Jojo.gltf'); });
+        $('.model-wrapper').each((i, e) => { renderModel(e, '../../3d/Model/Base.gltf'); });
+    })();
 
 </script>

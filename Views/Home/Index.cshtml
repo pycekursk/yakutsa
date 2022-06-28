@@ -2,6 +2,13 @@
 
 <link rel="stylesheet" href="~/css/images_slider.css" />
 
+<p style="display:none">
+    Yakutsa - российский бренд уличной одежды.
+    Мы совмещаем стрит-веар и аниме принты с футуристичными киберпанковыми элементами, создаём для Вас удобные модели худи и футболок, которые прослужат долгое время за счёт качественных материалов и новейшего способа нанесения авторского рисунка.
+    Заказ можно оформить только на официальном сайте yakutsa.ru
+    Доставка по всему миру.
+</p>
+
 <div class="container-fluid p-0">
     <div class="row mx-0 mt-0 pt-0">
         <div class="col-sm-12 p-0">
@@ -11,7 +18,6 @@
         </div>
     </div>
     <section id="catalog">
-
         <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-1 g-sm-2 mt-3 px-1 mx-0 px-md-3 justify-content-center">
             @foreach (Product p in Model!)
             {
@@ -39,10 +45,10 @@
                             <div class="card-body pt-0">
                                 <h5 class="card-title fa-2x text-center">@p.name</h5>
                                 <p class="card-text fa-sm text-center">
-                               @*     @{
-                                        var oldPrice = p.maxPrice + 1000;
-                                    }
-                                  <strike class="me-1">@oldPrice <i class="fa fa-rub nohover"></i></strike>*@
+                                    @*     @{
+                                var oldPrice = p.maxPrice + 1000;
+                                }
+                                <strike class="me-1">@oldPrice <i class="fa fa-rub nohover"></i></strike>*@
                                     @p.maxPrice <i class="fa fa-rub nohover"></i>
                                 </p>
                             </div>

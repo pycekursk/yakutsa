@@ -439,7 +439,7 @@ body.busy .loading-cover {
 }
 
 .model-wrapper.loading {
-  background-image: url(../img/circle_loader.gif);
+  background-image: url(../img/small_circle_loader.gif);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100px;
