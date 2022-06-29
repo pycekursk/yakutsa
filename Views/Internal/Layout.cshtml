@@ -26,7 +26,7 @@
     <link rel="icon" type="image/svg" href="/favicon.svg">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" asp-append-version="true">
     <link rel="stylesheet" href="~/lib/fancybox/jquery.fancybox.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/suggestion.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/suggestion.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/toolkit.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/labelholder/labelholder.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
@@ -60,20 +60,22 @@
             isDevelopment = false;
             <!-- Yandex.Metrika counter -->
             <script type="text/javascript">
-                (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-                (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+                (function (m, e, t, r, i, k, a) {
+                    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+                    m[i].l = 1 * new Date(); k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+                })
+                    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
                 ym(87733644, "init", {
-                     clickmap:true,
-                     trackLinks:true,
-                     accurateTrackBounce:true,
-                     webvisor:true
+                    clickmap: true,
+                    trackLinks: true,
+                    accurateTrackBounce: true,
+                    webvisor: true
                 });
             </script>
             <noscript><div><img src="https://mc.yandex.ru/watch/87733644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
             <!-- /Yandex.Metrika counter -->
-            <script type="text/javascript">!function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src='https://vk.com/js/api/openapi.js?169',t.onload=function(){VK.Retargeting.Init("VK-RTRG-1318686-5SDfC"),VK.Retargeting.Hit()},document.head.appendChild(t)}();</script>
+            <script type="text/javascript">!function () { var t = document.createElement("script"); t.type = "text/javascript", t.async = !0, t.src = 'https://vk.com/js/api/openapi.js?169', t.onload = function () { VK.Retargeting.Init("VK-RTRG-1318686-5SDfC"), VK.Retargeting.Hit() }, document.head.appendChild(t) }();</script>
             <noscript><img src="https://vk.com/rtrg?p=VK-RTRG-1318686-5SDfC" style="position:fixed; left:-999px;" alt="" /></noscript>
         }
     }
@@ -114,6 +116,50 @@
             await Html.RenderPartialAsync("~/Views/Partials/MainMenuPartial.cshtml");
         }
     </header>
+
+    <aside>
+        <a href="/">
+            <img src="~/img/logo.png" class="w-100" alt="Yakutsa logo">
+        </a>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        КАТАЛОГ
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <ul class="text-sm-start text-center hovered">
+                        @foreach (ProductGroup group in ViewBag.Menu)
+                        {
+                            <li><a href="@Url.ActionLink("Category","Store", new {categoryName = group.name.ToLower()})">@group.name</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <a class="accordion-href py-1" href="@Url.ActionLink("DeliveryRules","Home")">ДОСТАВКА</a>
+                </h2>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <a class="accordion-href py-1" href="@Url.ActionLink("Care","Home")">УХОД</a>
+                </h2>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <a class="accordion-href py-1" href="@Url.ActionLink("PaymentRules", "Home")">ОПЛАТА</a>
+                </h2>
+            </div>
+            @* <div class="accordion-item">
+            <h2 class="accordion-header">
+            <a class="accordion-href py-1" href="@Url.ActionLink("Contacts", "Home")">РЕКВИЗИТЫ</a>
+            </h2>
+            </div>*@
+        </div>
+    </aside>
+
     <main role="main">
         <div class="container-fluid">
             @RenderBody()
@@ -181,9 +227,9 @@
                 </div>
                 <div class="col-sm-1 col-md-1 item">
                     @* <ul class="d-inline-flex w-100 justify-content-center">
-                        <li class="mx-2 nohover"><i class="fa fa-cc-visa fa-3x nohover"></i></li>
-                        <li class="mx-2 nohover"><i class="fa fa-cc-mastercard fa-3x nohover"></i></li>
-                        </ul>*@
+                    <li class="mx-2 nohover"><i class="fa fa-cc-visa fa-3x nohover"></i></li>
+                    <li class="mx-2 nohover"><i class="fa fa-cc-mastercard fa-3x nohover"></i></li>
+                    </ul>*@
                 </div>
                 <div class="col social">
                     <a target="_blank" href="https://t.me/YakutsaBot"><i class="fab fa-telegram fa-3x"></i></a>
@@ -234,39 +280,39 @@
     <script src="~/js/site.js" type="text/javascript" asp-append-version="true"></script>
 
     <script type="text/javascript" language="javascript">
-           let url =  '@Context.Request.Path';
-           if(detector.isPhoneSized()){
-                 if(url == '/'){
-                         $('.top-bar').css({'display':'none'});
-                    }
-                   document.querySelector('.top-bar').style.opacity = 1;
-           }
-           else{
-                 document.querySelector('.top-bar').style.opacity = 1;
-           }
+        let url = '@Context.Request.Path';
+        if (detector.isPhoneSized()) {
+            if (url == '/') {
+                $('.top-bar').css({ 'display': 'none' });
+            }
+            document.querySelector('.top-bar').style.opacity = 1;
+        }
+        else {
+            document.querySelector('.top-bar').style.opacity = 1;
+        }
 
-           $('.top-bar').css('height', Math.round($('.top-bar-inner').height() + 14));
+        $('.top-bar').css('height', Math.round($('.top-bar-inner').height() + 14));
 
-               document.addEventListener("DOMContentLoaded", () => {
-                    setTimeout(()=> {
-                        document.body.classList.remove('loading');
-                        document.body.classList.remove('busy');
-                    }, 5250);
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+                document.body.classList.remove('busy');
+            }, 5250);
 
-                     window.onload = function(){
-                        setTimeout(()=> {document.body.classList.remove('loading');}, 150);
-                        setTimeout(()=> { document.body.classList.remove('busy');}, 200);
-               }
-               });
-                 (function ($) {Initialize($);})(jQuery);
-        //        var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
-        //!function (t) {
-        //    var a = t.getElementsByTagName("head")[0];
-        //    var c = t.createElement("script");
-        //    c.type = "text/javascript";
-        //    c.src = "//c.retailcrm.tech/widget/loader.js";
-        //    a.appendChild(c);
-        //} (document);
+            window.onload = function () {
+                setTimeout(() => { document.body.classList.remove('loading'); }, 150);
+                setTimeout(() => { document.body.classList.remove('busy'); }, 200);
+            }
+        });
+        (function ($) { Initialize($); })(jQuery);
+                                        //        var _rcct = "6c4caa7779756413431bb9c176386908bc2a161066fed02b9c17e42ba5c0d1c4";
+                                        //!function (t) {
+                                        //    var a = t.getElementsByTagName("head")[0];
+                                        //    var c = t.createElement("script");
+                                        //    c.type = "text/javascript";
+                                        //    c.src = "//c.retailcrm.tech/widget/loader.js";
+                                        //    a.appendChild(c);
+                                        //} (document);
 
     </script>
 

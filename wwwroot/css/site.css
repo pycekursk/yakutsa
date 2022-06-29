@@ -363,8 +363,41 @@ body.mobile #footer_accordion {
 
 body main {
   transition: filter 250ms;
+  transition: transform 150ms;
   margin-bottom: 50px !important;
   min-height: 85vh;
+}
+
+body.side-open {
+  overflow: hidden;
+}
+
+  body.side-open main {
+    transform: translateX(200px);
+    filter: brightness(0.2);
+  }
+
+body aside {
+  transition: width 150ms;
+  position: fixed;
+  left: 0;
+  height: 100%;
+  z-index: 10;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding: 3px;
+}
+
+  body aside .accordion-header {
+    font-weight: 600;
+  }
+
+body.side-open aside {
+  box-shadow: 10px 0px 15px -12px rgb(244 2 2 / 60%);
+  width: 200px;
+  display: block;
+  opacity: 1
 }
 
 body.busy > div:not(.messages-wrapper), body.busy main > .container-fluid > div:not(.modal) {

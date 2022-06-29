@@ -5097,6 +5097,7 @@ body:not(.mobile) .card:not(.nohover):hover img {
   border-radius: 0;
   overflow-anchor: none;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
+  font-weight: 550;
 }
 
 @media (prefers-reduced-motion: reduce) {
