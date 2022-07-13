@@ -1,0 +1,279 @@
+﻿@model RetailCRMCore.Models.Order
+
+<style>
+    .info {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+        .info > div {
+            margin: 7px 5px;
+        }
+
+        .info div span {
+            font-weight: bold;
+            padding-left: 5px;
+        }
+
+    table {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+        table td {
+            border: 1px solid whitesmoke;
+        }
+
+        table thead td {
+            text-align: left;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+            .numeric,
+            table thead td .numeric {
+                text-align: center;
+            }
+
+    .empty {
+        text-align: center;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    hr {
+        margin: 20px 0;
+        border: 1px solid whitesmoke;
+    }
+
+    .sub-head {
+        font-size: 13pt;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .ft-lf,
+    .ft-rg {
+        width: 50%;
+        display: inline-block;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .ft-lf {
+        width: 50%;
+        float: left;
+    }
+
+    .ft-rg {
+        width: 40%;
+        float: right;
+    }
+
+    .clear {
+        clear: both;
+    }
+</style>
+
+<h1 style="text-align:center">
+    Заказ
+    <b>№@Model.number</b>
+</h1>
+<hr>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=998bce9c-aac7-40f3-ad71-0f8687ba8771&lang=ru_RU&load=Geolink" type="text/javascript"></script>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="info ft-lf">
+                <div class="sub-head">ПОКУПАТЕЛЬ</div>
+                <div>
+                    Имя:
+                    <span>@Model.firstName</span>
+                </div>
+                <div>
+                    Фамилия:
+                    <span>@Model.lastName</span>
+                </div>
+                <div>
+                    Телефон:
+                    <span>@Model.phone</span>
+                </div>
+                <div>
+                    Email:
+                    <span>@Model.email</span>
+                </div>
+            </div>
+            <div class="info ft-rg">
+                <div class="sub-head">МЕНЕДЖЕР</div>
+                <div>
+                    Имя:
+                    <span>@Model.manager?.firstName</span>
+                </div>
+                <div>
+                    Фамилия:
+                    <span>@Model.manager?.lastName</span>
+                </div>
+                <div>
+                    Телефон:
+                    <a class="hover" href="tel:@Model.manager?.phone" target="_blank">@Model.manager?.phone</a>
+                </div>
+                <div>
+                    Email:
+                    <a class="hover" href="mailto:@Model.manager?.email">@Model.manager?.email</a>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="info ft-lf">
+                <div class="sub-head">СПОСОБ ПОЛУЧЕНИЯ</div>
+                @if (Model.delivery.code == "self-delivery")
+                {
+                    <div>
+                        Самовывоз по адресу
+                        <span>
+                            <a target="_blank" class="hover" href="https://yandex.ru/maps/213/moscow/house/2_y_roshchinskiy_proyezd_8/Z04YcAdjSUQGQFtvfXtxd39hZA==/?ll=37.603011%2C55.706320&z=16" style="text-decoration: none;">
+                                г. Москва, 2-й Рощинский проезд, дом 8, офис 12, помещение XVII
+                            </a>
+                        </span>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        Служба доставки:
+                        @if (Model.delivery.code == "russian-post")
+                        {
+                            <span>
+                                Почта России
+                            </span>
+                            <div>
+                                Адрес доставки:
+                                <span>
+                                    @Model.delivery.address.cityType @Model.delivery.address.city, @Model.delivery.address.text
+                                </span>
+                            </div>
+                        }
+
+                        else if (Model.delivery.code == "dalli")
+                        {
+                            <span>
+                                @Model.delivery.data.tariffName
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.delivery.data.pickuppointAddress))
+                            {
+                                <div>
+                                    Адрес:
+                                    <a class="hover" target="_blank" href="http://maps.yandex.ru/?text=@Model.delivery.data.pickuppointAddress&ll=@Model.delivery.data.pickuppointCoordinateLongitude,@Model.delivery.data.pickuppointCoordinateLatitude&spn=0.067205,0.018782&z=18">
+                                        @Model.delivery.data.pickuppointAddress
+                                    </a>
+                                    @*   <span class="ymaps-geolink"
+                        data-type="biz"
+                        data-description="Московский офис Яндекса"
+                        data-bounds="[[55.729410, 37.584012],[55.738588, 37.598817]]">
+                        Яндекс
+                        </span>*@
+                                </div>
+                                <div>
+                                    График работы:
+                                    <span>
+                                        @Model.delivery.data.pickuppointSchedule
+                                    </span>
+                                </div>
+                                <div>
+                                    Телефон:
+                                    <a class="hover" href="tel:@Model.delivery.data.pickuppointPhone">
+                                        @Model.delivery.data.pickuppointPhone
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    Адрес доставки:
+                                    <span>
+                                        @Model.delivery.address.cityType @Model.delivery.address.city, @Model.delivery.address.text
+                                    </span>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="info ft-rg">
+                <div class="sub-head">СТАТУС ЗАКАЗА</div>
+                @if (Model.status == "ozhidaem-oplatu" || Model.status == "new")
+                {
+                    <div>
+                        <span style="color:var(--bs-danger)">Заказ не оплачен, </span><a class="hover" disabled href="">оплатить онлайн</a>
+                    </div>
+                }
+                else if (Model.status == "paid")
+                {
+                    <div>
+                        <span style="color:var(--bs-success)">Заказ оплачен,</span> {статус производства}
+                    </div>
+                }
+            </div>
+            <div class="clear"></div>
+            <div class="sub-head">СОСТАВ ЗАКАЗА</div>
+            <table>
+                <thead>
+                    <tr>
+                        <td style="text-align: center;">Наименование</td>
+                        <td style="text-align: center;">Фото</td>
+                        <td style="text-align: center;">Цена</td>
+                        <td style="text-align: center;">Кол-во</td>
+                        <td style="text-align: center;">Стоимость</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align:center;">
+                            BERSERK
+                            (TBRSR-S-OVS)
+                        </td>
+                        <td style="text-align:center">
+                            <div>
+                                <img height="200"
+                                     src="https://s3-s1.retailcrm.tech/eu-central-1/retailcrm/yakutsa-8e898aa36d0b809c520692c01e1cccbc/product/623fae56dc0ef-_berserk_m_front.png">
+                            </div>
+                        </td>
+                        <td class="numeric">3&nbsp;000,00&nbsp;<span class="currency-symbol rub">₽</span></td>
+                        <td class="numeric">1</td>
+                        <td class="numeric">0,00&nbsp;<span class="currency-symbol rub">₽</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="info ft-rg" style="text-align:right;">
+                <br>
+                <div>
+                    Сумма по товарам:
+                    <span>@Model.summ&nbsp;<span class="currency-symbol rub">₽</span></span>
+                </div>
+                <div>
+                    Итого:
+                    <span>@Model.totalSumm&nbsp;<span class="currency-symbol rub">₽</span></span>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+@*<link href="~/css/order.css" rel="stylesheet" />*@
+
+
+
+<script src="~/js/order.js" type="text/javascript" asp-append-version="true"></script>

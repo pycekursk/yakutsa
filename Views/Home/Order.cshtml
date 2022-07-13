@@ -1,0 +1,87 @@
+﻿@model RetailCRMCore.Models.Order
+<link href="~/css/order.css" rel="stylesheet" />
+<div class="container mt-0">
+    <div class="row">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+    </div>
+
+    <div class="row row-cols-12">
+        <div class="col">
+            <div data-reflow-type="order-status">
+                <div class="reflow-order-status">
+                    <div class="col">
+                        <div class="ref-order-info">
+                            <h2>Заказ №@Model.number</h2>
+                            <div class="ref-order-line ref-status"><b>Статус</b>processed</div>
+                            <div class="ref-order-line ref-created"><b>Создан</b>@Model.createdAt</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="ref-order-customer">
+                            <h2>Клиент</h2>
+                            <div class="ref-order-line ref-customer-name"><b>Имя</b>@Model.customer.firstName</div>
+                            <div class="ref-order-line ref-customer-surname"><b>Фамилия</b>@Model.customer.lastName</div>
+                            <div class="ref-order-line ref-customer-email"><b>Телефон</b>@Model.customer.anyPhone</div>
+                            <div class="ref-order-line ref-customer-phone"><b>Email</b>@Model.customer.anyEmail</div>
+                        </div>
+                    </div>
+                    @* <div class="col">
+                    <div class="ref-order-billing">
+                    <h2>Billing</h2>
+                    <div class="ref-order-line ref-billing-address"><b>Billing Name</b><span>John Doe</span></div>
+                    <div class="ref-order-line ref-billing-address">
+                    <b>Billing Address</b><span>
+                    Address: Baker Street
+                    4
+                    </span><span>City: London</span><span>Postcode: 987654</span><span>
+                    Country: United
+                    Kingdom
+                    </span>
+                    </div>
+                    </div>
+                    </div>*@
+                    <div class="col">
+                        <div class="ref-order-shipping">
+                            <h2>Способ получения</h2>
+                            <div class="ref-order-line ref-shipping-address">
+                                <b>Shipping Address</b><span>
+                                    Address: Baker Street
+                                    4
+                                </span><span>City: London</span><span>Postcode: 987654</span><span>
+                                    Country: United
+                                    Kingdom
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="ref-line-items">
+                            <h2>Подробности заказа</h2>
+                            <div class="ref-order-line ref-line-item ref-product-line">
+                                <div class="ref-name">2 × Bailee Jast</div>.
+                                <div class="ref-img p-2"><img style="width:100%;object-fit:cover" src="/img/logo.png" height="50"></div>
+                                <div class="ref-price"><b>$365.76</b><small>(2 × $182.88)</small></div>
+                            </div>
+                            <div class="ref-tiny-separator">∙∙∙∙∙</div>
+                            <div class="ref-order-line ref-line-item ref-product-line">
+                                <div class="ref-name">Jany Little S</div>
+                                <div class="ref-price"><b>$395.85</b><small>($395.85)</small></div>
+                            </div>
+                            <div class="ref-tiny-separator">∙∙∙∙∙</div>
+                            <div class="ref-order-line ref-line-item ref-product-line">
+                                <div class="ref-name">Jany Little M</div>
+                                <div class="ref-price"><b>$395.85</b><small>($395.85)</small></div>
+                            </div>
+                            <hr />
+                            <div class="ref-order-line ref-line-item">Сумма по товарам: <span class="ref-price">$2,300.00</span></div>
+                            <hr />
+                            <div class="ref-order-line ref-line-item">Сумма с доставкой: <span class="ref-price">$2,300.00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/order.js" type="text/javascript" asp-append-version="true"></script>

@@ -173,7 +173,7 @@ namespace yakutsa.Services
 
         public Task<string> GetDeliveryTariffs(Address address, Cart cart, string code = "dalli-service")
         {
-            return Task.Run<string>(async () =>
+            return Task.Run<string>(() =>
             {
                 string result = String.Empty;
                 //HttpClient httpClient = new HttpClient();
@@ -213,13 +213,50 @@ namespace yakutsa.Services
             });
         }
 
+        public Order? GetOrder(string number)
+        {
+            var filter = new Dictionary<string, object>();
+            filter.Add("numbers", new object[] { number });
+            var response = _client.OrdersList(filter);
+            try
+            {
+                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject(response.GetRawResponse()) as JObject;
+                var orders = obj?.GetValue("orders") as JArray;
+
+                if (orders == null)
+                    throw new Exception("Ошибка получения обьекта заказа");
+
+                var ord = orders[0];
+                var json = orders?.ToString();
+                var order = Newtonsoft.Json.JsonConvert.DeserializeObject<Order>(ord.ToString());
+
+
+                obj = (JObject?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.User((int)order?.managerId).GetRawResponse()) as JObject)?.GetValue("user");
+                var manager = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(obj.ToString());
+                order.manager = manager;
+
+                obj = (JObject?)(((JObject?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.DeliveryTypes().GetRawResponse()) as JObject)?.GetValue("deliveryTypes"))?.GetValue(order.delivery.code));
+
+
+                //order.deliveryType = Newtonsoft.Json.JsonConvert.DeserializeObject<DeliveryType>(obj?.ToString()!);
+
+                return order;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public Response<T> GetResponse<T>()
         {
             Response? response = null;
             switch (typeof(T).Name)
             {
                 case "Order":
+
                     response = _client.OrdersList();
+
                     break;
                 case "Product":
                     response = _client.StoreProducts();
@@ -247,10 +284,10 @@ namespace yakutsa.Services
             return (Response<T>)response;
         }
 
-        public Task<Response<T>> GetResponseAsync<T>()
-        {
-            return Task.Run(GetResponse<T>);
-        }
+        //public Task<Response<T>> GetResponseAsync<T>()
+        //{
+        //    return Task.Run(GetResponse<T>);
+        //}
 
         public List<Product>? GetProducts()
         {

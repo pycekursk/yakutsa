@@ -44,12 +44,13 @@ namespace yakutsa.Controllers
             //TODO: добавлено для отладки, убрать после
             if (_environment.IsDevelopment())
             {
-                if (Cart.Count == 0)
+                if (Cart?.Count == 0)
                 {
                     var product = products.FirstOrDefault(p => p.name.ToLower() == "joggers");
                     ToCart(product.id, product.offers.FirstOrDefault().id);
-                    return RedirectToAction("OrderOptions", "Home");
+                    //return RedirectToAction("OrderOptions", "Home");
                 }
+                return RedirectToAction("Order", "Home", new { number = "499A" });
             }
 
 
@@ -266,7 +267,7 @@ namespace yakutsa.Controllers
                 createOrder.paymentType = "cp";
                 createOrder.deliveryType = "dalli";
 
-                var managerId = 0;
+                var managerId = 10;
                 var users = _retailCRM.GetResponse<User>();
                 int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager)?.id.ToString(), out managerId);
                 var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
@@ -283,7 +284,7 @@ namespace yakutsa.Controllers
                 }
                 else
                 {
-                    createOrder.managerId = createOrder.managerId;
+                    createOrder.managerId = managerId;
                 }
                 createOrder.createdAt = DateTime.Now;
 
@@ -328,6 +329,24 @@ namespace yakutsa.Controllers
                 HttpContext.Session.Remove("cart");
                 return result;
             });
+        }
+
+        [Route("Order")]
+        public async Task<IActionResult> Order(string number)
+        {
+            if (string.IsNullOrEmpty(number)) return NotFound();
+
+            return await Task.Run<IActionResult>(() =>
+            {
+                var order = _retailCRM.GetOrder(number);
+
+                ViewData["Title"] = new HtmlString($"Заказ №{order?.number}");
+                ViewData["Description"] = new HtmlString($"Информация о заказе №{order?.number}");
+
+                return View("/Views/Home/OrderV2.cshtml", order);
+            });
+
+            //https://yakutsa.retailcrm.ru/api/v5/orders?filter[numbers][]=00000502&&apiKey=h0NsTuUjjscl7JG5SEk6NZPJPuw4dryy
         }
 
         [Route("CheckOffers")]
