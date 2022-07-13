@@ -153,8 +153,16 @@ namespace yakutsa.Services
             }
         }
 
+        public Order OrderUpdate(Order order)
+        {
+            _client.OrderUpdate(order);
+            return order;
+        }
+
         public async Task<string> CreatePayment(int id, string host)
         {
+
+
             var createInvoice = new CreateInvoice
             {
                 paymentId = id,
@@ -232,13 +240,33 @@ namespace yakutsa.Services
 
 
                 obj = (JObject?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.User((int)order?.managerId).GetRawResponse()) as JObject)?.GetValue("user");
-                var manager = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(obj.ToString());
+                var manager = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(obj?.ToString());
                 order.manager = manager;
 
-                obj = (JObject?)(((JObject?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.DeliveryTypes().GetRawResponse()) as JObject)?.GetValue("deliveryTypes"))?.GetValue(order.delivery.code));
+                //obj = (JObject?)(((JObject?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.DeliveryTypes().GetRawResponse()) as JObject)?.GetValue("deliveryTypes"))?.GetValue(order.delivery.code));
 
+
+                filter = new Dictionary<string, object>();
+                object[] filterValues = new object[order.items.Count()];
+                for (int i = 0; i < filterValues.Length; i++)
+                {
+                    filterValues[i] = order.items[i].offer.id;
+                }
+                filter.Add("offerIds", filterValues);
+
+
+                var jArray = (JArray?)(Newtonsoft.Json.JsonConvert.DeserializeObject(_client.StoreProducts(filter).GetRawResponse()) as JObject)?.GetValue("products");
+                var products = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(jArray?.ToString());
+
+                foreach (OrderProduct orderProduct in order.items)
+                {
+                    orderProduct.offer.product = products?.FirstOrDefault(prod => prod.offers?.FirstOrDefault(offr => offr.id == orderProduct.offer.id) != null);
+                    orderProduct.summ = orderProduct.quantity * orderProduct.initialPrice;
+                }
 
                 //order.deliveryType = Newtonsoft.Json.JsonConvert.DeserializeObject<DeliveryType>(obj?.ToString()!);
+
+
 
                 return order;
             }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using RetailCRMCore.Models;
 
@@ -50,7 +51,10 @@ namespace yakutsa.Controllers
                     ToCart(product.id, product.offers.FirstOrDefault().id);
                     //return RedirectToAction("OrderOptions", "Home");
                 }
-                return RedirectToAction("Order", "Home", new { number = "499A" });
+
+                Payment("499A").ContinueWith(t => t.Result).Wait();
+
+                return RedirectToAction("Order", "Home", new { number = "503A" });
             }
 
 
@@ -269,7 +273,7 @@ namespace yakutsa.Controllers
 
                 var managerId = 10;
                 var users = _retailCRM.GetResponse<User>();
-                int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager)?.id.ToString(), out managerId);
+                //int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager)?.id.ToString(), out managerId);
                 var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
                 if (customer != null)
                 {
@@ -347,6 +351,50 @@ namespace yakutsa.Controllers
             });
 
             //https://yakutsa.retailcrm.ru/api/v5/orders?filter[numbers][]=00000502&&apiKey=h0NsTuUjjscl7JG5SEk6NZPJPuw4dryy
+        }
+
+
+        [Route("Payment")]
+        public Task<IActionResult> Payment(string orderNumber)
+        {
+            return Task.Run<IActionResult>(async () =>
+            {
+                var result = new PortalActionResult();
+
+                var order = _retailCRM.GetOrder(orderNumber);
+                var payments = order?.payments as JObject;
+
+                if (!payments.HasValues)
+                {
+                    var p = new { type="cp", amount = 4350 };
+                  
+                    order.SetPropertyValue("payments", p);
+                    //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
+                }
+                _retailCRM.OrderUpdate(order);
+
+
+                //var payment = payments?.Properties()?.First()?.First;
+                //var status = payment.Value<string>("status");
+
+
+
+
+
+                //var status = (string?)firstPayment?.GetValue("status");
+
+                //if (status == "wait-approved")
+                //{
+
+                // string link = await _retailCRM.CreatePayment((int)payment?.Value<int>("id"), HttpContext.Request.Host.Value);
+                //string id = (property as dynamic).externalId;
+                //}
+                //if (order?.payments == null)
+                //{
+
+                //}
+                return result;
+            });
         }
 
         [Route("CheckOffers")]
