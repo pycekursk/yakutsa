@@ -117,7 +117,7 @@ namespace yakutsa.Controllers
             loyalty.GenerateCodes(codeText, count, promoCodeType, value);
 
             return RedirectToAction("Index", "Admin");
-           
+
         }
 
         [Route("Admin/RemovePromoCodes")]
@@ -141,11 +141,11 @@ namespace yakutsa.Controllers
             if (!_signIn.IsSignedIn(User)) return Forbid();
 
             var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
-            loyalty?.PromoCodes?.ForEach(p => { if (ids.Contains(p.Id.ToString())) { p.IsActive = true; } });
+            loyalty?.PromoCodes?.ForEach(p => { if (ids.Contains(p.Id.ToString()) && p.PromoCodeState != PromoCodeState.Used) { p.PromoCodeState = PromoCodeState.Active; } });
             _context.Loyalty.Update(loyalty);
             _context.SaveChanges();
             return new PortalActionResult() { Success = true };
-           
+
 
         }
 
@@ -155,7 +155,12 @@ namespace yakutsa.Controllers
         {
             if (!_signIn.IsSignedIn(User)) return Forbid();
             var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
-            loyalty?.PromoCodes?.ForEach(p => { if (ids.Contains(p.Id.ToString())) { p.IsActive = false; } });
+            
+            loyalty?.PromoCodes?.ForEach(p => {
+                if (ids.Contains(p.Id.ToString())) {
+                    p.PromoCodeState = PromoCodeState.NotActive;
+                } 
+            });
             _context.Loyalty.Update(loyalty);
             _context.SaveChanges();
 

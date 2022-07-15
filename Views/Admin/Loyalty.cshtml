@@ -35,23 +35,25 @@
                         }
                         @foreach (PromoCode? item in Model)
                         {
-                            <tr style="position:relative">
-                                <td><input type="checkbox" itemid="@item.Id" /></td>
+                            <tr style="position:relative; cursor:pointer">
+                                <td><input type="checkbox" itemid="@item.Id" style="pointer-events:none;" /></td>
                                 @foreach (PropertyInfo prop in properties)
                                 {
                                     var val = item.GetPropertyValue(prop.Name) == null ? "" : item.GetPropertyValue(prop.Name);
-                                    if (prop.Name == "IsActive")
+                                    if (prop.Name == "PromoCodeState")
                                     {
-                                        if ((bool)val == true)
+                                        if ((PromoCodeState)val == PromoCodeState.Active)
                                         {
-                                            <td style="background-color:green">Активен</td>
+                                            <td style="background-color:green; color:black;">Активен</td>
                                         }
-                                        else
+                                        else if ((PromoCodeState)val == PromoCodeState.NotActive)
                                         {
-                                            <td style="background-color:yellow;color:black">Отключен</td>
+                                            <td style="background-color:yellow;color:black">Неактивен</td>
                                         }
-
-
+                                        else if ((PromoCodeState)val == PromoCodeState.Used)
+                                        {
+                                            <td style="background-color:darkgreen;color:black">Использован</td>
+                                        }
                                     }
                                     else
                                     {
@@ -158,6 +160,17 @@
             }
         })
     });
+
+
+    document.querySelectorAll('tbody tr').forEach(r => {
+        r.addEventListener("click", function (evt) {
+            //evt.stopImmediatePropagation();
+            let checkbox = this.querySelector('input[type=checkbox]');
+            checkbox.checked = checkbox.checked ? false : true;
+            checkbox.dispatchEvent(new Event('change'));
+        })
+    });
+
 
     document.querySelectorAll('#activate_button, #deactivate_button, #remove_button').forEach(b => {
         b.addEventListener('click', function () {

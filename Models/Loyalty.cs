@@ -49,7 +49,7 @@ namespace yakutsa.Models
 
     public class PromoCode : BaseModel
     {
-        private bool isUsed;
+        //private bool isUsed;
 
         [RetailCRMCore.Models.TableAttribute("Код")]
         public string? CodeText { get; set; }
@@ -60,10 +60,13 @@ namespace yakutsa.Models
         [RetailCRMCore.Models.TableAttribute("Тип скидки")]
         public PromoCodeType PromoCodeType { get; set; } = PromoCodeType.Fixed;
 
-        public bool IsUsed { get => isUsed; set { isUsed = value; if (value) { IsActive = false; UsedAt = DateTime.Now; } } }
+        //public bool IsUsed { get => isUsed; set { isUsed = value; if (value) { IsActive = false; UsedAt = DateTime.Now; } } }
 
-        [RetailCRMCore.Models.TableAttribute("Активность")]
-        public bool IsActive { get; set; }
+        //[RetailCRMCore.Models.TableAttribute("Активность")]
+        //public bool IsActive { get; set; }
+
+        [RetailCRMCore.Models.TableAttribute("Статус")]
+        public PromoCodeState PromoCodeState { get; set; }
 
         public DateTime? UsedAt { get; set; }
 
@@ -80,5 +83,15 @@ namespace yakutsa.Models
         Dynamic,
         [Display(Name = "Фиксированная")]
         Fixed
+    }
+
+    public enum PromoCodeState
+    {
+        [Display(Name = "Активен")]
+        Active = 1,
+        [Display(Name = "Неактивен")]
+        NotActive = 0,
+        [Display(Name = "Использован")]
+        Used = 2
     }
 }

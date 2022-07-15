@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 using Newtonsoft.Json;
@@ -258,9 +259,39 @@ namespace yakutsa.Controllers
             return View(createOrder);
         }
 
+
+        [HttpPost]
+        [Route("CheckPromoCode")]
+        public IActionResult CheckPromoCode(PromoCode? promoCode)
+        {
+
+
+            PortalActionResult? result = new();
+
+            if (string.IsNullOrEmpty(promoCode?.CodeText))
+            {
+                result.Message = "Введите промокод";
+                return result;
+            }
+
+            var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).First();
+            var code = loyalty.PromoCodes?.FirstOrDefault(c => c.PromoCodeState == PromoCodeState.Active && c.CodeText?.ToLower() == promoCode?.CodeText?.ToLower());
+
+            if (code == null)
+            {
+                result.Message = "Промокод не найден";
+
+                return result;
+            }
+
+
+
+            return result;
+        }
+
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, PromoCode promoCode, string deliveryPartner, string paymentTypeCode)
         {
             return Task.Run<IActionResult>(() =>
             {
@@ -307,7 +338,7 @@ namespace yakutsa.Controllers
                 productId = cp.Product.id.ToString(),
                 productName = cp.Product.name,
                 quantity = cp.Count,
-                offer = cp.Offer
+                offer = cp.Offer,
             });
         });
 
