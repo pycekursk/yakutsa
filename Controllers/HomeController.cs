@@ -42,6 +42,7 @@ namespace yakutsa.Controllers
 
             products?.ForEach(p => p.groups = groups?.Where(g => p.groups.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray());
 
+
             //TODO: добавлено для отладки, убрать после
             if (_environment.IsDevelopment())
             {
@@ -52,9 +53,9 @@ namespace yakutsa.Controllers
                     //return RedirectToAction("OrderOptions", "Home");
                 }
 
-                Payment("499A").ContinueWith(t => t.Result).Wait();
+                //Payment("499A").ContinueWith(t => t.Result).Wait();
 
-                return RedirectToAction("Order", "Home", new { number = "503A" });
+                //return RedirectToAction("Order", "Home", new { number = "503A" });
             }
 
 
@@ -357,7 +358,7 @@ namespace yakutsa.Controllers
         [Route("Payment")]
         public Task<IActionResult> Payment(string orderNumber)
         {
-            return Task.Run<IActionResult>(async () =>
+            return Task.Run<IActionResult>(() =>
             {
                 var result = new PortalActionResult();
 
@@ -366,8 +367,8 @@ namespace yakutsa.Controllers
 
                 if (!payments.HasValues)
                 {
-                    var p = new { type="cp", amount = 4350 };
-                  
+                    var p = new { type = "cp", amount = 4350 };
+
                     order.SetPropertyValue("payments", p);
                     //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
                 }

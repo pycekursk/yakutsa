@@ -7,11 +7,16 @@
     <form action="/@ViewData["Controller"]?.ToString()/@Model.GetType().Name" method="post">
         @foreach (PropertyInfo prop in properties)
         {
+            var attr = prop.GetCustomAttributes()?.FirstOrDefault(attr => attr.GetType() == typeof(HtmlDisplayAttribute)) as HtmlDisplayAttribute;
+
+            //if (prop.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(HtmlDisplay) && !(bool)a.GetPropertyValue("IsVisible")) != null) continue;
+
             if ((prop.PropertyType.IsClass || prop.PropertyType.IsArray) && prop.PropertyType != typeof(String)) continue;
             var type = string.Empty;
             var access = prop.CanWrite ? "" : "readonly";
             var value = new HtmlString($"value=\"{Model.GetPropertyValue(prop.Name)}\"");
             var cssClass = "form-control";
+            var style = attr != null && !attr.IsVisible ? "display:none;" : string.Empty;
             switch (prop.PropertyType.Name.ToLower())
             {
                 case "string":
@@ -36,7 +41,7 @@
             }
             else
             {
-                <div class="labelholder has-labelholder floating" data-label="@prop.GetDisplayName()" style="margin:5px 0;">
+                <div class="labelholder has-labelholder floating" data-label="@prop.GetDisplayName()" style="margin:5px 0;@style">
                     <input type="@type" @value @access class="@cssClass" name="@prop.Name" />
                 </div>
             }

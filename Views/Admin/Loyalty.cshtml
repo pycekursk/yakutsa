@@ -1,0 +1,180 @@
+﻿@using System.Reflection
+@model List<yakutsa.Models.PromoCode>
+
+@{
+    List<PropertyInfo>? properties = new List<PropertyInfo>();
+    if (Model?.Count > 0)
+    {
+        properties = Model?.First().GetType().GetProperties().Where(p => p.GetCustomAttribute(typeof(TableAttribute)) != null).ToList();
+    }
+}
+
+<div class="row">
+    <h4 class="text-center">@ViewData["Title"]</h4>
+</div>
+
+@if (properties?.Count > 0)
+{
+    <div class="row">
+        <div class="col-sm-12 mx-auto">
+            <div class="table-responsive" id="table_@Model?.First()?.GetType().Name">
+                <table class="table table-sm table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col"><input type="checkbox" id="all_checkbox" /></th>
+                            @foreach (PropertyInfo? prop in properties)
+                            {
+                                var val = prop.GetCustomAttribute<TableAttribute>()?.ColumnName;
+                                <th scope="col">@val</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 1;
+                        }
+                        @foreach (PromoCode? item in Model)
+                        {
+                            <tr style="position:relative">
+                                <td><input type="checkbox" itemid="@item.Id" /></td>
+                                @foreach (PropertyInfo prop in properties)
+                                {
+                                    var val = item.GetPropertyValue(prop.Name) == null ? "" : item.GetPropertyValue(prop.Name);
+                                    if (prop.Name == "IsActive")
+                                    {
+                                        if ((bool)val == true)
+                                        {
+                                            <td style="background-color:green">Активен</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="background-color:yellow;color:black">Отключен</td>
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        <td>@val</td>
+                                    }
+                                }
+                            </tr>
+                            index++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('all_checkbox').addEventListener('click', function () {
+            let table = document.getElementById('table_@Model?.First().GetType().Name');
+            table.querySelectorAll('tbody input[type=checkbox]').forEach(c => {
+                c.checked = this.checked;
+                c.dispatchEvent(new Event('change'));
+            });
+        });
+    </script>
+}
+
+<div class="row">
+    <div class="col-sm-12 mx-auto">
+        <div class="btn-group">
+            <div class="btn-anim">
+                <a data-bs-toggle="modal" href="#promo_code_create_modal" role="button" class="btn btn-main">Добавить</a>
+            </div>
+            <div class="btn-anim">
+                <button role="button" id="activate_button" class="btn btn-main">Активировать</button>
+            </div>
+
+            <div class="btn-anim">
+                <button role="button" id="deactivate_button" class="btn btn-main">Деактивировать</button>
+            </div>
+            <div class="btn-anim">
+                <button role="button" id="remove_button" class="btn btn-main">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="promo_code_create_modal" class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form method="post" action="@Url.ActionLink("AppendPromoCode","Admin")">
+                    <h2 class="sr-only">Добавление промокодов</h2>
+                    <div class="input-group">
+                        <div class="form-control border-0">
+                            <div class="labelholder">
+                                <input required class="form-control" type="text" name="codeText" placeholder="Текст промокода" />
+                            </div>
+                        </div>
+                        <div class="form-control border-0">
+                            <div class="labelholder">
+                                <input required class="form-control" type="number" name="count" placeholder="Количество" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="input-group">
+                        <div class="form-control border-0">
+                            @Html.ListBox("promoCodeType", Html.GetEnumSelectList(typeof(PromoCodeType)), new {size = 1, @class="w-100"})
+                        </div>
+                        <div class="form-control border-0">
+                            <div class="labelholder">
+                                <input required class="form-control" type="number" name="value" placeholder="Значение" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mt-2" style="justify-content:space-around">
+                        <div class="btn-anim" style="flex: 0 0 49%;">
+                            <div class="btn btn-primary w-100" data-bs-target="#promo_code_create_modal" data-bs-toggle="modal">ЗАКРЫТЬ</div>
+                        </div>
+
+                        <div class="btn-anim" style="flex: 0 0 49%;">
+                            <button class="btn btn-primary w-100" type="submit">ОК</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('select').forEach(s => s.removeAttribute("multiple"));
+
+
+
+    document.querySelectorAll('input[type=checkbox]').forEach(s => {
+        s.addEventListener("change", function () {
+            if (this.checked) {
+                this.setAttribute("checked", "true");
+            }
+            else {
+                this.removeAttribute("checked");
+            }
+        })
+    });
+
+    document.querySelectorAll('#activate_button, #deactivate_button, #remove_button').forEach(b => {
+        b.addEventListener('click', function () {
+
+            let data = new FormData();
+            document.querySelectorAll('tbody input[checked]').forEach(cb => data.append("ids[]", cb.getAttribute('itemid')));
+            if (data.length != 0)
+                if (this.id == "activate_button") {
+                    sendAjaxForm(data, '@Url.ActionLink("ActivatePromoCodes", "Admin")', (response) => { console.log(response); location.reload(); }, true);
+                }
+                else if (this.id == "deactivate_button") {
+                    sendAjaxForm(data, '@Url.ActionLink("DeactivatePromoCodes", "Admin")', (response) => { console.log(response); location.reload(); }, true);
+                }
+                else if (this.id == "remove_button") {
+                    sendAjaxForm(data, '@Url.ActionLink("RemovePromoCodes", "Admin")', (response) => { console.log(response); location.reload(); }, true);
+                }
+        });
+    });
+
+</script>

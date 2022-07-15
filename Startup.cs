@@ -118,6 +118,14 @@ public class Startup
           pattern: "{categoryName}/{productName?}/{article?}",
           defaults: new { controller = "Store" });
 
+
+            endpoints.MapControllerRoute(
+         name: "integration",
+         pattern: "{controller}/{action}",
+         defaults: new { controller = "Integration" });
+
+
+
             endpoints.MapRazorPages();
         });
     }

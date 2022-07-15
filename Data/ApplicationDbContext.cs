@@ -15,7 +15,7 @@ namespace yakutsa.Data
         }
 
         public DbSet<Vk> Vk { get; set; }
-
+        public DbSet<Loyalty> Loyalty { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql("server=37.77.105.24;database=yakutsa;uid=pycek;password=6m7sd38L;ConvertZeroDateTime=True", new MySqlServerVersion(new Version(8, 0, 23)));

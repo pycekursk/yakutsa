@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 using Newtonsoft.Json;
@@ -95,6 +95,71 @@ namespace yakutsa.Controllers
             var categories = _retailCRM.GetResponse<ProductGroup>()?.Array?.Select(gr => gr as object).ToList();
 
             return PartialView(categories);
+        }
+
+        [Route("Admin/Loyalty")]
+        [HttpGet]
+        public IActionResult Loyalty()
+        {
+            if (!_signIn.IsSignedIn(User)) return Forbid();
+
+            var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
+
+            return PartialView(loyalty.PromoCodes);
+        }
+
+        [Route("Admin/AppendPromoCode")]
+        [HttpPost]
+        public IActionResult AppendPromoCode(string codeText, int count, PromoCodeType promoCodeType, double value)
+        {
+            if (!_signIn.IsSignedIn(User)) return Forbid();
+            var loyalty = _context.Loyalty.OrderBy(l => l.Id).Last();
+            loyalty.GenerateCodes(codeText, count, promoCodeType, value);
+
+            return RedirectToAction("Index", "Admin");
+           
+        }
+
+        [Route("Admin/RemovePromoCodes")]
+        [HttpPost]
+        public IActionResult RemovePromoCodes(string[] ids)
+        {
+            if (!_signIn.IsSignedIn(User)) return Forbid();
+
+            var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
+            loyalty?.PromoCodes?.RemoveAll(p => ids.Contains(p.Id.ToString()));
+            _context.Loyalty.Update(loyalty);
+            _context.SaveChanges();
+
+            return new PortalActionResult() { Success = true };
+        }
+
+        [Route("Admin/ActivatePromoCodes")]
+        [HttpPost]
+        public IActionResult ActivatePromoCodes(string[] ids)
+        {
+            if (!_signIn.IsSignedIn(User)) return Forbid();
+
+            var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
+            loyalty?.PromoCodes?.ForEach(p => { if (ids.Contains(p.Id.ToString())) { p.IsActive = true; } });
+            _context.Loyalty.Update(loyalty);
+            _context.SaveChanges();
+            return new PortalActionResult() { Success = true };
+           
+
+        }
+
+        [Route("Admin/DeactivatePromoCodes")]
+        [HttpPost]
+        public IActionResult DeactivatePromoCodes(string[] ids)
+        {
+            if (!_signIn.IsSignedIn(User)) return Forbid();
+            var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
+            loyalty?.PromoCodes?.ForEach(p => { if (ids.Contains(p.Id.ToString())) { p.IsActive = false; } });
+            _context.Loyalty.Update(loyalty);
+            _context.SaveChanges();
+
+            return new PortalActionResult() { Success = true };
         }
 
         [Route("Admin/Vk")]

@@ -12,7 +12,10 @@
             <div class="tab-panel">
                 <ul class="nav nav-tabs">
                     <li class="nav-item btn-anim active" role="presentation">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Products","Admin")">Товары</a>
+                        <a class="nav-link active" id="loyalty-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Loyalty","Admin")">Лояльность</a>
+                    </li>
+                    <li class="nav-item btn-anim" role="presentation">
+                        <a class="nav-link" id="home-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Products","Admin")">Товары</a>
                     </li>
                     <li class="nav-item btn-anim" role="presentation">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Categories","Admin")">Категории</a>
@@ -29,7 +32,7 @@
 </div>
 
 <script>
-    $.ready((function($){
+    $.ready((function ($) {
         var $tabPanel = $('.tab-panel');
         var $tabContent = $tabPanel.find('.tab-content');
         var $navTabs = $tabPanel.find('.nav-tabs');
@@ -38,7 +41,7 @@
         var controller = new AbortController();
         var request = null;
         $navItems.on('click', (evt) => {
-            if(request != undefined){
+            if (request != undefined) {
                 controller.abort();
                 controller = new AbortController();
             }
@@ -47,9 +50,9 @@
             let $tabePanes = $tabContent.find('.tab-pane');
             $navItems.removeClass('active').find('.nav-link').removeClass('active');
             $tabePanes.removeClass('show').removeClass('active');
-            if($navLink.length > 0){
+            if ($navLink.length > 0) {
                 let $tabPane = $tabContent.find('#ajax');
-                if($tabPane.length == 0){
+                if ($tabPane.length == 0) {
                     $tabPane = $('<div class="tab-pane loader loading fade" id="ajax" role="tabpanel" ></div>');
                     $tabContent.append($tabPane);
                     $tabPane.loader();
@@ -57,13 +60,13 @@
 
 
 
-                request = fetch($navLink.attr('data-link'),{ signal: controller.signal });
+                request = fetch($navLink.attr('data-link'), { signal: controller.signal });
                 request.then(result => result.text())
-                .then(response => {
+                    .then(response => {
                         $tabPane.removeClass('loading');
                         $tabPane.html(response);
-                })
-                .catch(reject => { console.log(reject); });
+                    })
+                    .catch(reject => { console.log(reject); });
             }
 
             $this.addClass('active').find('.nav-link').addClass('active');
