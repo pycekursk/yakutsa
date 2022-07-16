@@ -96,7 +96,7 @@
                             </div>
                             <form id="promo_code_check" class="mb-3 input-group justify-content-end" method="post" action="@Url.ActionLink("CheckPromoCode", "Home")">
                                 <div class="labelholder">
-                                    <input required class="form-control p-2" type="text" name="promoCode.CodeText" placeholder="ПРОМОКОД" />
+                                    <input required class="form-control" type="text" name="promoCode.CodeText" placeholder="ПРОМОКОД" value="@Model?.PromoCode?.CodeText" />
                                 </div>
                                 <div class="btn-anim">
                                     <input class="btn btn-main" type="submit" value="ПРИМЕНИТЬ" />
@@ -108,7 +108,13 @@
                                     <a href="/DeliveryRules" target="_blank">Условия доставки</a>
                                 </div>
                                 <div class="ref-totals">
-                                    <div class="ref-subtotal">ИТОГО: @Model?.Price <i class="fa fa-rub nohover"></i></div><br />
+                                    <div class="ref-subtotal">ИТОГО: @Model?.InitialPrice <i class="fa fa-rub nohover"></i></div>
+                                    @if (Model?.PromoCode != null)
+                                    {
+                                        <div class="ref-subtotal" style="color: green;">ИТОГО с учетом скидки: @Model?.Price <i style="color: green;" class="fa fa-rub nohover"></i></div>
+                                        <br />
+                                    }
+
                                     <div class="btn-anim">
                                         <a class="btn btn-main px-4 ref-checkout-button" href="@Url.ActionLink("OrderOptions","Home")">Подтвердить</a>
                                     </div>
@@ -131,11 +137,11 @@
 <script src="~/js/cart.js" type="text/javascript" asp-append-version="true"></script>
 
 @*<script>
-  (($)=>{
-  let products = $('.ref-product');
+    (($)=>{
+    let products = $('.ref-product');
 
 
-  $('.ref-product-summ').closest('.ref-product');
-  console.log(products);
-  })(jQuery);
-  </script>*@
+    $('.ref-product-summ').closest('.ref-product');
+    console.log(products);
+    })(jQuery);
+    </script>*@

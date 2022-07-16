@@ -1,6 +1,10 @@
-﻿using RetailCRMCore.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+
+using RetailCRMCore.Models;
+
+using yakutsa.Data;
 
 namespace yakutsa.Models
 {
@@ -8,6 +12,9 @@ namespace yakutsa.Models
     {
         [JsonIgnore]
         public HttpContext _httpContext;
+        private double discountManualPercent;
+        private double discountManualAmount;
+        private PromoCode? promoCode;
 
         public Cart(HttpContext httpContext)
         {
@@ -19,18 +26,67 @@ namespace yakutsa.Models
             get
             {
                 double result = 0;
+                if (DiscountManualPercent > 0)
+                {
+                    result = InitialPrice - (InitialPrice / 100 * DiscountManualPercent) > 0 ? InitialPrice - InitialPrice / 100 * DiscountManualPercent : 0;
+                }
+                if (DiscountManualAmount > 0)
+                {
+                    result = InitialPrice - discountManualAmount >= 0 ? InitialPrice - discountManualAmount : 0;
+                }
+                return result;
+            }
+        }
+
+        public double DiscountManualAmount
+        {
+            get => discountManualAmount;
+            set
+            {
+                discountManualAmount = value;
+            }
+        }
+
+        public double DiscountManualPercent
+        {
+            get => discountManualPercent;
+            set
+            {
+                discountManualPercent = value;
+            }
+        }
+
+        public double InitialPrice
+        {
+            get
+            {
+                double result = 0;
                 CartProducts.ForEach(x => result += x.Price);
                 return result;
             }
         }
 
-        public double DiscountManualAmount { get; set; }
-
-        public double DiscountManualPercent { get; set; }
-
         public double DiscountTotal { get; set; }
 
-        public PromoCode? PromoCode { get; set; }
+        public PromoCode? PromoCode
+        {
+            get => promoCode;
+            set
+            {
+                promoCode = value;
+                if (value != null)
+                {
+                    if (value.PromoCodeType == PromoCodeType.Dynamic)
+                    {
+                        DiscountManualPercent = value.Value;
+                    }
+                    else
+                    {
+                        DiscountManualAmount = value.Value;
+                    }
+                }
+            }
+        }
 
         public double Weight
         {
@@ -67,6 +123,23 @@ namespace yakutsa.Models
             }
             _httpContext.Session.SetString("cart", System.Text.Json.JsonSerializer.Serialize(this));
             return CartProducts;
+        }
+
+        public void UsePromoCode(int promoCodeId)
+        {
+            //PromoCode = promoCode;
+            //PromoCode.PromoCodeState = PromoCodeState.NotActive;
+
+            using (var ctx = new ApplicationDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext>()))
+            {
+                var loyalty = ctx.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
+                PromoCode = loyalty.PromoCodes?.FirstOrDefault(p => p.Id == promoCodeId);
+                PromoCode.PromoCodeState = PromoCodeState.Used;
+                ctx.Loyalty.Update(loyalty);
+                ctx.SaveChanges();
+            }
+
+            _httpContext.Session.SetString("cart", Newtonsoft.Json.JsonConvert.SerializeObject(this));
         }
     }
 }

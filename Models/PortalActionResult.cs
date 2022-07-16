@@ -7,10 +7,10 @@ namespace yakutsa.Models
     {
         public string? Message { get; set; }
         public bool Success { get; set; }
-        public string Html { get; set; }
-        public string Json { get; set; }
+        public string? Html { get; set; }
+        public string? Json { get; set; }
         public int Code { get; set; }
-        public string Url { get; set; }
+        public string? Url { get; set; }
         public string? Data { get; set; }
 
         public PortalActionResult() { }

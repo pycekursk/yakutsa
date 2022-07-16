@@ -60,11 +60,6 @@ namespace yakutsa.Models
         [RetailCRMCore.Models.TableAttribute("Тип скидки")]
         public PromoCodeType PromoCodeType { get; set; } = PromoCodeType.Fixed;
 
-        //public bool IsUsed { get => isUsed; set { isUsed = value; if (value) { IsActive = false; UsedAt = DateTime.Now; } } }
-
-        //[RetailCRMCore.Models.TableAttribute("Активность")]
-        //public bool IsActive { get; set; }
-
         [RetailCRMCore.Models.TableAttribute("Статус")]
         public PromoCodeState PromoCodeState { get; set; }
 

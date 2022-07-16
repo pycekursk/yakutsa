@@ -264,8 +264,6 @@ namespace yakutsa.Controllers
         [Route("CheckPromoCode")]
         public IActionResult CheckPromoCode(PromoCode? promoCode)
         {
-
-
             PortalActionResult? result = new();
 
             if (string.IsNullOrEmpty(promoCode?.CodeText))
@@ -284,24 +282,37 @@ namespace yakutsa.Controllers
                 return result;
             }
 
-
-
+            Cart.UsePromoCode(code.Id);
+            result.Url = Url.ActionLink("Cart", "Home");
+            result.Message = "Промокод успешно добавлен";
             return result;
         }
 
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, PromoCode promoCode, string deliveryPartner, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
         {
             return Task.Run<IActionResult>(() =>
             {
                 PortalActionResult result = new();
-                createOrder.delivery.address.building = createOrder.delivery.address.house;
-                createOrder.delivery.address.streetType += ".";
-                createOrder.delivery.address.house = null;
-                createOrder.address = createOrder.delivery.address;
+
+                if (createOrder.delivery?.address != null)
+                {
+                    createOrder.delivery.address.building = createOrder.delivery.address.house;
+                    createOrder.delivery.address.streetType += ".";
+                    createOrder.delivery.address.house = null;
+                    createOrder.address = createOrder.delivery.address;
+                    createOrder.delivery.code = "dalli";
+                    createOrder.delivery.data.extraData = new DeliveryExtraData { partner = deliveryPartner, paytype = "NO" };
+
+                }
+                else
+                {
+                    createOrder.delivery.code = "self-delivery";
+                }
                 createOrder.paymentType = "cp";
-                createOrder.deliveryType = "dalli";
+
+
 
                 var managerId = 10;
                 var users = _retailCRM.GetResponse<User>();
@@ -401,31 +412,31 @@ namespace yakutsa.Controllers
                     var p = new { type = "cp", amount = 4350 };
 
                     order.SetPropertyValue("payments", p);
-                    //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
-                }
+                //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
+            }
                 _retailCRM.OrderUpdate(order);
 
 
-                //var payment = payments?.Properties()?.First()?.First;
-                //var status = payment.Value<string>("status");
+            //var payment = payments?.Properties()?.First()?.First;
+            //var status = payment.Value<string>("status");
 
 
 
 
 
-                //var status = (string?)firstPayment?.GetValue("status");
+            //var status = (string?)firstPayment?.GetValue("status");
 
-                //if (status == "wait-approved")
-                //{
+            //if (status == "wait-approved")
+            //{
 
-                // string link = await _retailCRM.CreatePayment((int)payment?.Value<int>("id"), HttpContext.Request.Host.Value);
-                //string id = (property as dynamic).externalId;
-                //}
-                //if (order?.payments == null)
-                //{
+            // string link = await _retailCRM.CreatePayment((int)payment?.Value<int>("id"), HttpContext.Request.Host.Value);
+            //string id = (property as dynamic).externalId;
+            //}
+            //if (order?.payments == null)
+            //{
 
-                //}
-                return result;
+            //}
+            return result;
             });
         }
 
@@ -450,7 +461,7 @@ namespace yakutsa.Controllers
             var user = await _userManager.FindByEmailAsync(login.ToLower());
             var result = await _signIn.PasswordSignInAsync(user, password, true, true);
             if (!result.Succeeded) AppendMessage("Ошибка авторизации", Enums.MessageType.danger);
-            AppendMessage("Успешная авторизация!");
+            //else AppendMessage("Успешная авторизация!");
             return RedirectToAction("Index", "Home");
         }
 

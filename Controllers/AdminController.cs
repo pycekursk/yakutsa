@@ -53,9 +53,6 @@ namespace yakutsa.Controllers
             ViewData["Description"] = new HtmlString("Категории товаров");
             ViewData["Title"] = new HtmlString("");
             var categories = _retailCRM.GetResponse<ProductGroup>()?.Array?.Select(gr => gr as object).ToList();
-
-
-
             return PartialView(categories);
         }
 
