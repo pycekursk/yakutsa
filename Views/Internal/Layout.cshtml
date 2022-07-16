@@ -87,8 +87,13 @@
     <header>
         <nav class="top-bar" style="opacity:0;">
             <div class="top-bar-inner position-fixed">
-                <div class="inline-icons">
                     <i class="fas fa-bars fa-sm nohover" style="margin-top: 0 !important;" data-bs-toggle="modal" href="#menu_modal" role="button"></i>
+                <a href="/" class="d-block">
+                    <img src="~/img/logo.png" alt="logo" aria-hidden="true" height="40" style="object-fit:contain;width:100%;" />
+                </a>
+
+
+                  <div class="inline-icons">
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <a class="nohover" href="@Url.ActionLink("Index", "Admin")" aria-hidden="true">
@@ -102,13 +107,12 @@
                     {
                         <i role="button" class="fas fa-door-closed nohover fa-sm" data-bs-toggle="modal" data-bs-target="#signin_modal" aria-hidden="true"></i>
                     }
-                </div>
-                <a href="/" class="d-block">
-                    <img src="~/img/logo.png" alt="logo" aria-hidden="true" height="40" style="object-fit:contain;width:100%;" />
-                </a>
-                <a class="nohover" href="@Url.ActionLink("Cart", "Home")" aria-hidden="true">
+                     <a class="nohover" href="@Url.ActionLink("Cart", "Home")" aria-hidden="true">
                     <i class="fas fa-shopping-cart d-block fa-sm nohover" count="@ViewData["count"]" role="button"></i>
                 </a>
+                </div>
+
+               
             </div>
         </nav>
 
