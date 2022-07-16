@@ -111,13 +111,13 @@ namespace yakutsa.Extensions
         }
 
 
-        public static TAttribute? GetAttribute<TAttribute>(this object obj)
+        public static TAttribute? GetAttribute<TAttribute>(this object? obj)
          where TAttribute : Attribute
         {
             try
             {
-                return obj.GetType()
-                                .GetMember(obj.ToString())
+                return obj?.GetType()
+                                .GetMember(obj?.ToString())
                                 .First()
                                 .GetCustomAttribute<TAttribute>();
             }

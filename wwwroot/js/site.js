@@ -244,7 +244,6 @@ function Initialize($) {
                             prop += w.charAt(0).toUpperCase() + w.slice(1);
                         });
                         data.append(`delivery.address.${prop}`, attr.value);
-                        //console.log(`delivery.address.${prop}`, attr.value);
                     }
                 });
 
@@ -252,14 +251,11 @@ function Initialize($) {
                     let attributesArray = Array.from($("option:selected", $('#deliveryPartner'))[0].attributes);
                     attributesArray.forEach((a, i) => {
                         if (a.name.includes('tariff-')) {
-                            console.log(`delivery.${a.name.replace('tariff-', '').replaceAll('_', '.')}`, a.value);
                             data.append(`delivery.${a.name.replace('tariff-', '').replaceAll('_', '.')}`, a.value);
                         }
                     });
-
                     var paymentType = $('option:selected', $('#paymentType'));
                     data.append(`delivery.data.extraData.paytype`, paymentType.val());
-
                 } catch (e) {
                     console.log(e);
                 }
@@ -297,26 +293,6 @@ function Initialize($) {
             }, true);
         });
 
-        //$('#deliveryPartner').on('change', (evt) => {
-        //    if ($(evt.target).val() != "header") {
-
-        //        let $deliveryPartner = $('#deliveryPartner');
-        //        let $paymentType = $('#paymentType');
-
-        //        $paymentType.parent().removeClass('d-none').removeClass('col-sm-0').addClass('col-sm-3');
-        //        $deliveryPartner.parent().removeClass('col-sm-12').addClass('col-sm-9');
-
-        //        document.getElementById('paymentType').removeAttribute('disabled');
-        //    }
-        //    else {
-
-        //        $paymentType.parent().addClass('d-none').removeClass('col-sm-3').addClass('col-sm-0');
-        //        $deliveryPartner.parent().removeClass('col-sm-9').addClass('col-sm-12');
-
-        //        document.getElementById('paymentType').setAttribute('disabled', true);
-        //    }
-        //});
-
         $('*[suggestion]').suggestion();
 
         $('#menu_links h3 > i').on('click', (evt) => { $(document.body).removeClass('openmenu') });
@@ -343,6 +319,9 @@ function Initialize($) {
                             formData.append(prop, attr.value);
                         }
                     });
+
+                    formData.append('text', document.getElementById('address_text').value);
+
                     sendAjaxForm(formData, "/Products/CalculateDelivery", (response) => {
                         $('select[name="deliveryPartner"] option:not([Value=header]), select[name=deliveryTariff]:not(#deliveryTariff)').remove();
                         if (response.Success) {
@@ -352,7 +331,10 @@ function Initialize($) {
                             for (var i = 0; i < tariffs.length; i++) {
                                 for (var x = 0; x < tariffs[i].Price.length; x++) {
                                     let rupost = tariffs[i].Partner == "rupost" ? `(${tariffs[i].Price[x].RupostFriendlyName})` : "";
-                                    $tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
+                                    let price = tariffs[i].Price[x].Price == 0 ? "" : `<span> - ${tariffs[i].Price[x].Price} руб.</span>`;
+                                    let infoText = tariffs[i].Price[x].InfoText == "" ? "" : `<span>, ${tariffs[i].Price[x].InfoText}</span>`;
+                                    $tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code}" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
+                                    //$tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
                                 }
                             }//tariffs[i].Price[x].ServiceType.replace(/^_/, '')
                             //  value="${tariffs[i].Partner + "_" + tariffs[i].Price[x].Service}"
@@ -370,6 +352,24 @@ function Initialize($) {
         });
 
 
+
+        $('#self_delivery_trigger').on('change', function (e) {
+            var $address_text = $('#address_text');
+            if (e.currentTarget.checked) {
+                $address_text
+                    .removeAttr('required')
+                    .attr('disabled', 'True');
+
+                $('#deliveryPartner')
+                    .removeAttr('required')
+                    .attr('disabled', 'True');
+            }
+            else if (!e.currentTarget.checked) {
+                $address_text
+                    .attr('required', 'True')
+                    .removeAttr('disabled');
+            }
+        });
 
         //TODO: добавить расчет стоимости для сдэка
         //$('#order_configure_form .form-select[name=deliveryType]').on('change', (evt) => {

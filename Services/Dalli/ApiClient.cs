@@ -40,7 +40,7 @@
             int height = 0;
             int length = 0;
 
-            float weight = 0;
+            double weight = 0;
             decimal price = 0;
 
             string cashservicesString = cashservices ? $"<price>{cart.Price}</price><inshprice>{cart.Price}</inshprice><cashservices>YES</cashservices>" : "";
@@ -76,6 +76,7 @@
                   using (StringReader reader = new StringReader(xmlString))
                   {
                       var cost = (DeliveryCost)serializer.Deserialize(reader);
+                      cost.Code = "dalli";
                       if (cost.Partner != null)
                           pVZPoints.Add(cost);
                   }
@@ -85,8 +86,6 @@
               catch (Exception exc)
               {
                   Console.WriteLine(exc.Message);
-                  Console.WriteLine(" ");
-                  Console.WriteLine(" ");
               }
           }));
             });

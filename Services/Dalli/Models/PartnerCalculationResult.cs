@@ -33,13 +33,18 @@ namespace yakutsa.Services.Dalli.Models
         public int Type { get; set; }
 
         [Display(Name = "Срок (без учета дня забора)")]
-        public string InfoText { get => $"{DeliveryPeriod} раб. дн. ({Msg})"; }
+        public string InfoText { get => DeliveryPeriod == 0 ? String.Empty : $"{DeliveryPeriod + 1} раб. дн."; }
+
+        public string LabelText { get => labelText ??= String.Empty; set => labelText = value; }
 
         public DeliveryServices ServiceType { get => (DeliveryServices)Service; }
 
         public RupostTypes RupostType { get => (RupostTypes)Type; }
 
-        public string FriendlyName { get => ServiceType.GetDisplayName(); }
+        string friendlyName;
+        private string labelText;
+
+        public string FriendlyName { get => friendlyName ??= ServiceType.GetDisplayName(); set => friendlyName = value; }
 
         public string RupostFriendlyName { get => RupostType.GetDisplayName(); }
     }

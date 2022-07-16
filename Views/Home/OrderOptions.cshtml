@@ -37,7 +37,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 my-1">
+            <div class="col-sm-12 col-md-4 col-xl-2 my-1 text-md-center px-2">
+                <input id="self_delivery_trigger" name="selfDelivery" type="checkbox">
+                <label for="self_delivery_trigger" class="fa-2x mx-2">Самовывоз</label>
+            </div>
+            <div class="col-sm-12 my-1 col-md-8 col-xl-10">
                 @* @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })*@
                 <div class="labelholder">
                     @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
