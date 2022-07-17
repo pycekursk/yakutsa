@@ -291,7 +291,7 @@ namespace yakutsa.Controllers
 
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string addressText, string paymentTypeCode)
         {
             return Task.Run<IActionResult>(() =>
             {
@@ -304,8 +304,18 @@ namespace yakutsa.Controllers
                     createOrder.delivery.address.house = null;
                     createOrder.address = createOrder.delivery.address;
                     createOrder.delivery.code = "dalli";
-                    createOrder.delivery.data.extraData = new DeliveryExtraData { partner = deliveryPartner, paytype = "NO" };
+                    //createOrder.delivery.data.extraData = new DeliveryExtraData { partner = "SDEK", paytype = "NO" };
+                    //  createOrder.delivery.data.tariff = "10";
 
+                }
+                else if (createOrder.delivery?.address == null && !string.IsNullOrEmpty(createOrder.address.text))
+                {
+                    var address = new RetailCRMCore.Models.Address() { text = createOrder.address.text };
+                    createOrder.delivery.address = address;
+                    //createOrder.delivery.address.text = createOrder.address.text;
+                    createOrder.delivery.code = "dalli";
+                    //createOrder.delivery.data.extraData = new DeliveryExtraData { partner = "SDEK", paytype = "NO" };
+                    // createOrder.delivery.data.tariff = "10";
                 }
                 else
                 {
