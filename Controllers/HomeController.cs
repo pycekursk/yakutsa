@@ -278,13 +278,14 @@ namespace yakutsa.Controllers
             if (code == null)
             {
                 result.Message = "Промокод не найден";
-
                 return result;
             }
 
-            Cart.UsePromoCode(code.Id);
+            Cart?.UsePromoCode(code.Id);
+            result.Success = true;
+            result.Html = $"ИТОГО с учетом скидки: {Cart?.Price} <i style='color:green;' class='fa fa-rub nohover'></i>";
             result.Url = Url.ActionLink("Cart", "Home");
-            result.Message = "Промокод успешно добавлен";
+            result.Message = "Промокод успешно использован";
             return result;
         }
 
@@ -310,9 +311,21 @@ namespace yakutsa.Controllers
                 {
                     createOrder.delivery.code = "self-delivery";
                 }
+
                 createOrder.paymentType = "cp";
 
+                if (Cart?.PromoCode != null)
+                {
+                    if (Cart?.PromoCode.PromoCodeType == PromoCodeType.Dynamic)
+                    {
+                        createOrder.discountManualPercent = Cart?.PromoCode.Value;
+                    }
+                    else if (Cart?.PromoCode.PromoCodeType == PromoCodeType.Fixed)
+                    {
+                        createOrder.discountManualAmount = Cart?.PromoCode.Value;
+                    }
 
+                }
 
                 var managerId = 10;
                 var users = _retailCRM.GetResponse<User>();
@@ -334,24 +347,18 @@ namespace yakutsa.Controllers
                     createOrder.managerId = managerId;
                 }
                 createOrder.createdAt = DateTime.Now;
-
-                //if (String.IsNullOrEmpty(createOrder.deliveryType) || String.IsNullOrEmpty(createOrder.paymentType))
-                //{
-                //  result.Message = String.IsNullOrEmpty(createOrder.paymentType) ? new String("Укажите способ оплаты") : new String("Укажите способ получения");
-                //  return result;
-                //}
-
                 Cart?.CartProducts.ForEach(cp =>
-        {
-            createOrder.items.Add(new OrderProduct
-            {
-                initialPrice = (int)cp.Product.maxPrice,
-                productId = cp.Product.id.ToString(),
-                productName = cp.Product.name,
-                quantity = cp.Count,
-                offer = cp.Offer,
-            });
-        });
+                {
+                    createOrder.items.Add(
+                        new OrderProduct
+                        {
+                            initialPrice = (int)cp.Product.maxPrice,
+                            productId = cp.Product.id.ToString(),
+                            productName = cp.Product.name,
+                            quantity = cp.Count,
+                            offer = cp.Offer,
+                        });
+                });
 
                 createOrder.price = Cart.Price + (int)createOrder.delivery.cost;
 
@@ -412,31 +419,31 @@ namespace yakutsa.Controllers
                     var p = new { type = "cp", amount = 4350 };
 
                     order.SetPropertyValue("payments", p);
-                //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
-            }
+                    //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");
+                }
                 _retailCRM.OrderUpdate(order);
 
 
-            //var payment = payments?.Properties()?.First()?.First;
-            //var status = payment.Value<string>("status");
+                //var payment = payments?.Properties()?.First()?.First;
+                //var status = payment.Value<string>("status");
 
 
 
 
 
-            //var status = (string?)firstPayment?.GetValue("status");
+                //var status = (string?)firstPayment?.GetValue("status");
 
-            //if (status == "wait-approved")
-            //{
+                //if (status == "wait-approved")
+                //{
 
-            // string link = await _retailCRM.CreatePayment((int)payment?.Value<int>("id"), HttpContext.Request.Host.Value);
-            //string id = (property as dynamic).externalId;
-            //}
-            //if (order?.payments == null)
-            //{
+                // string link = await _retailCRM.CreatePayment((int)payment?.Value<int>("id"), HttpContext.Request.Host.Value);
+                //string id = (property as dynamic).externalId;
+                //}
+                //if (order?.payments == null)
+                //{
 
-            //}
-            return result;
+                //}
+                return result;
             });
         }
 

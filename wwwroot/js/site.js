@@ -332,8 +332,8 @@ function Initialize($) {
                                 for (var x = 0; x < tariffs[i].Price.length; x++) {
                                     let rupost = tariffs[i].Partner == "rupost" ? `(${tariffs[i].Price[x].RupostFriendlyName})` : "";
                                     let price = tariffs[i].Price[x].Price == 0 ? "" : `<span> - ${tariffs[i].Price[x].Price} руб.</span>`;
-                                    let infoText = tariffs[i].Price[x].InfoText == "" ? "" : `<span>, ${tariffs[i].Price[x].InfoText}</span>`;
-                                    $tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code}" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
+                                let infoText = tariffs[i].Price[x].InfoText == "" ? "" : `<span>, ${tariffs[i].Price[x].InfoText}</span>`;
+                                $tariffSelect.append(`$<option class="py-1" data-json='${JSON.stringify(tariffs[i].Price[x])}' tariff-data_tariff="${ tariffs[i].Price[x].Service } " tariff-code="${ tariffs[i].Code } " tariff-integrationCode="dalli - service" tariff-data_payerType="sender" tariff-cost="${ tariffs[i].Price[x].Price } "><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
                                     //$tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
                                 }
                             }//tariffs[i].Price[x].ServiceType.replace(/^_/, '')

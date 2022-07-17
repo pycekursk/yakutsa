@@ -94,7 +94,7 @@
                                     </div>
                                 }
                             </div>
-                            <form id="promo_code_check" class="mb-3 input-group justify-content-end" method="post" action="@Url.ActionLink("CheckPromoCode", "Home")">
+                            <form id="promo_code_check" class="mb-3 input-group align-items-center justify-content-md-end justify-content-center" method="post" action="@Url.ActionLink("CheckPromoCode", "Home")">
                                 <div class="labelholder">
                                     <input required class="form-control" type="text" name="promoCode.CodeText" placeholder="ПРОМОКОД" value="@Model?.PromoCode?.CodeText" />
                                 </div>
@@ -109,12 +109,11 @@
                                 </div>
                                 <div class="ref-totals">
                                     <div class="ref-subtotal">ИТОГО: @Model?.InitialPrice <i class="fa fa-rub nohover"></i></div>
-                                    @if (Model?.PromoCode != null)
-                                    {
-                                        <div class="ref-subtotal" style="color: green;">ИТОГО с учетом скидки: @Model?.Price <i style="color: green;" class="fa fa-rub nohover"></i></div>
-                                        <br />
+                                    @{
+                                        var display = Model?.PromoCode == null ? "display:none" : "display:block";
                                     }
-
+                                    <div class="ref-subtotal" id="total_with_discount" style="overflow:hidden; color: green;@display">ИТОГО с учетом скидки: @Model?.Price <i style="color: green;" class="fa fa-rub nohover"></i></div>
+                                    <br />
                                     <div class="btn-anim">
                                         <a class="btn btn-main px-4 ref-checkout-button" href="@Url.ActionLink("OrderOptions","Home")">Подтвердить</a>
                                     </div>
