@@ -30,7 +30,7 @@
         {
             //partners ??= new List<string> { "BOXBERRY", "SDEK", "DS", "RUPOST", "5POST", "PickPoint" };
 
-            partners ??= new List<string> { "BOXBERRY", "SDEK" };
+            partners ??= new List<string> { "BOXBERRY", "SDEK", "RUPOST" };
 
             List<Task> requestTasks = new List<Task>();
             XmlSerializer serializer = new XmlSerializer(typeof(DeliveryCost));
@@ -56,38 +56,40 @@
             partners.ForEach((p) =>
             {
                 requestTasks.Add(Task.Run(async () =>
-          {
-              HttpClient httpClient = new HttpClient();
-              httpClient.DefaultRequestHeaders
-        .Accept
-        .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-              try
-              {
-                  string priceString = weight.ToString().Replace(',', '.');
+                      {
+                          HttpClient httpClient = new HttpClient();
+                          httpClient.DefaultRequestHeaders
+                            .Accept
+                            .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                          try
+                          {
+                              string priceString = weight.ToString().Replace(',', '.');
 
-                  string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><deliverycost><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><partner>{p}</partner><townto>{address.city}</townto><oblname>{address.region}</oblname>{cashservicesString}<weight>{priceString}</weight><length>{length}</length><width>{width}</width><height>{height}</height><output>x2</output></deliverycost>";
-                  var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
-                  var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
-                  var xmlString = await response.Content.ReadAsStringAsync();
+                              string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><deliverycost><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><partner>{p}</partner><townto>{address.city}</townto><oblname>{address.region}</oblname>{cashservicesString}<weight>{priceString}</weight><length>{length}</length><width>{width}</width><height>{height}</height><output>x2</output></deliverycost>";
+                              var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
+                              var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+                              var xmlString = await response.Content.ReadAsStringAsync();
 
-                  Console.WriteLine(requestString);
-                  Console.WriteLine(xmlString);
+                              Console.WriteLine(requestString);
+                              Console.WriteLine(xmlString);
 
-                  using (StringReader reader = new StringReader(xmlString))
-                  {
-                      var cost = (DeliveryCost)serializer.Deserialize(reader);
-                      cost.Code = "dalli";
-                      if (cost.Partner != null)
-                          pVZPoints.Add(cost);
-                  }
+                              using (StringReader reader = new StringReader(xmlString))
+                              {
+                                  var cost = (DeliveryCost)serializer.Deserialize(reader);
+
+                                  cost?.Price?.Where(prc => prc.ServiceType.ToString().Split("_")[0] == "PVZ")?.ToList();
 
 
-              }
-              catch (Exception exc)
-              {
-                  Console.WriteLine(exc.Message);
-              }
-          }));
+                                  cost.Code = "dalli";
+                                  if (cost.Partner != null)
+                                      pVZPoints.Add(cost);
+                              }
+                          }
+                          catch (Exception exc)
+                          {
+                              Console.WriteLine(exc.Message);
+                          }
+                      }));
             });
 
             Task.WaitAll(requestTasks.ToArray());
@@ -100,32 +102,34 @@
             partners ??= new List<string> { "BOXBERRY", "SDEK", "DS", "RUPOST", "5POST", "PickPoint" };
             List<Task> requestTasks = new List<Task>();
             XmlSerializer serializer = new XmlSerializer(typeof(Pvzlist));
-            List<Pvzlist> pVZPoints = new List<Pvzlist>();
+            List<Pvzlist>? pVZPoints = new List<Pvzlist>();
+
             partners.ForEach((p) =>
             {
                 requestTasks.Add(Task.Run(async () =>
-          {
-              HttpClient httpClient = new HttpClient();
-              httpClient.DefaultRequestHeaders
-        .Accept
-        .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-              try
-              {
-                  string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><pvzlist><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><town>{address.city}</town><partner>{p}</partner></pvzlist>";
-                  var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
-                  var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
-                  var xmlString = await response.Content.ReadAsStringAsync();
-                  using (StringReader reader = new StringReader(xmlString))
                   {
-                      var pvzList = (Pvzlist)serializer.Deserialize(reader);
-                      pVZPoints.Add(pvzList);
-                  }
-              }
-              catch (Exception exc)
-              {
-                  //throw exc;
-              }
-          }));
+                      HttpClient httpClient = new HttpClient();
+                      httpClient.DefaultRequestHeaders
+                        .Accept
+                        .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                      try
+                      {
+                          string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><pvzlist><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><town>{address.city}</town><partner>{p}</partner></pvzlist>";
+                          var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
+                          var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+                          var xmlString = await response.Content.ReadAsStringAsync();
+                          using (StringReader reader = new StringReader(xmlString))
+                          {
+                              var pvzList = (Pvzlist)serializer.Deserialize(reader);
+                              pVZPoints.Add(pvzList);
+                          }
+                      }
+                      catch (Exception exc)
+                      {
+                          Console.WriteLine(exc.Message);
+                          //throw exc;
+                      }
+                  }));
             });
 
             Task.WaitAll(requestTasks.ToArray());

@@ -8,7 +8,7 @@ namespace yakutsa.Services.Dalli.Models
     public class DeliveryCost
     {
         [XmlElement(ElementName = "price")]
-        public List<PartnerCalculationResult> Price { get; set; }
+        public List<PartnerCalculationResult>? Price { get; set; }
 
         [XmlAttribute(AttributeName = "partner")]
         public string? Partner { get; set; }

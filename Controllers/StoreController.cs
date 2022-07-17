@@ -144,12 +144,12 @@ namespace yakutsa.Controllers
       PortalActionResult actionResult = new();
       try
       {
-        var pvzList = await _retailCRM.GetPVZList(address);
-        if (pvzList != null)
-        {
-          actionResult.Success = true;
-          actionResult.Json = Newtonsoft.Json.JsonConvert.SerializeObject(pvzList);
-        }
+        //var pvzList = await _retailCRM.GetPVZList(address);
+        //if (pvzList != null)
+        //{
+        //  actionResult.Success = true;
+        //  actionResult.Json = Newtonsoft.Json.JsonConvert.SerializeObject(pvzList);
+        //}
       }
       catch (Exception exc)
       {

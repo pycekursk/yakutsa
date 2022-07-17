@@ -193,8 +193,8 @@ namespace yakutsa.Services
                 //var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
                 //result = await response.Content.ReadAsStringAsync();
 
-                var deliveryModule = this.deliveryModules.FirstOrDefault(dm => dm.Code == code);
-                var pvzList = (deliveryModule as Dalli.ApiClient).GetPVZList(address);
+                //var deliveryModule = this.deliveryModules.FirstOrDefault(dm => dm.Code == code);
+                //var pvzList = (deliveryModule as Dalli.ApiClient).GetPVZList(address);
 
                 return result;
             });
@@ -211,15 +211,15 @@ namespace yakutsa.Services
         }
 
         //undone
-        public Task<List<Pvzlist>> GetPVZList(Address address, string code = "dalli-service")
-        {
-            return Task.Run<List<Pvzlist>>(() =>
-            {
-                var deliveryModule = this.deliveryModules.FirstOrDefault(dm => dm.Code == code);
-                var pvzList = (deliveryModule as Dalli.ApiClient).GetPVZList(address);
-                return pvzList;
-            });
-        }
+        //public Task<List<Pvzlist>> GetPVZList(Address address, string code = "dalli-service")
+        //{
+        //    return Task.Run<List<Pvzlist>>(() =>
+        //    {
+        //        var deliveryModule = this.deliveryModules.FirstOrDefault(dm => dm.Code == code);
+        //        var pvzList = (deliveryModule as Dalli.ApiClient).GetPVZList(address);
+        //        return pvzList;
+        //    });
+        //}
 
         public Order? GetOrder(string number)
         {

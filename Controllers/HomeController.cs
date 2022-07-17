@@ -291,7 +291,7 @@ namespace yakutsa.Controllers
 
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string addressText, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
         {
             return Task.Run<IActionResult>(() =>
             {

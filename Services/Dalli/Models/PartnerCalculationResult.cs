@@ -47,5 +47,7 @@ namespace yakutsa.Services.Dalli.Models
         public string FriendlyName { get => friendlyName ??= ServiceType.GetDisplayName(); set => friendlyName = value; }
 
         public string RupostFriendlyName { get => RupostType.GetDisplayName(); }
+
+        public List<Dalli.Models.Point>? PVZList { get; set; }
     }
 }
