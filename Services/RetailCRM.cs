@@ -234,6 +234,9 @@ namespace yakutsa.Services
                 if (orders == null)
                     throw new Exception("Ошибка получения обьекта заказа");
 
+                if (orders.Children().Count() == 0)
+                    throw new NullReferenceException("Заказ не найден");
+
                 var ord = orders[0];
                 var json = orders?.ToString();
                 var order = Newtonsoft.Json.JsonConvert.DeserializeObject<Order>(ord.ToString());
@@ -263,16 +266,11 @@ namespace yakutsa.Services
                     orderProduct.offer.product = products?.FirstOrDefault(prod => prod.offers?.FirstOrDefault(offr => offr.id == orderProduct.offer.id) != null);
                     orderProduct.summ = orderProduct.quantity * orderProduct.initialPrice;
                 }
-
-                //order.deliveryType = Newtonsoft.Json.JsonConvert.DeserializeObject<DeliveryType>(obj?.ToString()!);
-
-
-
                 return order;
             }
-            catch
+            catch (Exception exc)
             {
-                throw;
+                throw (exc);
             }
         }
 

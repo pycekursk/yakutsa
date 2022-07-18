@@ -402,12 +402,17 @@ namespace yakutsa.Controllers
 
             return await Task.Run<IActionResult>(() =>
             {
-                var order = _retailCRM.GetOrder(number);
-
-                ViewData["Title"] = new HtmlString($"Заказ №{order?.number}");
-                ViewData["Description"] = new HtmlString($"Информация о заказе №{order?.number}");
-
-                return View("/Views/Home/OrderV2.cshtml", order);
+                try
+                {
+                    var order = _retailCRM.GetOrder(number);
+                    ViewData["Title"] = new HtmlString($"Заказ №{order?.number}");
+                    ViewData["Description"] = new HtmlString($"Информация о заказе №{order?.number}");
+                    return View("/Views/Home/OrderV2.cshtml", order);
+                }
+                catch (Exception)
+                {
+                    return NotFound();
+                }
             });
 
             //https://yakutsa.retailcrm.ru/api/v5/orders?filter[numbers][]=00000502&&apiKey=h0NsTuUjjscl7JG5SEk6NZPJPuw4dryy
