@@ -1481,3 +1481,8 @@ option:not(.nohover):hover {
 option:not(.nohover) {
   background-color: var(--main-content-bg-color);
 }
+
+
+.pvzlist-wrapper {
+  display: none;
+}

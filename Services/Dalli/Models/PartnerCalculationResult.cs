@@ -48,6 +48,8 @@ namespace yakutsa.Services.Dalli.Models
 
         public string RupostFriendlyName { get => RupostType.GetDisplayName(); }
 
-        public List<Dalli.Models.Point>? PVZList { get; set; }
+        public Dalli.Models.Pvzlist? PVZList { get; set; }
+
+        public bool IsPVZType { get; set; }
     }
 }

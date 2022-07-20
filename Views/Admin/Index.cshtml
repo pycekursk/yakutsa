@@ -11,14 +11,14 @@
         <div class="col-sm-12">
             <div class="tab-panel">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item btn-anim active" role="presentation">
-                        <a class="nav-link active" id="loyalty-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Loyalty","Admin")">Лояльность</a>
+                    <li class="nav-item btn-anim" role="presentation">
+                        <a class="nav-link" id="loyalty-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Loyalty","Admin")">Лояльность</a>
                     </li>
                     <li class="nav-item btn-anim" role="presentation">
-                        <a class="nav-link" id="home-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Products","Admin")">Товары</a>
+                        <a class="nav-link" id="product-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Products","Admin")">Товары</a>
                     </li>
                     <li class="nav-item btn-anim" role="presentation">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Categories","Admin")">Категории</a>
+                        <a class="nav-link" id="categories-tab" data-toggle="tab" role="tab" aria-controls="ajax" data-link="@Url.ActionLink("Categories","Admin")">Категории</a>
                     </li>
                     <li class="nav-item btn-anim" role="presentation">
                         <a class="nav-link" id="contact-tab" data-toggle="tab" role="tab" data-link="@Url.ActionLink("Vk","Admin")" aria-controls="ajax">VK</a>
@@ -30,7 +30,6 @@
         </div>
     </div>
 </div>
-
 <script>
     $.ready((function ($) {
         var $tabPanel = $('.tab-panel');
@@ -72,6 +71,11 @@
             $this.addClass('active').find('.nav-link').addClass('active');
             $tabContent.find(`#${$this.find('.nav-link').attr('aria-controls')}`).addClass('show').addClass('active');
         });
+
+        let activeTab = document.getElementById(document.location.href.split('#')[1]);
+
         $tabPanel.find('.nav-item.active').click();
+
+
     })(jQuery));
 </script>

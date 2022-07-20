@@ -44,13 +44,19 @@
             <div class="col-sm-12 my-1 col-md-8 col-xl-10">
                 @* @Html.HiddenFor(m => m.paymentType, new { name="paymentTypeCode" })*@
                 <div class="labelholder">
-                    @Html.TextBoxFor(m => m.address.text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
+                    @Html.TextBoxFor(m => m.deliveryAddress.text,null, new {@class="form-control", placeholder="Город, улица, дом, кв/оф", suggestion="address", required=true, autocomplete="off"})
                 </div>
             </div>
             <div class="col-sm-12 my-1">
                 @*  @Html.HiddenFor(m => m.delivery.code)*@
                 @Html.DropDownList("deliveryPartner", new List<SelectListItem>() { new SelectListItem { Text = "Способ доставки", Selected = true, Value="header" } }, new { @class="form-select",size=1, disabled = true, required = true})
             </div>
+
+            <div class="col-sm-12 my-1 pvzlist-wrapper">
+                @*  @Html.HiddenFor(m => m.delivery.code)*@
+                @Html.DropDownList("PVZList", new List<SelectListItem>() { new SelectListItem { Text = "Пункт выдачи", Selected = true, Value="header" } }, new { @class="form-select",size=1, required = true})
+            </div>
+
             <div class="col-sm-0 my-1 ps-1 d-none">
                 @{
                     var paymentTypeList = new List<SelectListItem>() { new SelectListItem { Text = "Способ оплаты", Selected = true, Value = "NO" } };

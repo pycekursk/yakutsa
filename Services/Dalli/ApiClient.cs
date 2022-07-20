@@ -76,9 +76,13 @@
                               using (StringReader reader = new StringReader(xmlString))
                               {
                                   var cost = (DeliveryCost)serializer.Deserialize(reader);
-
-                                  cost?.Price?.Where(prc => prc.ServiceType.ToString().Split("_")[0] == "PVZ")?.ToList();
-
+                                  var pvzType = cost?.Price?.FirstOrDefault(prc => prc.ServiceType.ToString().Split("_")[0] == "PVZ");
+                                  if (pvzType != null)
+                                  {
+                                      var points = GetPVZList(address, cost?.Partner);
+                                      pvzType.PVZList = points;
+                                      pvzType.IsPVZType = true;
+                                  }
 
                                   cost.Code = "dalli";
                                   if (cost.Partner != null)
@@ -97,41 +101,35 @@
             return pVZPoints;
         }
 
-        public List<Pvzlist> GetPVZList(Address address, List<string> partners = null)
+        public Pvzlist GetPVZList(Address address, string? partner)
         {
-            partners ??= new List<string> { "BOXBERRY", "SDEK", "DS", "RUPOST", "5POST", "PickPoint" };
             List<Task> requestTasks = new List<Task>();
             XmlSerializer serializer = new XmlSerializer(typeof(Pvzlist));
-            List<Pvzlist>? pVZPoints = new List<Pvzlist>();
+            Pvzlist? pVZPoints = new Pvzlist();
 
-            partners.ForEach((p) =>
-            {
-                requestTasks.Add(Task.Run(async () =>
+            requestTasks.Add(Task.Run(async () =>
+              {
+                  HttpClient httpClient = new HttpClient();
+                  httpClient.DefaultRequestHeaders
+                    .Accept
+                    .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                  try
                   {
-                      HttpClient httpClient = new HttpClient();
-                      httpClient.DefaultRequestHeaders
-                        .Accept
-                        .Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-                      try
+                      string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><pvzlist><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><town>{address.city}</town><partner>{partner}</partner></pvzlist>";
+                      var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
+                      var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
+                      var xmlString = await response.Content.ReadAsStringAsync();
+                      using (StringReader reader = new StringReader(xmlString))
                       {
-                          string requestString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?><pvzlist><auth token=\"cd94b1b2049e7e35db64ec756bc49073\"></auth><town>{address.city}</town><partner>{p}</partner></pvzlist>";
-                          var stringContent = new StringContent(requestString, Encoding.UTF8, "application/xml");
-                          var response = await httpClient.PostAsync("https://api.dalli-service.com/v1/", stringContent);
-                          var xmlString = await response.Content.ReadAsStringAsync();
-                          using (StringReader reader = new StringReader(xmlString))
-                          {
-                              var pvzList = (Pvzlist)serializer.Deserialize(reader);
-                              pVZPoints.Add(pvzList);
-                          }
+                          pVZPoints = (Pvzlist)serializer.Deserialize(reader);
                       }
-                      catch (Exception exc)
-                      {
-                          Console.WriteLine(exc.Message);
-                          //throw exc;
-                      }
-                  }));
-            });
-
+                  }
+                  catch (Exception exc)
+                  {
+                      Console.WriteLine(exc.Message);
+                      //throw exc;
+                  }
+              }));
             Task.WaitAll(requestTasks.ToArray());
             return pVZPoints;
         }

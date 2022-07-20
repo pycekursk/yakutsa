@@ -238,20 +238,20 @@ namespace yakutsa.Controllers
                 createOrder.phone = "+79207048884";
                 createOrder.patronymic = "Владимирович";
 
-                ViewBag.Address = new RetailCRMCore.V2.Models.Address
-                {
-                    Region = "Курская область",
-                    City = "Курск",
-                    CityId = 3255,
-                    RegionId = 27,
-                    StreetId = 1403926,
-                    Street = "проспект Кулакова",
-                    Flat = "206",
-                    Building = "9",
-                    Block = 5,
-                    Index = "305018",
-                    Floor = 1
-                };
+                //ViewBag.Address = new RetailCRMCore.V2.Models.Address
+                //{
+                //    Region = "Курская область",
+                //    City = "Курск",
+                //    CityId = 3255,
+                //    RegionId = 27,
+                //    StreetId = 1403926,
+                //    Street = "проспект Кулакова",
+                //    Flat = "206",
+                //    Building = "9",
+                //    Block = 5,
+                //    Index = "305018",
+                //    Floor = 1
+                //};
             }
 
             createOrder.paymentType = "cp";
@@ -291,38 +291,58 @@ namespace yakutsa.Controllers
 
         [HttpPost]
         [Route("OrderOptions")]
-        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.V2.Models.Address address, string deliveryPartner, string paymentTypeCode)
+        public Task<IActionResult> OrderOptions(CreateOrderObject createOrder, RetailCRMCore.Models.SuggestionAddress suggestionAddress, string deliveryPartner, string paymentTypeCode)
         {
-            return Task.Run<IActionResult>(() =>
+            return Task.Run<IActionResult>(async () =>
             {
                 PortalActionResult result = new();
 
-                if (createOrder.delivery?.address != null)
-                {
-                    createOrder.delivery.address.building = createOrder.delivery.address.house;
-                    createOrder.delivery.address.streetType += ".";
-                    createOrder.delivery.address.house = null;
-                    createOrder.address = createOrder.delivery.address;
-                    createOrder.delivery.code = "dalli";
-                    //createOrder.delivery.data.extraData = new DeliveryExtraData { partner = "SDEK", paytype = "NO" };
-                    //  createOrder.delivery.data.tariff = "10";
+                createOrder.delivery.data.service = new DeliveryService { code = "13" };
 
-                }
-                else if (createOrder.delivery?.address == null && !string.IsNullOrEmpty(createOrder.address.text))
-                {
-                    var address = new RetailCRMCore.Models.Address() { text = createOrder.address.text };
-                    createOrder.delivery.address = address;
-                    //createOrder.delivery.address.text = createOrder.address.text;
-                    createOrder.delivery.code = "dalli";
-                    //createOrder.delivery.data.extraData = new DeliveryExtraData { partner = "SDEK", paytype = "NO" };
-                    // createOrder.delivery.data.tariff = "10";
-                }
-                else
-                {
-                    createOrder.delivery.code = "self-delivery";
-                }
+
+                //if (createOrder.delivery?.address != null)
+                //{
+                //    //createOrder.delivery.address.building = createOrder.delivery.address.house;
+                //    //createOrder.delivery.address.streetType += ".";
+                //    //createOrder.delivery.address.house = null;
+                //    createOrder.delivery.code = "dalli";
+                //    createOrder.delivery.integrationCode = "dalli-service";
+                //}
+                ////else if (createOrder.delivery?.address == null && !string.IsNullOrEmpty(createOrder.address.text))
+                ////{
+                ////    //var address = new RetailCRMCore.Models.Address() { text = createOrder.address.text };
+                ////    //createOrder.delivery.address = address;
+                ////    createOrder.delivery.code = "dalli";
+                ////    createOrder.delivery.integrationCode = "dalli-service";
+                ////}
+                //else
+                //{
+                //    createOrder.delivery.code = "self-delivery";
+                //}
 
                 createOrder.paymentType = "cp";
+
+                yakutsa.Services.GeoHelper.ApiClient apiClient = new Services.GeoHelper.ApiClient();
+                var address = await apiClient.GetVerifiedAddress(suggestionAddress);
+
+                createOrder.delivery.address = address;
+
+                //createOrder.delivery.address = new Address
+                //{
+                //    index = "305018",
+                //    countryIso = "RU",
+                //    region = "Курская область",
+                //    regionId = 27,
+                //    city = "Курск",
+                //    cityId = 3255,
+                //    cityType = "г.",
+                //    street = "Кулакова",
+                //    streetId = 1403926,
+                //    streetType = "пр-кт.",
+                //    building = "9",
+                //    flat = "206",
+                //    text = @"пр-кт. Кулакова, д. 9, кв.\/офис 206"
+                //};
 
                 if (Cart?.PromoCode != null)
                 {
@@ -370,7 +390,7 @@ namespace yakutsa.Controllers
                         });
                 });
 
-                createOrder.price = Cart.Price + (int)createOrder.delivery.cost;
+                //createOrder.price = Cart.Price;// + (int)createOrder.delivery.cost;
 
                 string link = string.Empty;
                 string id = string.Empty;
