@@ -340,6 +340,13 @@ namespace yakutsa.Controllers
                 }
 
                 var managerId = 10;
+
+                if (_environment.IsDevelopment())
+                {
+                    managerId = 13;
+                }
+
+
                 var users = _retailCRM.GetResponse<User>();
                 //int.TryParse(users?.Array?.FirstOrDefault(u => u.isManager)?.id.ToString(), out managerId);
                 var customer = _retailCRM.GetResponse<Customer>()?.Array?.FirstOrDefault(c => c.phones.FirstOrDefault(p => p.number.Contains(createOrder.phone)) != null || c.email!.Contains(createOrder.email));
