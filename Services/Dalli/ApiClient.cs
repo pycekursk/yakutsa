@@ -28,9 +28,9 @@
 
         public List<DeliveryCost> Calculate(Address address, Cart cart, bool cashservices = false, List<string> partners = null)
         {
-            //partners ??= new List<string> { "BOXBERRY", "SDEK", "DS", "RUPOST", "5POST", "PickPoint" };
+            partners ??= new List<string> { "BOXBERRY", "SDEK", "DS", "5POST", "PickPoint" };
 
-            partners ??= new List<string> { "BOXBERRY", "SDEK", "RUPOST" };
+            //partners ??= new List<string> { "BOXBERRY", "SDEK", "RUPOST" };
 
             List<Task> requestTasks = new List<Task>();
             XmlSerializer serializer = new XmlSerializer(typeof(DeliveryCost));
@@ -84,7 +84,7 @@
                                       pvzType.IsPVZType = true;
                                   }
 
-                                  cost.Code = "dalli";
+                                  cost.Code = "dalli-servicedalli-v2";
                                   if (cost.Partner != null)
                                       pVZPoints.Add(cost);
                               }

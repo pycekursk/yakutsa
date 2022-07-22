@@ -238,10 +238,10 @@ function Initialize($) {
         if (document.getElementById("self_delivery_trigger").checked) {
           data.append('delivery.code', 'self-delivery');
         }
-        else {
-          data.append('delivery.code', 'dalli');
-          data.append('delivery.integrationCode', 'dalli-service');
-        }
+        //else {
+        //  data.append('delivery.code', 'dalli');
+        //  data.append('delivery.integrationCode', 'dalli-service');
+        //}
 
         let attributes = Array.from(document.getElementById('deliveryAddress_text').attributes);
         attributes.forEach(attr => { 
@@ -362,7 +362,7 @@ function Initialize($) {
                   let price = tariffs[i].Price[x].Price == 0 ? "" : `<span> - ${tariffs[i].Price[x].Price} руб.</span>`;
                   let infoText = tariffs[i].Price[x].InfoText == "" ? "" : `<span>, ${tariffs[i].Price[x].InfoText}</span>`;
                   //tariff-data_extraData_partner="${tariffs[i].Partner}"
-                  $tariffSelect.append(`<option class="py-1" tariff-type='${tariffs[i].Price[x].Type}' data-json='${JSON.stringify(tariffs[i].Price[x])}'  tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code} " tariff-integrationCode="dalli-service" tariff-data_payerType="sender"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
+                    $tariffSelect.append(`<option class="py-1" tariff-type='${tariffs[i].Price[x].Type}' data-json='${JSON.stringify(tariffs[i].Price[x])}'  tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
                   //$tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
                 }
               }

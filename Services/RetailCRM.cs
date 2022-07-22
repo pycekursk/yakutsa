@@ -46,7 +46,8 @@ namespace yakutsa.Services
         public RetailCRM()
         {
             _client = new Client(_url, _key);
-            deliveryModules.Add(new yakutsa.Services.Dalli.ApiClient { Code = "dalli-service" });
+            //deliveryModules.Add(new yakutsa.Services.Dalli.ApiClient { Code = "dalli-service" });
+            deliveryModules.Add(new yakutsa.Services.Dalli.ApiClient { Code = "dalli-servicedalli-v2" });
         }
 
         public string GetOrdersJson()
@@ -200,7 +201,7 @@ namespace yakutsa.Services
             });
         }
 
-        public Task<List<DeliveryCost>> DeliveryCalculate(Address address, Cart cart, string code = "dalli-service")
+        public Task<List<DeliveryCost>> DeliveryCalculate(Address address, Cart cart, string code = "dalli-servicedalli-v2")
         {
             return Task.Run<List<yakutsa.Services.Dalli.Models.DeliveryCost>>(() =>
           {
@@ -354,6 +355,8 @@ namespace yakutsa.Services
             createOrderObject.externalId = Guid.NewGuid().ToString();
 
             var json = _client.OrdersCreate(createOrderObject, "YAKUTSA.RU").GetRawResponse();
+
+            Console.WriteLine(json);
 
             var jObject = JObject.Parse(json);
 

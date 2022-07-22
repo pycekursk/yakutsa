@@ -238,24 +238,8 @@ namespace yakutsa.Controllers
                 createOrder.phone = "+79207048884";
                 createOrder.patronymic = "Владимирович";
 
-                //ViewBag.Address = new RetailCRMCore.V2.Models.Address
-                //{
-                //    Region = "Курская область",
-                //    City = "Курск",
-                //    CityId = 3255,
-                //    RegionId = 27,
-                //    StreetId = 1403926,
-                //    Street = "проспект Кулакова",
-                //    Flat = "206",
-                //    Building = "9",
-                //    Block = 5,
-                //    Index = "305018",
-                //    Floor = 1
-                //};
+
             }
-
-            createOrder.paymentType = "cp";
-
             return View(createOrder);
         }
 
@@ -296,9 +280,6 @@ namespace yakutsa.Controllers
             return Task.Run<IActionResult>(async () =>
             {
                 PortalActionResult result = new();
-
-                createOrder.delivery.data.service = new DeliveryService { code = "13" };
-
 
                 //if (createOrder.delivery?.address != null)
                 //{
@@ -354,7 +335,8 @@ namespace yakutsa.Controllers
                     {
                         createOrder.discountManualAmount = Cart?.PromoCode.Value;
                     }
-
+                    createOrder.customFields ??= new Dictionary<string, string>();
+                    createOrder.customFields.Add("promoCode", Cart?.PromoCode?.CodeText);
                 }
 
                 var managerId = 10;
@@ -394,6 +376,11 @@ namespace yakutsa.Controllers
 
                 string link = string.Empty;
                 string id = string.Empty;
+
+                createOrder.delivery.code = "dalli-service-dalli-v2";
+                createOrder.delivery.data.locked = true;
+
+
                 _retailCRM.OrderCreate(createOrder, HttpContext.Request.Host.Value, _environment.IsDevelopment()).ContinueWith(t =>
                 {
                     link = t.Result.link;

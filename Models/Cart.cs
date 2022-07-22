@@ -30,9 +30,13 @@ namespace yakutsa.Models
                 {
                     result = InitialPrice - (InitialPrice / 100 * DiscountManualPercent) > 0 ? InitialPrice - InitialPrice / 100 * DiscountManualPercent : 0;
                 }
-                if (DiscountManualAmount > 0)
+                else if (DiscountManualAmount > 0)
                 {
                     result = InitialPrice - discountManualAmount >= 0 ? InitialPrice - discountManualAmount : 0;
+                }
+                else
+                {
+                    result = InitialPrice;
                 }
                 return result;
             }

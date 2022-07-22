@@ -85,6 +85,7 @@ public class Startup
 
         app.UseStaticFiles(new StaticFileOptions()
         {
+            ServeUnknownFileTypes = true,
             HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.Compress,
             ContentTypeProvider = provider,
             OnPrepareResponse = ctx =>

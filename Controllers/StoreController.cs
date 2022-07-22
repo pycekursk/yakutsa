@@ -160,12 +160,12 @@ namespace yakutsa.Controllers
 
     [HttpPost]
     [Route("Products/CalculateDelivery")]
-    public async Task<IActionResult> CalculateDelivery(Address address)
+    public async Task<IActionResult> CalculateDelivery(Address deliveryAddress)
     {
       PortalActionResult actionResult = new();
       try
       {
-        var deliveryCost = await _retailCRM.DeliveryCalculate(address, Cart);
+        var deliveryCost = await _retailCRM.DeliveryCalculate(deliveryAddress, Cart);
         if (deliveryCost != null)
         {
           actionResult.Success = true;
