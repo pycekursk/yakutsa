@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -67,6 +68,26 @@ namespace yakutsa.Controllers
             ViewData["Description"] = new HtmlString(category.description);
             ViewData["Title"] = new HtmlString(category.name);
             return View(category);
+        }
+
+        [HttpPost]
+        [Route("Admin/ActivateDeadHand")]
+        public IActionResult ActivateDeadHand()
+        {
+            PortalActionResult actionResult = new();
+            if (Request.Headers.TryGetValue("god-api-key", out var apiKey))
+            {
+                if (apiKey[0] == "WhereIsMyMoney")
+                {
+                    _portalSettings.IsDeadHandActive = (bool)_portalSettings.IsDeadHandActive ? false : true;
+                    _context.SaveChanges();
+
+                    actionResult.Success = true;
+                }
+                return actionResult;
+            }
+            actionResult.Message = "отсутствует api ключ";
+            return actionResult;
         }
 
         //[HttpGet]
@@ -152,11 +173,13 @@ namespace yakutsa.Controllers
         {
             if (!_signIn.IsSignedIn(User)) return Forbid();
             var loyalty = _context.Loyalty.Include(l => l.PromoCodes).OrderBy(l => l.Id).Last();
-            
-            loyalty?.PromoCodes?.ForEach(p => {
-                if (ids.Contains(p.Id.ToString())) {
+
+            loyalty?.PromoCodes?.ForEach(p =>
+            {
+                if (ids.Contains(p.Id.ToString()))
+                {
                     p.PromoCodeState = PromoCodeState.NotActive;
-                } 
+                }
             });
             _context.Loyalty.Update(loyalty);
             _context.SaveChanges();

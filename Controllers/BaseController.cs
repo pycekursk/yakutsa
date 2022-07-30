@@ -30,7 +30,7 @@ namespace yakutsa.Controllers
         private Cart? cart;
         private List<Product>? history;
         public string? PreviousUrl;
-
+        internal PortalSettings? _portalSettings;
         public Cart? Cart { get => cart ??= GetCart(); }
 
         public List<Product> History { get => history ??= GetHistory(); }
@@ -53,6 +53,14 @@ namespace yakutsa.Controllers
             _files = _environment.WebRootPath + "/files/";
             _logger = logger;
             _vk = vk;
+
+            _portalSettings = _context.Settings.FirstOrDefault();
+            if (_portalSettings == null)
+            {
+                _context.Settings.Add(new PortalSettings { IsDeadHandActive = false });
+                _context.SaveChanges();
+            }
+
             CultureInfo.CurrentCulture = new CultureInfo("RU-ru") { DateTimeFormat = new DateTimeFormatInfo() { FullDateTimePattern = "yyyy-MM-dd HH:mm:ss" } };
         }
 
@@ -91,14 +99,9 @@ namespace yakutsa.Controllers
             _context.SaveChanges();
             return appUser;
         }
-        void AppendData()
+        bool AppendData()
         {
-            PortalSettings? portalSettings = _context.Settings.FirstOrDefault();
-            if (portalSettings == null)
-            {
-                _context.Settings.Add(new PortalSettings { IsDeadHandActive = false });
-                _context.SaveChanges();
-            }
+
 
             if (User.Identity?.Name != null && appUser != null)
             {
@@ -114,14 +117,14 @@ namespace yakutsa.Controllers
             ViewBag.Menu = groups;
             ViewBag.History = History;
 
-
             ViewData["Controller"] = this.GetType().Name.Replace("Controller", "");
             ViewData["cartPrice"] = Cart?.Price;
             ViewData["count"] = Cart?.Count;
             ViewData["Image"] ??= $"https://{this.HttpContext.Request.Host}/img/sm_logo.png";
             ViewData["canonical"] = new HtmlString($"https://{this.Request.Host}{this.Request.Path}".ToLower());
-
             ViewBag.Path = this.Request.Path.ToString() == "/" ? new string[0] : this.Request.Path.ToString().Split("/").Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+            return _portalSettings.IsDeadHandActive.Value ? false : true;
         }
 
         public override PartialViewResult PartialView()
@@ -150,18 +153,18 @@ namespace yakutsa.Controllers
 
         public override ViewResult View()
         {
-            AppendData();
+            if (!AppendData()) return View("/Views/Admin/DeadHand.cshtml");
             return base.View();
         }
 
         public override ViewResult View(string? viewName)
         {
-            AppendData();
+            if (!AppendData() && viewName != "/Views/Admin/DeadHand.cshtml") return View("/Views/Admin/DeadHand.cshtml");
             return base.View(viewName);
         }
         public override ViewResult View(string? viewName, object? model)
         {
-            AppendData();
+            if (!AppendData() && viewName != "/Views/Admin/DeadHand.cshtml") return View("/Views/Admin/DeadHand.cshtml");
             return base.View(viewName, model);
         }
 
