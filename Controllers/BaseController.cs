@@ -93,6 +93,13 @@ namespace yakutsa.Controllers
         }
         void AppendData()
         {
+            PortalSettings? portalSettings = _context.Settings.FirstOrDefault();
+            if (portalSettings == null)
+            {
+                _context.Settings.Add(new PortalSettings { IsDeadHandActive = false });
+                _context.SaveChanges();
+            }
+
             if (User.Identity?.Name != null && appUser != null)
             {
                 appUser.LastVisit = DateTime.Now;
