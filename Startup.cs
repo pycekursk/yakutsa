@@ -21,16 +21,19 @@ public class Startup
 {
     public Startup(IConfiguration configuration)
     {
-        _configuration = configuration;
+        Configuration = configuration;
     }
 
-    IConfiguration _configuration { get; set; }
+    public static IConfiguration? Configuration { get; internal set; }
     public static IWebHostEnvironment? Environment { get; set; }
 
     public void ConfigureServices(IServiceCollection services)
     {
+
+
+
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql("server=37.77.105.24;database=yakutsa;uid=pycek;password=6m7sd38L;ConvertZeroDateTime=True", new MySqlServerVersion(new Version(8, 0, 23))));
+            options.UseMySql(Configuration.GetConnectionString("Default"), new MySqlServerVersion(new Version(8, 0, 23))));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
 
