@@ -244,7 +244,7 @@ function Initialize($) {
         //}
 
         let attributes = Array.from(document.getElementById('deliveryAddress_text').attributes);
-        attributes.forEach(attr => { 
+        attributes.forEach(attr => {
           if (attr.name.includes('sd')) {
             let str = attr.name.replace('sd-', '');
             let words = str.split('_');
@@ -290,7 +290,13 @@ function Initialize($) {
                 console.log(e);
               }
             }
+
+
+
             showPaymentModal(response.Url);
+
+            //window.open(response.Url, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+
             sendAjaxForm({ 'id': response.Html }, 'PaymentCheck', (resp) => {
               if (resp.Success) {
                 $('#payment_modal').hide();
@@ -362,7 +368,7 @@ function Initialize($) {
                   let price = tariffs[i].Price[x].Price == 0 ? "" : `<span> - ${tariffs[i].Price[x].Price} руб.</span>`;
                   let infoText = tariffs[i].Price[x].InfoText == "" ? "" : `<span>, ${tariffs[i].Price[x].InfoText}</span>`;
                   //tariff-data_extraData_partner="${tariffs[i].Partner}"
-                    $tariffSelect.append(`<option class="py-1" tariff-type='${tariffs[i].Price[x].Type}' data-json='${JSON.stringify(tariffs[i].Price[x])}'  tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
+                  $tariffSelect.append(`<option class="py-1" tariff-type='${tariffs[i].Price[x].Type}' data-json='${JSON.stringify(tariffs[i].Price[x])}'  tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="${tariffs[i].Code}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span>${infoText}${price}</option>`);
                   //$tariffSelect.append(`$<option class="py-1" tariff-data_tariff="${tariffs[i].Price[x].Service}" tariff-code="dalli" tariff-integrationCode="dalli-service" tariff-data_payerType="sender" tariff-cost="${tariffs[i].Price[x].Price}"><span style="display:block"><strong>${tariffs[i].Price[x].FriendlyName}${rupost}</strong></span><span>, ${tariffs[i].Price[x].InfoText}</span><span> - ${tariffs[i].Price[x].Price} руб.</span></option>`);
                 }
               }

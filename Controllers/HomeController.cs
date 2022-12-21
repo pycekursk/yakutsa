@@ -445,7 +445,7 @@ namespace yakutsa.Controllers
 
                 if (!payments.HasValues)
                 {
-                    var p = new { type = "cp", amount = 4350 };
+                    var p = new { type = "robokassa", amount = 4350 };
 
                     order.SetPropertyValue("payments", p);
                     //var tempObject = JObject.Parse("\"526\": {\"id\": 526,\"status\": \"wait-approved\",\"type\": \"cp\",\"amount\": 4350}");

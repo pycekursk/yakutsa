@@ -96,7 +96,7 @@
     <div class="modal-dialog modal-fullscreen-xl-down modal-xl">
         <div class="modal-content">
             <div class="modal-body p-0">
-                <iframe style="min-height: 700px;width: 100%;" frameborder="0" allowfullscreen="" allow="payment"></iframe>
+                <iframe  style="min-height: 700px;width: 100%;" frameborder="0" allowfullscreen="" allow="payment"></iframe>
             </div>
         </div>
     </div>
@@ -104,10 +104,11 @@
 
 <script>
     function showPaymentModal(url) {
-        $('#payment_modal').modal('show');
-        $('#payment_modal iframe').attr('src', url);
-        $('#payment_modal button').click(function () {
-            $('#payment_modal iframe').removeAttr('src');
-        });
+        location.href = url;
+        //$('#payment_modal').modal('show');
+        //$('#payment_modal iframe').attr('src', url);
+        //$('#payment_modal button').click(function () {
+        //    $('#payment_modal iframe').removeAttr('src');
+        //});
     }
 </script>
