@@ -22,6 +22,7 @@ using yakutsa.Data;
 using yakutsa.Extensions;
 using yakutsa.Models;
 using yakutsa.Services;
+using yakutsa.Services.Ozon;
 
 using static yakutsa.Services.RetailCRM;
 
@@ -204,6 +205,71 @@ namespace yakutsa.Controllers
             _context.Vk.Update(_vk);
             _context.SaveChanges();
             return View(model: _vk);
+        }
+
+        [Route("Admin/OzonSettings")]
+        [HttpGet]
+        public IActionResult OzonSettings()
+        {
+            ViewData["Description"] = new HtmlString("Интеграция Ozon");
+            ViewData["Title"] = new HtmlString("");
+
+            OzonSettings ozonSettings = new OzonSettings();
+
+            using (var ctx = new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>()))
+            {
+                var _ozonSettings = ctx.OzonSettings.FirstOrDefault();
+                if (_ozonSettings != null) ozonSettings = _ozonSettings;
+            }
+
+            return PartialView(ozonSettings);
+        }
+
+        [Route("Admin/OzonSettings")]
+        [HttpPost]
+        public IActionResult OzonSettings(OzonSettings ozon)
+        {
+            _context.OzonSettings.Update(ozon);
+            _context.SaveChanges();
+            return View(viewName: "Views/Admin/Index.cshtml", model: ozon);
+        }
+
+
+        [Route("Admin/OzonImport")]
+        [HttpPost]
+        public async Task<IActionResult> OzonImport()
+        {
+            PortalActionResult actionResult = new PortalActionResult();
+
+            var ozonApiClient = OzonApiClient.Instance;
+
+            //var attrs = await client.GetCategoryAttributes(new long[] { 17037058 });
+
+            //var ozonProducts = await client.GetProducts();
+
+            //var productInfo = await client.GetProductInfo(ozonProducts.Result.Products[0]);
+
+            List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
+            List<ProductGroup>? groups = _retailCRM.GetResponse<ProductGroup>().Array?.ToList();
+            products?.ForEach(p => p.groups = groups?.Where(g => p.groups?.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray());
+
+            if (products != null)
+                await ozonApiClient.ProductImport(products, 17037058);
+
+            return actionResult;
+        }
+
+
+        [Route("Admin/SyncOzonStocks")]
+        [HttpPost]
+        public async Task<IActionResult> SyncOzonStocks()
+        {
+            PortalActionResult actionResult = new PortalActionResult();
+            var ozonApiClient = OzonApiClient.Instance;
+            List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
+
+            ///TODO недоделано
+            return actionResult;
         }
 
 

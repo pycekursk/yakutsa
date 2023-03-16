@@ -1,0 +1,36 @@
+﻿@model yakutsa.Services.Ozon.OzonSettings
+
+<div class="row">
+    <h4 class="text-center">@ViewData["Title"]</h4>
+</div>
+
+<div class="row">
+    <div class="col-sm-10 mx-auto">
+        @{
+            Html.RenderPartial("/Views/Partials/FormPartial.cshtml", (object)Model);
+        }
+        <div class="btn-anim mt-2">
+            <input class="btn" type="button" value="Импорт товаров" id="ozon_import" />
+        </div>
+        <div class="btn-anim mt-2">
+            <input class="btn" type="button" value="Синх. остатков" id="sync_stocks" />
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (() => {
+        var importInput = document.getElementById('ozon_import');
+        var syncStocksInput = document.getElementById('sync_stocks');
+
+        syncStocksInput.addEventListener('click', function (evt) {
+            console.log(evt, this);
+            sendAjaxForm({}, '@Url.ActionLink("SyncOzonStocks", "Admin")', (response) => { console.log(response); });
+        });
+
+        importInput.addEventListener('click', function (evt) {
+            console.log(evt, this);
+            sendAjaxForm({}, '@Url.ActionLink("OzonImport", "Admin")', (response) => { console.log(response); });
+        });
+    })();
+</script>

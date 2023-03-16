@@ -26,6 +26,7 @@ namespace yakutsa.Controllers
         internal SignInManager<AppUser> _signIn;
         internal RetailCRM _retailCRM;
         public Vk _vk;
+
         internal string _files;
         private Cart? cart;
         private List<Product>? history;

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using yakutsa.Models;
 using yakutsa.Services;
+using yakutsa.Services.Ozon;
 
 namespace yakutsa.Data
 {
@@ -16,6 +17,9 @@ namespace yakutsa.Data
 
         public DbSet<yakutsa.Data.PortalSettings> Settings { get; set; }
         public DbSet<Vk> Vk { get; set; }
+
+        public DbSet<OzonSettings> OzonSettings { get; set; }
+
         public DbSet<Loyalty> Loyalty { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

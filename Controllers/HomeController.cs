@@ -18,6 +18,7 @@ using yakutsa.Data;
 using yakutsa.Extensions;
 using yakutsa.Models;
 using yakutsa.Services;
+using yakutsa.Services.Ozon;
 
 using static yakutsa.Services.RetailCRM;
 
@@ -34,32 +35,25 @@ namespace yakutsa.Controllers
 
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ViewData["Description"] = new HtmlString("Интернет-магазин Российского бренда уличной одежды премиального качества.");
             ViewData["Title"] = new HtmlString("Российский бренд уличной одежды.");
             List<Product>? products = _retailCRM.GetResponse<Product>().Array?.Where(p => p.active && p.quantity != 0).ToList();
             List<ProductGroup>? groups = _retailCRM.GetResponse<ProductGroup>().Array?.ToList();
-
             products?.ForEach(p => p.groups = groups?.Where(g => p.groups.FirstOrDefault(pg => pg.id == g.id) != null)?.ToArray());
 
 
-            //TODO: добавлено для отладки, убрать после
-            if (_environment.IsDevelopment())
-            {
-                if (Cart?.Count == 0)
-                {
-                    var product = products.FirstOrDefault(p => p.name.ToLower() == "joggers");
-                    ToCart(product.id, product.offers.FirstOrDefault().id);
-                    //return RedirectToAction("OrderOptions", "Home");
-                }
-
-                //Payment("499A").ContinueWith(t => t.Result).Wait();
-
-                //return RedirectToAction("Order", "Home", new { number = "503A" });
-            }
+            var client = OzonApiClient.Instance;
 
 
+            //var attrs = await client.GetCategoryAttributes(new long[] { 17037058 });
+
+            //var ozonProducts = await client.GetProducts();
+
+            //var productInfo = await client.GetProductInfo(ozonProducts.Result.Products[0]);
+
+            //await client.ProductImport(products, 17037058);
 
             return View(products);
         }
@@ -182,7 +176,7 @@ namespace yakutsa.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetResponse(string? action)
+        public async Task<IActionResult> GetResponse(string? action)
         {
             switch (action?.ToLower())
             {
@@ -192,7 +186,7 @@ namespace yakutsa.Controllers
                 case "product-groups": return Json(_retailCRM.GetResponse<ProductGroup>());
                 case "reference/payment-types": return Json(_retailCRM.GetResponse<PaymentType>());
                 case "reference/delivery-types": return Json(_retailCRM.GetResponse<DeliveryType>());
-                default: return Index();
+                default: return await Index();
             }
         }
 

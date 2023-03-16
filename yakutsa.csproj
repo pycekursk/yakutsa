@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\OzonSellerApi\Models\" />
     <Folder Include="wwwroot\lib\popper\" />
     <Folder Include="wwwroot\lib\vibrate\" />
   </ItemGroup>
